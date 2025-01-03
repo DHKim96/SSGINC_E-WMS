@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- PasswordEncoder Bean(콩) 설정 -->
+<!--    내 코드가 아니면 어노테이션으로 싱글톤으로 만들 수가없음. -->
+<!--    외부 설정파일에서 싱글톤으로 만들어달라고 설정할 수밖에 없음. -->
+<!--    설정파일은 자바 또는 XML로 함. -->
+<!--    프로젝트 시작할 때 이 파일을 읽어서 bean이라는 폴더를 만나면
+    싱글톤 객체로 만든다.!!
+    Security passwordEncoder = new Security(10);
+    //변수명은 bean태그의 id로 설정함.
+    //생성할 때 필요한 입력값은 constructor-arg라는 태그에 넣어주면
+    //생성자의 입력값으로 넣어줌.
+-->
+    <bean id="passwordEncoder"
+          class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+        <constructor-arg value="10" /> <!-- 암호화 강도 설정 -->
+    </bean>
+</beans>
+
