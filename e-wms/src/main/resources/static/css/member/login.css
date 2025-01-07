@@ -1,0 +1,108 @@
+/* styles.css */
+body {
+    font-family: pretendard;
+    background-color: #fff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    text-align: center;
+    width: 400px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.logo {
+    width: 75%;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 20px;
+    color: #787878;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: 30px;
+    color: #f9a825;
+    margin-bottom: 20px;
+}
+
+.input-field {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.remember-me input {
+    margin-right: 5px;
+}
+
+.login-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #f9a825;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: #e6951c;
+}
+
+.links {
+    margin: 20px 0;
+    font-size: 14px;
+    color: #787878;
+}
+
+.links a {
+    color: #f9a825;
+    text-decoration: none;
+}
+
+.links a:hover {
+    text-decoration: underline;
+}
+
+.sns-login {
+    margin-top: 20px;
+}
+
+.sns-login p {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.sns-icons img {
+    width: 40px;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.sns-icons img:hover {
+    opacity: 0.8;
+}

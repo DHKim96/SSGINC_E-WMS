@@ -1,7 +1,44 @@
 package com.ssginc.ewms.member.service;
 
+import com.ssginc.ewms.member.dto.MemberRequest;
+import com.ssginc.ewms.member.mapper.MemberMapper;
+import com.ssginc.ewms.member.vo.MemberVO;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
-public class MemberServiceImpl {
+@RequiredArgsConstructor
+public class MemberServiceImpl implements MemberService {
+
+    private final MemberMapper memberMapper;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public MemberVO selectMemberById(MemberRequest member) {
+
+        MemberVO test = new MemberVO();
+        test.setMemberId("test");
+        test.setMemberPw("1234");
+        test.setMemberBirth("1999-02-02");
+        test.setMemberAddr("강원도");
+        test.setMemberEmail("test@test.com");
+        test.setMemberName("test");
+        test.setMemberPost("21231");
+        test.setMemberPhone("000-0000-0000");
+        test.setWarehouseId(0);
+
+//        memberMapper.insertMember(test);
+
+        return memberMapper.selectMemberById(member.getMemberId().trim());
+    }
+
+    @Override
+    public boolean validatePwd(MemberRequest memberRequest, MemberVO member) {
+        return passwordEncoder.matches(member.getMemberPw(), memberRequest.getMemberPw());
+    }
+
+
 }

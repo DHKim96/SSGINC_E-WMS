@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <link rel="stylesheet" href="/css/member/login.css">
+</head>
+<body>
+    <div class="login-container">
+        <img src="/img/member/emart-logo.png" alt="Emart Logo" class="logo">
+        <h2>Warehouse Management System</h2>
+        <h1>로그인</h1>
+        <form action="/member/login" class="login-form">
+            <input type="text" name="memberId" placeholder="아이디" class="input-field" required>
+            <input type="password" name="memberPw" placeholder="비밀번호" class="input-field" required>
+            <div class="remember-me">
+                <input type="checkbox" id="remember-me">
+                <label for="remember-me" style="color: #787878;">로그인 상태 유지</label>
+            </div>
+            <button type="submit" class="login-button">로그인</button>
+        </form>
+        <div class="links">
+            <a href="#">아이디 찾기</a> |
+            <a href="#">비밀번호 찾기</a> |
+            <a href="#">회원가입</a>
+        </div>
+
+        <hr style="color: #787878;">
+
+        <div class="sns-login">
+            <p style="color: #787878;">SNS 계정으로 간편 로그인</p>
+            <div class="sns-icons">
+                <img src="/img/member/google.png" alt="Google Login">
+                <img src="/img/member/naver.png" alt="Naver Login">
+                <img src="/img/member/kakao.png" alt="Kakao Login">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
