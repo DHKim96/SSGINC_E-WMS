@@ -19,19 +19,6 @@
         <result column="MEMBER_WAREHOUSE_ID" property="warehouseId"/>
     </resultMap>
 
-    <insert id="insertMember"
-        parameterType="memberVO">
-        INSERT INTO MEMBER
-        (
-            member_id, member_pw, member_name, member_email, member_phone, member_post,
-            member_addr, member_birth, member_role, member_warehouse_id
-        )
-        VALUES(
-                  #{memberId}, #{memberPw},#{memberName},#{memberEmail},#{memberPhone},#{memberPost},
-                  #{memberAddr},#{memberBirth},#{memberRole},#{warehouseId}
-              )
-    </insert>
-
     <!--    MemberMapper.java와 연결이 됨.-->
     <select id="selectMemberById"
             resultMap="memberResult">

@@ -18,20 +18,6 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberVO selectMemberById(MemberRequest member) {
-
-        MemberVO test = new MemberVO();
-        test.setMemberId("test");
-        test.setMemberPw("1234");
-        test.setMemberBirth("1999-02-02");
-        test.setMemberAddr("강원도");
-        test.setMemberEmail("test@test.com");
-        test.setMemberName("test");
-        test.setMemberPost("21231");
-        test.setMemberPhone("000-0000-0000");
-        test.setWarehouseId(0);
-
-//        memberMapper.insertMember(test);
-
         return memberMapper.selectMemberById(member.getMemberId().trim());
     }
 
