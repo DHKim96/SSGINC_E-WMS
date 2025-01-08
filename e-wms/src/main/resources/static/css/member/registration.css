@@ -1,10 +1,11 @@
 /* style.css */
 * {
     box-sizing: border-box;
+    margin: 0;
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: Pretendard;
     margin: 0;
     padding: 0;
     display: flex;
@@ -57,7 +58,17 @@ body {
     width: 100%;
     margin-bottom: 15px;
     text-align: left;
+  }
+
+  .input-group {
     gap: 12px;
+    width: 100%;
+  }
+
+  .errMsg {
+    width: 100%;
+    padding-left: 115px;
+    font-size: 12px;
   }
   
   label {
@@ -81,6 +92,11 @@ body {
     display: inline-block;
     height: 53px;
   }
+
+  input::placeholder {
+    font-size: 12px;
+    font-weight: 100;
+  }
   
   .btn {
     width: 90px;
@@ -93,10 +109,16 @@ body {
     background: #fff;
     cursor: pointer;
   }
+
+  .pointer-none {
+    pointer-events: none;
+  }
   
-  .btn:hover {
+  .btn:hover,
+  .btn:hover svg *{
     background: #f8a600;
     color: #fff;
+    stroke: #fff;
   }
   
   .radio-group {
@@ -129,3 +151,13 @@ body {
     background: #fff;
   }
   
+  .errMsg {
+    color: red;
+  }
+
+  .timer {
+    width: 18%;
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: red;
+  }

@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인</title>
+    <title>E-WMS</title>
     <link rel="stylesheet" href="/css/member/login.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
         <img src="/img/member/emart-logo.png" alt="Emart Logo" class="logo">
         <h2>Warehouse Management System</h2>
         <h1>로그인</h1>
-        <form action="/member/login" class="login-form">
+        <form th:action="@{/member/login}" class="login-form">
             <input type="text" name="memberId" placeholder="아이디" class="input-field" required>
             <input type="password" name="memberPw" placeholder="비밀번호" class="input-field" required>
             <div class="remember-me">
@@ -25,7 +25,7 @@
         <div class="links">
             <a href="#">아이디 찾기</a> |
             <a href="#">비밀번호 찾기</a> |
-            <a href="#">회원가입</a>
+            <a th:href="@{/member/registration}">회원가입</a>
         </div>
 
         <hr style="color: #787878;">
@@ -38,6 +38,6 @@
                 <img src="/img/member/kakao.png" alt="Kakao Login">
             </div>
         </div>
-    </div>
+    </div>   
 </body>
 </html>

@@ -5,5 +5,10 @@ import com.ssginc.ewms.member.vo.MemberVO;
 
 public interface MemberService {
     MemberVO selectMemberById(MemberRequest member);
+
     boolean validatePwd(MemberRequest member, MemberVO loginUser);
+
+    int checkEmail(String email);
+
+    boolean authEmail(String email, String authNo);
 }

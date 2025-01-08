@@ -7,9 +7,12 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.time.LocalDate;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -42,5 +45,27 @@ public class MemberController {
         log.info("loginUser = {}", loginUser);
 
         return mv;
+    }
+
+    @GetMapping("registration")
+    public String registration(Model model) {
+
+        model.addAttribute("nowDate", LocalDate.now().toString());
+
+        return "member/registration";
+    }
+
+    @GetMapping("registration/checkEmail")
+    @ResponseBody
+    public boolean checkEmail(String email) {
+        return memberService.checkEmail(email) == 1;
+    }
+
+    @PostMapping("registration/authEmail")
+    @ResponseBody
+    public boolean authEmail(@RequestBody Map<String, String> resultMap) {
+        String email = resultMap.get("email");
+        String authNo = resultMap.get("authNo");
+        return memberService.authEmail(email, authNo);
     }
 }
