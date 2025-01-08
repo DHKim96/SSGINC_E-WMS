@@ -136,6 +136,7 @@ cmake-build-*/
 
 # IntelliJ
 out/
+.idea
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -331,10 +332,11 @@ gradle-app.setting
 ### etc
 
 # log
-*.log
+*.log.*
+/logs/*
 
 #build
-*/build.gradle
+/build.gradle
 
 #properties
-*.properties
+application.properties

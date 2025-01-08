@@ -9,4 +9,6 @@ public interface MemberMapper {
     MemberVO selectMemberById(String memberId);
 
     int checkMemberEmail(String email);
+
+    int checkMemberId(String id);
 }

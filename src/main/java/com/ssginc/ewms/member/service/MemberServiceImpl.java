@@ -38,8 +38,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public int checkEmail(String email) {
-        return memberMapper.checkMemberEmail(email);
+    public boolean checkEmail(String email) {
+        return memberMapper.checkMemberEmail(email) == 1;
     }
 
     @Override
@@ -63,6 +63,11 @@ public class MemberServiceImpl implements MemberService {
         }
 
         return isSuccess;
+    }
+
+    @Override
+    public boolean checkId(String id) {
+        return memberMapper.checkMemberId(id) == 1;
     }
 
 

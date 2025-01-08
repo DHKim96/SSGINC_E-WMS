@@ -8,7 +8,9 @@ public interface MemberService {
 
     boolean validatePwd(MemberRequest member, MemberVO loginUser);
 
-    int checkEmail(String email);
+    boolean checkEmail(String email);
 
     boolean authEmail(String email, String authNo);
+
+    boolean checkId(String id);
 }

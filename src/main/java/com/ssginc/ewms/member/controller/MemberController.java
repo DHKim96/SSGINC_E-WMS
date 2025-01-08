@@ -58,7 +58,7 @@ public class MemberController {
     @GetMapping("registration/checkEmail")
     @ResponseBody
     public boolean checkEmail(String email) {
-        return memberService.checkEmail(email) == 1;
+        return memberService.checkEmail(email);
     }
 
     @PostMapping("registration/authEmail")
@@ -67,5 +67,12 @@ public class MemberController {
         String email = resultMap.get("email");
         String authNo = resultMap.get("authNo");
         return memberService.authEmail(email, authNo);
+    }
+
+    @GetMapping("registration/checkId")
+    @ResponseBody
+    public boolean checkId(String id) {
+        log.info("id={}", id);
+        return memberService.checkId(id);
     }
 }

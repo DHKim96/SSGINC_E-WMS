@@ -7,7 +7,7 @@ function showMsg(element, type, message) {
     if (type === "success") {
         element.html(`<p>${message}</p>`).css('color', 'green');
     } else if (type === "error") {
-        element.html(`<p>${message}</p>`);
+        element.html(`<p>${message}</p>`).css('color', 'red');
     }
 }
 
@@ -17,25 +17,34 @@ function showMsg(element, type, message) {
 function validateId() {
     const id = $("input[name='id']").val().trim();
     const idErrMsg = $("#register-input-id > .errMsg");
-    const idReg = /^[A-Za-z0-9]{10,20}/;
+    const idReg = /^[A-Za-z0-9]{10,20}$/;
 
     if (id == ""){
         showMsg(idErrMsg, "error", "아이디를 입력해주세요.");
     } else if (idReg.test(id)){ // 유효성 검증 성공
         // 아이디 체크
-        if (!checkId()) {
-            // @@@@@@@@@@@@@@@@@@@250108
+        if (!checkId(id)) {
+            showMsg(idErrMsg, "success", "사용 가능한 아이디입니다.")
+        } else {
+            showMsg(idErrMsg, "error", "이미 사용 중인 아이디입니다.")
         }
     } else if (id.length < 10) { // 유효성 검증 실패
         showMsg(idErrMsg, "error", "아이디는 영문, 숫자 포함 10글자 이상입니다.")
     } else if (id.length > 20) {
         showMsg(idErrMsg, "error", "아이디는 영문, 숫자 포함 20글자 미만입니다.")
+    } else {
+        showMsg(idErrMsg, "error", "아이디는 영문과 숫자로만 구성되어야 합니다.");
     }
 }
 
-function checkId() {
+function checkId(id) {
+
+    console.log("id : " + id);
+
     axios
-        .get('/member/registration/checkId', {id : this.id})
+        .get('/member/registration/checkId', {
+            params: {id: id}
+        })
         .then((response) => {
             if(response.data) {
                 return true;
@@ -209,7 +218,7 @@ class EmailAuthentication {
     }
 
     showError(element, message) {
-        element.html(`<p>${message}</p>`);
+        element.html(`<p>${message}</p>`).css('color', 'red');
     }
 
     showSuccess(element, message) {
@@ -217,7 +226,43 @@ class EmailAuthentication {
     }
 }
 
+// ================================================ 비밀번호 검증 ===============================================
+
+
+function validatePw() {
+    const password = $("input[name='pw']").val().trim();
+    const pwErrMsg = $("#register-input-pw > .errMsg");
+    const pwReg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/;
+
+    if (password === "") {
+        showMsg(pwErrMsg, "error", "비밀번호를 입력해주세요.");
+    } else if (pwReg.test(password)) {
+        showMsg(pwErrMsg, "success", "사용 가능한 비밀번호입니다.");
+    } else {
+        showMsg(pwErrMsg, "error", "비밀번호는 영문, 숫자, !@#$%^&* 중 하나를 포함하여<br>8~20자로 구성되어야 합니다.");
+    }
+}
+
+function confirmPw(){
+    const confirmPw = $("input[name='confirm-pw']").val().trim();
+    const confirmPwErrMsg = $("#register-input-confirm-pw > .errMsg");
+    const password = $("input[name='pw']").val().trim();
+
+    if (confirmPw === ""){
+        showMsg(confirmPw, "error", "비밀번호를 다시 입력해주세요.");
+    } else if (confirmPw === password) {
+        showMsg(confirmPw, "success", "비밀번호가 일치합니다.");
+    } else {
+        showMsg(confirmPw, "error", "비밀번호가 일치하지 않습니다.");
+    }
+}
+
+
 // DOMContentLoaded 이벤트
 $(document).ready(() => {
     new EmailAuthentication();
+
+    $("#btn-check-id").on('click', () => validateId());
+    $("input[name='pw']").on('blur', () => validatePw());
+    $("input[name='confirm-pw']").on('blur', () => confirmPw());
 });
