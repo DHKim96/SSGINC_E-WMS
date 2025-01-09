@@ -3,7 +3,7 @@ name: Bug
 about: 버그 발생 시 작성하는 이슈
 title: "[BUG]"
 labels: bug
-assignees: DHKim96
+assignees: dckat, 0O000, jinfive, DHKim96, gayeon0723
 
 ---
 
