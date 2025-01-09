@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * MemberServiceImpl: 회원 관리 서비스 구현체.
@@ -227,27 +229,52 @@ public class MemberServiceImpl implements MemberService {
 
         String generatedPw = generateRandomStr(8);
 
-        int res = memberMapper.updateMemberPw(generatedPw, id);
+        Map<String, String> map = new HashMap<>();
+        map.put("id", id);
+        map.put("generatedPw", generatedPw);
+
+        int res = memberMapper.updateMemberPw(map);
 
         if (res == 0) {
             return false;
         }
 
-        return false;
+        String email = memberMapper.selectMemberEmailById(id);
+
+        if (email == null) {
+            return false;
+        }
+
+        String subject = "[EWMS] 임시 비밀번호 발급 서비스입니다.";
+
+        String contents = "회원님의 임시 비밀번호는 [ " + generatedPw + " ] 입니다.";
+
+        return sendMail(email, subject, contents);
+    }
+
+    @Override
+    public String selectMemberEmailById(String id) {
+        return memberMapper.selectMemberEmailById(id);
     }
 
     /**
-     * 숫자, 영문 대문자, 영문 소문자 조합의 랜덤한 문자열을 생성합니다.
-     * @param length 문자열 자릿수
+     * 숫자, 영문 대소문자, 특수문자 조합의 랜덤한 문자열을 생성합니다.
+     * @param length 생성할 문자열의 길이 (0보다 큰 정수)
      * @return 랜덤 문자열
+     * @throws IllegalArgumentException 길이가 0 이하일 경우
      */
-    private String generateRandomStr(int length) {
+    public static String generateRandomStr(int length) {
+        if (length <= 0) {
+            throw new IllegalArgumentException("길이는 0보다 커야 합니다.");
+        }
+
+        String charSet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*";
         SecureRandom random = new SecureRandom();
 
-        StringBuffer sb = new StringBuffer();
-
+        StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            sb.append((char)random.nextInt(126-48) + 48);
+            int index = random.nextInt(charSet.length());
+            sb.append(charSet.charAt(index));
         }
 
         return sb.toString();

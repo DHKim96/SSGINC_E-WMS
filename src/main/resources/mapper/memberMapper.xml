@@ -32,7 +32,7 @@
          member_post,
          member_addr,
          member_birth,
-         member_warehouse_id
+         warehouse_id
         )
         values
         (
@@ -51,5 +51,15 @@
     <select id="selectMemberIdByEmail" resultType="string">
         select member_id from member where member_email = #{email}
     </select>
+
+    <select id="selectMemberEmailById" resultType="string">
+        select member_email from member where member_id = #{id};
+    </select>
+
+    <update id="updateMemberPw">
+        update member
+        set member_pw = #{generatedPw}
+        where member_id = #{id}
+    </update>
 
 </mapper>

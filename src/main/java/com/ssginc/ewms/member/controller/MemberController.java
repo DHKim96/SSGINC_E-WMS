@@ -74,6 +74,12 @@ public class MemberController {
         return memberService.findId(email);
     }
 
+    @GetMapping("login/findPw/checkEmail")
+    @ResponseBody
+    public boolean checkEmailForFindPw(String id, String email) {
+        return email.equals(memberService.selectMemberEmailById(id));
+    }
+
     @GetMapping("login/findPw")
     @ResponseBody
     public boolean findPw(String id){
@@ -105,7 +111,6 @@ public class MemberController {
     @GetMapping("registration/checkEmail")
     @ResponseBody
     public boolean checkEmail(String email) {
-        log.info("email = {}", email);
         return memberService.checkEmail(email);
     }
 

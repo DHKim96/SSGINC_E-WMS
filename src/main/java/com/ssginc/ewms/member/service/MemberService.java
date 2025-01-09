@@ -88,4 +88,6 @@ public interface MemberService {
     boolean findId(String email);
 
     boolean findPw(String id);
+
+    String selectMemberEmailById(String id);
 }
