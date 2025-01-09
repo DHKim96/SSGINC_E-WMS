@@ -7,6 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-WMS</title>
     <link rel="stylesheet" href="/css/member/login.css">
+
+    <script
+    src="https://code.jquery.com/jquery-3.7.1.slim.js"
+    integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc="
+    crossorigin="anonymous"></script>
+  
+    <!-- AXIOS -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
     <div class="login-container">
@@ -23,21 +31,33 @@
             <button type="submit" class="login-button">로그인</button>
         </form>
         <div class="links">
-            <a href="#">아이디 찾기</a> |
-            <a href="#">비밀번호 찾기</a> |
+            <a href="#" onclick="openModal('id-modal')">아이디 찾기</a> |
+            <a href="#" onclick="openModal('pw-modal')">비밀번호 찾기</a> |
             <a th:href="@{/member/registration}">회원가입</a>
         </div>
-
-        <hr style="color: #787878;">
-
-        <div class="sns-login">
-            <p style="color: #787878;">SNS 계정으로 간편 로그인</p>
-            <div class="sns-icons">
-                <img src="/img/member/google.png" alt="Google Login">
-                <img src="/img/member/naver.png" alt="Naver Login">
-                <img src="/img/member/kakao.png" alt="Kakao Login">
-            </div>
+    </div>
+    
+        <!-- 모달 배경 -->
+    <div id="modal-overlay" class="modal-overlay">
+        <!-- 아이디 찾기 모달 -->
+        <div id="id-modal" class="modal" style="display: none;">
+            <h2>아이디 찾기</h2>
+            <p>이메일을 입력해주세요</p>
+            <input type="email" id="id-email" class="input-field" placeholder="이메일">
+            <button onclick="findId()">아이디 찾기</button>
+            <button class="close-btn" onclick="closeModal()">닫기</button>
         </div>
-    </div>   
+
+        <!-- 비밀번호 찾기 모달 -->
+        <div id="pw-modal" class="modal" style="display: none;">
+            <h2>비밀번호 찾기</h2>
+            <p>아이디를 입력해주세요</p>
+            <input type="text" id="pw-id" class="input-field" placeholder="아이디">
+            <button onclick="findPassword()">비밀번호 찾기</button>
+            <button class="close-btn" onclick="closeModal()">닫기</button>
+        </div>
+    </div>
+
+    <script src="/js/member/login.js"></script>
 </body>
 </html>

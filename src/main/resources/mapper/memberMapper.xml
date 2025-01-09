@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.ewms.member.mapper.MemberMapper">
-
     <!--    MemberMapper.java와 연결이 됨.-->
     <select id="selectMemberById"
             resultType="MemberVO">
@@ -18,5 +17,39 @@
         select count(member_id) from member where member_id = #{id}
     </select>
 
+    <select id="checkMemberPhone" resultType="int">
+        select count(member_id) from member where member_phone = #{phone}
+    </select>
+
+    <insert id="insertMember">
+        insert into member
+        (
+         member_id,
+         member_pw,
+         member_name,
+         member_email,
+         member_phone,
+         member_post,
+         member_addr,
+         member_birth,
+         member_warehouse_id
+        )
+        values
+        (
+        #{memberId},
+        #{memberPw},
+        #{memberName},
+        #{memberEmail},
+        #{memberPhone},
+        #{memberPost},
+        #{memberAddr},
+        #{memberBirth},
+        0
+        )
+    </insert>
+
+    <select id="selectMemberIdByEmail" resultType="string">
+        select member_id from member where member_email = #{email}
+    </select>
 
 </mapper>

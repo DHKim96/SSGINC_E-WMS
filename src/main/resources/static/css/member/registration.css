@@ -161,3 +161,8 @@ body {
     margin-bottom: 5px;
     color: red;
   }
+
+  #address-search-result {
+    width: min-content;
+    gap: 12px;
+  }
