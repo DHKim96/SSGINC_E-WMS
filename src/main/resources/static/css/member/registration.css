@@ -1,0 +1,168 @@
+/* style.css */
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    font-family: Pretendard;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .flex {
+    display: flex;
+  }
+
+  .flex-col {
+    flex-direction: column;
+  }
+
+  .flex-row {
+    flex-direction: row;
+  }
+
+  .align-center {
+    align-items: center;
+  }
+
+  .justify-center {
+    justify-content: center;
+  }
+  
+  .signup-container {
+    width: 580px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 28px;
+    color: #f8a600;
+    margin-bottom: 50px;
+  }
+  
+  .signup-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group {
+    width: 100%;
+    margin-bottom: 15px;
+    text-align: left;
+  }
+
+  .input-group {
+    gap: 12px;
+    width: 100%;
+  }
+
+  .errMsg {
+    width: 100%;
+    padding-left: 115px;
+    font-size: 12px;
+  }
+  
+  label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+    width: 18%;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="date"]  {
+    width: 320px;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: inline-block;
+    height: 53px;
+  }
+
+  input::placeholder {
+    font-size: 12px;
+    font-weight: 100;
+  }
+  
+  .btn {
+    width: 90px;
+    height: 53px;
+    padding: 8px;
+    font-size: 12px;
+    color: #f8a600;
+    border: 1px solid #f8a600;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .pointer-none {
+    pointer-events: none;
+  }
+  
+  .btn:hover,
+  .btn:hover svg *{
+    background: #f8a600;
+    color: #fff;
+    stroke: #fff;
+  }
+  
+  .radio-group {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .radio-group label {
+    font-size: 14px;
+  }
+  
+  .submit-btn {
+    width: 320px;
+    height: 53px;
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #f8a600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .submit-btn:hover {
+    background-color: #fff;
+    color: #f8a600;
+    border: 1px solid #f8a600;
+    border-radius: 4px;
+    background: #fff;
+  }
+  
+  .errMsg {
+    color: red;
+  }
+
+  .timer {
+    width: 18%;
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: red;
+  }
+
+  #address-search-result {
+    width: min-content;
+    gap: 12px;
+  }

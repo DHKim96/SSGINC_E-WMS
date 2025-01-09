@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-WMS</title>
+    <link rel="stylesheet" href="/css/member/login.css">
+
+    <script
+    src="https://code.jquery.com/jquery-3.7.1.slim.js"
+    integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc="
+    crossorigin="anonymous"></script>
+  
+    <!-- AXIOS -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="login-container">
+        <img src="/img/member/emart-logo.png" alt="Emart Logo" class="logo">
+        <h2>Warehouse Management System</h2>
+        <h1>로그인</h1>
+        <form th:action="@{/member/login}" class="login-form">
+            <input type="text" name="memberId" placeholder="아이디" class="input-field" required>
+            <input type="password" name="memberPw" placeholder="비밀번호" class="input-field" required>
+            <div class="remember-me">
+                <input type="checkbox" id="remember-me">
+                <label for="remember-me" style="color: #787878;">로그인 상태 유지</label>
+            </div>
+            <button type="submit" class="login-button">로그인</button>
+        </form>
+        <div class="links">
+            <a href="#" onclick="openModal('id-modal')">아이디 찾기</a> |
+            <a href="#" onclick="openModal('pw-modal')">비밀번호 찾기</a> |
+            <a th:href="@{/member/registration}">회원가입</a>
+        </div>
+    </div>
+    
+        <!-- 모달 배경 -->
+    <div id="modal-overlay" class="modal-overlay">
+        <!-- 아이디 찾기 모달 -->
+        <div id="id-modal" class="modal" style="display: none;">
+            <h2>아이디 찾기</h2>
+            <p>이메일을 입력해주세요</p>
+            <input type="email" id="id-email" class="input-field" placeholder="이메일">
+            <button onclick="findId()">아이디 찾기</button>
+            <button class="close-btn" onclick="closeModal()">닫기</button>
+        </div>
+
+        <!-- 비밀번호 찾기 모달 -->
+        <div id="pw-modal" class="modal" style="display: none;">
+            <h2>비밀번호 찾기</h2>
+            <p>아이디와 가입 시 입력한 이메일을 입력해주세요</p>
+            <input type="text" id="pw-id" class="input-field" placeholder="아이디">
+            <input type="text" id="pw-email" class="input-field" placeholder="이메일">
+            <button onclick="findPassword()">비밀번호 찾기</button>
+            <button class="close-btn" onclick="closeModal()">닫기</button>
+        </div>
+    </div>
+
+    <script src="/js/member/login.js"></script>
+</body>
+</html>
