@@ -5,8 +5,6 @@ import com.ssginc.ewms.member.vo.MemberVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
-import java.util.Map;
-
 /**
  * 회원 관리를 위한 MyBatis Mapper 인터페이스
  *
@@ -63,8 +61,4 @@ public interface MemberMapper {
     int insertMember(MemberRequest member);
 
     String selectMemberIdByEmail(String email);
-
-    String selectMemberEmailById(String id);
-
-    int updateMemberPw(Map<String, String> map);
 }

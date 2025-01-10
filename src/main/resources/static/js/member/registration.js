@@ -16,13 +16,7 @@
 // 공통 인증 관리 클래스
 class AuthManager {
     constructor(duration, timerElement, onExpire) {
-        this.authNo = ""; // 인증번호
         this.timer = new AuthTimer(duration, timerElement, onExpire); // 인증 타이머
-    }
-
-    generateAuthNumber() {
-        this.authNo = Math.floor(Math.random() * 1000000).toString().padStart(6, '0'); // 6자리 난수 생성
-        return this.authNo;
     }
 
     startTimer() {
@@ -31,10 +25,6 @@ class AuthManager {
 
     stopTimer() {
         this.timer.stop();
-    }
-
-    getAuthNumber() {
-        return this.authNo;
     }
 }
 
@@ -138,7 +128,7 @@ async function validateId() {
     const idErrMsg = $("#register-input-id > .errMsg");
     const idReg = /^[a-z0-9]{4,20}$/;
 
-    if (id == ""){
+    if (!id){
         showMsg(idErrMsg, "error", "아이디를 입력해주세요.");
         isValid.id = false;
     } else if (idReg.test(id)){ // 유효성 검증 성공
@@ -155,8 +145,6 @@ async function validateId() {
             return false;
         });
 
-        console.log(isUniqueId);
-
         if (isUniqueId) {
             showMsg(idErrMsg, "success", "사용 가능한 아이디입니다.");
             isValid.id = true;
@@ -164,6 +152,7 @@ async function validateId() {
             showMsg(idErrMsg, "error", "이미 사용 중인 아이디입니다.");
             isValid.id = false;
         }
+
     } else if (id.length < 4) { // 유효성 검증 실패
         showMsg(idErrMsg, "error", "아이디는 영문(소문자), 숫자 포함 4글자 이상입니다.");
         isValid.id = false;
@@ -184,7 +173,7 @@ async function validateId() {
 class EmailAuthentication {
     constructor() {
         this.isSending = false;
-
+        this.generatedAuthNo = "";
         this.authManager = new AuthManager(180, $("#email-auth-timer > h4"), this.onTimerExpire.bind(this));
 
         this.emailInput = $("input[type='email']");
@@ -231,8 +220,6 @@ class EmailAuthentication {
 
         this.isSending = true;
 
-        const authNo = this.authManager.generateAuthNumber(); // 인증번호 생성
-        
         try {
             this.emailInputErrMsg.html("");
 
@@ -242,13 +229,12 @@ class EmailAuthentication {
 
             $("#email-auth-section").css('display', 'flex');
             
-            // await axios.post('/member/registration/authEmail', {
-            //     email: email,
-            //     authNo: authNo,
-            // });
-        
-            
+            this.generatedAuthNo = await axios.get('/member/registration/authEmail', {
+                params: {email: email}
+            });
+
             this.authInput.prop('readonly', false).val('').focus();
+
         } catch (error) {
             console.error("Error sending auth number:", error);
             showMsg(this.authNoInputErrMsg, "error","인증번호 발송에 실패했습니다. 다시 시도해주세요.");
@@ -260,15 +246,13 @@ class EmailAuthentication {
 
     verifyAuthNum() {
         const inputAuthNo = this.authInput.val().trim();
-        const generatedAuthNo = this.authManager.getAuthNumber();
 
         if (!inputAuthNo) {
             showMsg(this.authNoInputErrMsg, "error", "인증번호를 입력해주세요.");
             return;
         }
 
-        // if (inputAuthNo === generatedAuthNo) {
-        if(true){
+        if (inputAuthNo === String(this.generatedAuthNo.data)) {
             alert("이메일 인증이 완료되었습니다.");
             this.authManager.stopTimer();
             $("#email-auth-section").css('display', 'none');
@@ -286,6 +270,7 @@ class EmailAuthentication {
             showMsg(this.authNoInputErrMsg, "error", "인증번호가 일치하지 않습니다.");
             isValid.email = false;
         }
+
     }
 
     onTimerExpire() {
@@ -368,6 +353,7 @@ function validateName() {
 class PhoneAuthentication {
     constructor() {
         this.isSending = false;
+        this.generatedAuthNo = "";
 
         this.authManager = new AuthManager(180, $("#phone-auth-timer > h4"), this.onTimerExpire.bind(this));
 
@@ -412,8 +398,6 @@ class PhoneAuthentication {
 
         this.isSending = true;
 
-        const authNo = this.authManager.generateAuthNumber(); // 인증번호 생성
-        
         try {
 
             this.phoneInputErrMsg.html("");
@@ -424,12 +408,11 @@ class PhoneAuthentication {
 
             $("#phone-auth-section").css('display', 'flex');
             
-            // await axios.post('/member/registration/authPhone', {
-            //     phone: phone,
-            //     authNo: authNo,
-            // });
-        
-            
+            this.generatedAuthNo = await axios.get('/member/registration/authPhone', {
+                params: {phone: phone}
+            });
+
+
             this.authInput.prop('readonly', false).val('').focus();
 
         } catch (error) {
@@ -440,9 +423,8 @@ class PhoneAuthentication {
         }
     }
 
-    verifyAuthNum() {
+    async verifyAuthNum() {
         const inputAuthNo = this.authInput.val().trim();
-        const generatedAuthNo = this.authManager.getAuthNumber();
 
         if (!inputAuthNo) {
             showMsg(this.authNoInputErrMsg, "error", "인증번호를 입력해주세요.");
@@ -450,8 +432,11 @@ class PhoneAuthentication {
             return;
         }
 
-        // if (inputAuthNo === generatedAuthNo) {
-        if (true){
+        const isTrue = await axios.get("/member/registration/checkAuthNo", {
+            params: {inputAuthNo: inputAuthNo}
+        })
+
+        if (isTrue) {
             alert("전화번호 인증이 완료되었습니다.");
             this.authManager.stopTimer();
             $("#phone-auth-section").css('display', 'none');
@@ -483,7 +468,7 @@ class PhoneAuthentication {
 // ================================================ 주소 검증 ===============================================
 
 
-class AddressVaildation {
+class AddressValidation {
 
     constructor() {
         this.searchBtn = $("#addr-search-btn");
@@ -600,11 +585,19 @@ class AddressVaildation {
 // ================================================ 생년월일 검증 ===============================================
 
 function validateBirth() {
-    const birth = $("input[type='date']").val();
-    const birthMsg = $("#register-input-birth > .errMsg");
+    const birthInput = $("input[type='date']");
+    const birth = birthInput.val();
+    const birthMsg = $("#register-input-birth > .errMsg")
+    const birthReg = /^\d{4}-\d{2}-\d{2}$/;
 
-    if (!birth) {
+    if (!birthInput.val()) {
         showMsg(birthMsg, "error", "생년월일을 입력해주세요.");
+        isValid.birth = false;
+    } else if (!birthReg.test(birth)){
+        showMsg(birthMsg, "error", "올바른 날짜 형식을 입력해주세요.");
+        isValid.birth = false;
+    } else if(birth > birthInput.attr("max") || birth < birthInput.attr("min")) {
+        showMsg(birthMsg, "error", "올바른 범위가 아닙니다.");
         isValid.birth = false;
     } else {
         birthMsg.html(""); // 메시지 초기화
@@ -618,7 +611,7 @@ $(document).ready(() => {
 
     new EmailAuthentication();
     new PhoneAuthentication();
-    new AddressVaildation();
+    new AddressValidation();
 
     $("#btn-check-id").on('click', () => validateId());
     $("input[name='memberName']").on('blur', () => validateName());

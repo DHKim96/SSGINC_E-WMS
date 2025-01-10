@@ -2,6 +2,7 @@ package com.ssginc.ewms.member.service;
 
 import com.ssginc.ewms.member.dto.MemberRequest;
 import com.ssginc.ewms.member.mapper.MemberMapper;
+import com.ssginc.ewms.util.RandomGenerator;
 import com.ssginc.ewms.member.vo.MemberVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +21,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
 import java.sql.SQLException;
+<<<<<<< Updated upstream
+=======
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+>>>>>>> Stashed changes
 
 /**
  * MemberServiceImpl: 회원 관리 서비스 구현체.
@@ -44,6 +48,10 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder; // 비밀번호 암호화
     private final JavaMailSender mailSender; // 이메일 전송
 
+    private final RandomGenerator randomGenerator; // 인증번호 및 문자열 생성
+
+    private final ConcurrentHashMap<String, String> authNumbers = new ConcurrentHashMap<>();  // 인증번호 저장 (key: 이메일 또는 전화번호, value: 인증번호)
+
     @Value("${spring.mail.username}")
     private String adminEmail; // 발신 이메일 주소
 
@@ -56,32 +64,19 @@ public class MemberServiceImpl implements MemberService {
     @Value("${coolsms.client.phone}")
     private String smsApiPhone; // 발신 전화번호
 
-    /**
-     * 회원 아이디로 회원 정보를 조회.
-     * @param member 회원 요청 데이터 (아이디 포함)
-     * @return 회원 정보 객체
-     */
+
     @Override
     public MemberVO selectMemberById(MemberRequest member) {
         return memberMapper.selectMemberById(member.getMemberId().trim());
     }
 
-    /**
-     * 입력된 비밀번호와 저장된 비밀번호를 비교하여 검증.
-     * @param memberRequest 회원 요청 데이터 (비밀번호 포함)
-     * @param member 데이터베이스에 저장된 회원 정보
-     * @return 비밀번호 일치 여부
-     */
+
     @Override
     public boolean validatePwd(MemberRequest memberRequest, MemberVO member) {
         return passwordEncoder.matches(memberRequest.getMemberPw(), member.getMemberPw());
     }
 
-    /**
-     * 이메일 중복 여부 확인.
-     * @param email 입력된 이메일 주소
-     * @return 중복 여부 (true: 사용 가능, false: 중복)
-     */
+
     @Override
     public boolean checkEmail(String email) {
         return memberMapper.checkMemberEmail(email) == 0;
@@ -115,50 +110,38 @@ public class MemberServiceImpl implements MemberService {
         return isSuccess;
     }
 
-    /**
-     * 이메일 내용을 생성하는 메서드
-     * @param email 수신 이메일 주소
-     * @param authNo 인증 번호
-     * @return 전송 성공 여부
-     */
     @Override
-    public boolean authEmail(String email, String authNo) {
+    public boolean authEmail(String email) {
+        String authNo = randomGenerator.generateRandomNum();
 
         String subject = "[E-WMS] 인증번호가 도착했습니다.";
         String contents = "인증번호는 [ " + authNo + " ] 입니다.";
 
-        return sendMail(email, subject, contents);
+        boolean isSuccess = sendMail(email, subject, contents);
+
+        authNumbers.put(email, authNo); // 인증번호 저장
+
+        return isSuccess;
     }
     
 
-    /**
-     * 아이디 중복 여부 확인.
-     * @param id 입력된 회원 아이디
-     * @return 중복 여부 (true: 사용 가능, false: 중복)
-     */
+
     @Override
     public boolean checkId(String id) {
         return memberMapper.checkMemberId(id) == 0;
     }
 
-    /**
-     * 전화번호 중복 여부 확인.
-     * @param phone 입력된 회원 전화번호
-     * @return 중복 여부 (true: 사용 가능, false: 중복)
-     */
+
     @Override
     public boolean checkPhone(String phone) {
         return memberMapper.checkMemberPhone(phone) == 0;
     }
 
-    /**
-     * 인증 번호를 전화번호로 전송.
-     * @param phone 수신 전화번호
-     * @param authNo 인증 번호
-     * @return 전송 성공 여부
-     */
+
     @Override
-    public boolean authPhone(String phone, String authNo) {
+    public boolean authPhone(String phone) {
+        String authNo = randomGenerator.generateRandomNum();
+
         DefaultMessageService messageService = NurigoApp.INSTANCE.initialize(smsApiKey, smsApiSecret, "https://api.coolsms.co.kr");
 
         Message message = new Message();
@@ -182,15 +165,11 @@ public class MemberServiceImpl implements MemberService {
             throw new RuntimeException(e);
         }
 
+        authNumbers.put(phone, authNo);
+
         return isSuccess;
     }
 
-    /**
-     * 회원 정보를 데이터베이스에 저장.
-     * @param member 회원 요청 데이터
-     * @return 저장 성공 여부 (0: 실패, 1: 성공)
-     * @throws Exception 저장 실패 시 예외 발생
-     */
     @Override
     public int insertMember(MemberRequest member) throws Exception {
         // 비밀번호 암호화
@@ -227,56 +206,56 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean findPw(String id) {
 
-        String generatedPw = generateRandomStr(8);
+        String generatedPw = randomGenerator.generateRandomStr();
 
+<<<<<<< Updated upstream
+        int res = memberMapper.updateMemberPw(generatedPw, id);
+=======
         Map<String, String> map = new HashMap<>();
         map.put("id", id);
-        map.put("generatedPw", generatedPw);
+        map.put("generatedPw", passwordEncoder.encode(generatedPw)); // 암호화한 임시 비밀번호로 수정
 
         int res = memberMapper.updateMemberPw(map);
+>>>>>>> Stashed changes
 
         if (res == 0) {
             return false;
         }
 
-        String email = memberMapper.selectMemberEmailById(id);
-
-        if (email == null) {
-            return false;
-        }
-
-        String subject = "[EWMS] 임시 비밀번호 발급 서비스입니다.";
-
-        String contents = "회원님의 임시 비밀번호는 [ " + generatedPw + " ] 입니다.";
-
-        return sendMail(email, subject, contents);
+        return false;
     }
 
-    @Override
-    public String selectMemberEmailById(String id) {
-        return memberMapper.selectMemberEmailById(id);
-    }
-
+<<<<<<< Updated upstream
     /**
-     * 숫자, 영문 대소문자, 특수문자 조합의 랜덤한 문자열을 생성합니다.
-     * @param length 생성할 문자열의 길이 (0보다 큰 정수)
+     * 숫자, 영문 대문자, 영문 소문자 조합의 랜덤한 문자열을 생성합니다.
+     * @param length 문자열 자릿수
      * @return 랜덤 문자열
-     * @throws IllegalArgumentException 길이가 0 이하일 경우
      */
-    public static String generateRandomStr(int length) {
-        if (length <= 0) {
-            throw new IllegalArgumentException("길이는 0보다 커야 합니다.");
-        }
-
-        String charSet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*";
+    private String generateRandomStr(int length) {
         SecureRandom random = new SecureRandom();
 
-        StringBuilder sb = new StringBuilder(length);
+        StringBuffer sb = new StringBuffer();
+
         for (int i = 0; i < length; i++) {
-            int index = random.nextInt(charSet.length());
-            sb.append(charSet.charAt(index));
+            sb.append((char)random.nextInt(126-48) + 48);
         }
 
         return sb.toString();
+=======
+
+    @Override
+    public boolean verifyAuthNo(String key, String authNo) {
+
+        String storedAuthNo = authNumbers.get(key);
+
+        if (authNo.equals(storedAuthNo)) {
+            authNumbers.remove(key);
+            return true;
+        }
+
+        return false;
+>>>>>>> Stashed changes
     }
+
+
 }

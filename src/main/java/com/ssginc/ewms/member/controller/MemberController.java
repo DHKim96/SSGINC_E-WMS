@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -43,49 +44,47 @@ public class MemberController {
      * 아이디와 비밀번호를 통해 로그인합니다.
      * @param member 회원 아이디, 비밀번호 데이터
      * @param session HTTPsession
-     * @param mv ModelAndView
+     * @param redirectAttributes 일회성 메세지 용도
      * @return 로그인 결과에 따라 주소 담을 ModelAndView
      */
-    @GetMapping("login")
-    public ModelAndView login(MemberRequest member,
-                              HttpSession session,
-                              ModelAndView mv) {
+    @PostMapping("/login")
+    public String login(MemberRequest member,
+                        HttpSession session,
+                        RedirectAttributes redirectAttributes) {
 
         MemberVO loginUser = memberService.selectMemberById(member);
 
         if (loginUser == null) {
-            mv.addObject("result", "아이디가 일치하지 않습니다.");
-            mv.setViewName("redirect:/");
-        } else if(!memberService.validatePwd(member, loginUser)) {
-            mv.addObject("result", "비밀번호가 일치하지 않습니다.");
-            mv.setViewName("redirect:/");
-        } else { // 성공
-            session.setAttribute("loginUser", loginUser);
-            mv.setViewName("dashboard/dashboard");
+            // RedirectAttributes 는 현재 요청에서만 유효
+            redirectAttributes.addFlashAttribute("alertMsg", "아이디가 일치하지 않습니다.");
+            return "redirect:/"; // 리다이렉트하면서 메시지 전달
+        } else if (!memberService.validatePwd(member, loginUser)) {
+            redirectAttributes.addFlashAttribute("alertMsg", "비밀번호가 일치하지 않습니다.");
+            return "redirect:/";
         }
 
-        return mv;
+        // 로그인 성공
+        session.setAttribute("loginUser", loginUser);
+        return "dashboard/dashboard"; // 성공 시 대시보드로 이동
     }
 
 
-    @GetMapping("login/findId")
-    @ResponseBody
-    public boolean findId(String email){
-        return memberService.findId(email);
-    }
 
-    @GetMapping("login/findPw/checkEmail")
-    @ResponseBody
-    public boolean checkEmailForFindPw(String id, String email) {
-        return email.equals(memberService.selectMemberEmailById(id));
-    }
-
+<<<<<<< Updated upstream
     @GetMapping("login/findPw")
     @ResponseBody
     public boolean findPw(String id){
         return memberService.findPw(id);
     }
     
+=======
+    @GetMapping("login/findPw/checkEmail")
+    @ResponseBody
+    public boolean checkEmailForFindPw(String id, String email) {
+        return email.equals(memberService.selectMemberEmailById(id));
+    }
+
+>>>>>>> Stashed changes
     
     // =========================================== 회원가입 ========================================================
     
@@ -98,7 +97,10 @@ public class MemberController {
     @GetMapping("registration")
     public String registration(Model model) {
 
-        model.addAttribute("nowDate", LocalDate.now().toString());
+        LocalDate today = LocalDate.now();
+
+        model.addAttribute("today", today.toString());
+        model.addAttribute("pastDate", today.minusYears(150));
 
         return "member/registration";
     }
@@ -111,20 +113,19 @@ public class MemberController {
     @GetMapping("registration/checkEmail")
     @ResponseBody
     public boolean checkEmail(String email) {
+        log.info("email = {}", email);
         return memberService.checkEmail(email);
     }
 
     /**
-     * 클라이언트로부터 생성된 난수를 받아 입력받은 이메일 주소로 전송합니다.
-     * @param resultMap 회원의 이메일 주소, 생성된 6자리 난수
+     * 클라이언트로부터 입력받은 이메일 주소로 난수를 생성해서 전송합니다.
+     * @param email 회원의 이메일 주소
      * @return 전송 성공 여부
      */
-    @PostMapping("registration/authEmail")
+    @GetMapping("registration/authEmail")
     @ResponseBody
-    public boolean authEmail(@RequestBody Map<String, String> resultMap) {
-        String email = resultMap.get("email");
-        String authNo = resultMap.get("authNo");
-        return memberService.authEmail(email, authNo);
+    public boolean authEmail(String email) {
+        return memberService.authEmail(email);
     }
 
     /**
@@ -151,15 +152,19 @@ public class MemberController {
 
     /**
      * 클라이언트의 전화번호와 생성된 난수를 클라이언트의 번호로 전송합니다.
-     * @param resultMap 회원 전화번호, 6자리 난수
+     * @param phone 회원 전화번호, 6자리 난수
      * @return 중복 여부
      */
-    @PostMapping("registration/authPhone")
+    @GetMapping("registration/authPhone")
     @ResponseBody
-    public boolean authPhone(@RequestBody Map<String, String> resultMap) {
-        String phone = resultMap.get("phone");
-        String authNo = resultMap.get("authNo");
-        return memberService.authPhone(phone, authNo);
+    public boolean authPhone(String phone) {
+        return memberService.authPhone(phone);
+    }
+
+    @PostMapping("registration/verifyAuthNo")
+    @ResponseBody
+    public boolean verifyAuthNo(String key, String authNo) {
+        return memberService.verifyAuthNo(key, authNo);
     }
 
     /**

@@ -46,10 +46,9 @@ public interface MemberService {
      * 입력받은 이메일 주소로 인증번호를 전송합니다.
      *
      * @param email 이메일 주소
-     * @param authNo 인증번호
-     * @return 이메일 전송 성공 여부
+     * @return 생성된 난수
      */
-    boolean authEmail(String email, String authNo);
+    boolean authEmail(String email);
 
     /**
      * 회원 아이디 중복 여부를 확인합니다.
@@ -71,10 +70,9 @@ public interface MemberService {
      * 입력받은 전화번호로 인증번호를 전송합니다.
      *
      * @param phone 회원 전화번호
-     * @param authNo 인증번호
-     * @return 인증번호 전송 성공 여부
+     * @return 인증번호
      */
-    boolean authPhone(String phone, String authNo);
+    boolean authPhone(String phone);
 
     /**
      * 회원 정보를 데이터베이스에 저장합니다.
@@ -88,6 +86,11 @@ public interface MemberService {
     boolean findId(String email);
 
     boolean findPw(String id);
+<<<<<<< Updated upstream
+=======
 
     String selectMemberEmailById(String id);
+
+    boolean verifyAuthNo(String key, String authNo);
+>>>>>>> Stashed changes
 }

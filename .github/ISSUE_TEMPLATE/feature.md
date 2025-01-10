@@ -3,7 +3,7 @@ name: Feature
 about: 개발할 기능에 대한 이슈
 title: "[FEAT]"
 labels: enhancement
-assignees: ''
+assignees: DHKim96
 
 ---
 

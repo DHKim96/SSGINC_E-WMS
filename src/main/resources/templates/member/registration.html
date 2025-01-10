@@ -112,7 +112,7 @@
       <div id="register-input-birth" class="form-group flex flex-col align-center">
         <div class="input-group flex flex-row align-center">
           <label>생년월일</label>
-          <input type="date" name="memberBirth" min="1900-01-01" th:max="${nowDate}" required>
+          <input type="date" name="memberBirth" min="1900-01-01" th:min="${pastDate}" th:max="${today}" required>
         </div>
         <div class="errMsg" style="width: 100%;"></div>
       </div>
