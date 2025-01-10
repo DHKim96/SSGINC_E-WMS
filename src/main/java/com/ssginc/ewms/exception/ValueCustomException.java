@@ -19,10 +19,21 @@ public class ValueCustomException extends AbstractionException {
         super(errorCode, args);
     }
 
+    /**
+     * 에러 코드와 원인을 기반으로 예외를 생성합니다.
+     *
+     * @param errorCode 에러 코드
+     * @param cause   예외 원인
+     */
     protected ValueCustomException(ErrorCode errorCode, Throwable cause) {
         super(errorCode, cause);
     }
 
+    /**
+     * 에러 코드, 메시지 매개변수 배열, 원인을 기반으로 예외를 생성합니다.
+     *
+     * @param errorCode 에러 코드
+     */
     public ValueCustomException(ErrorCode errorCode) {
         super(errorCode);
     }
