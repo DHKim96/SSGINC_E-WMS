@@ -22,7 +22,8 @@ public class OutgoingService {
         return outgoingMapper.getOutgoingList();
     }
 
-    public List<OutgoingVO> getOutgoingByDateRange(String startDate, String endDate) {
-        return outgoingMapper.selectByDateRange(startDate, endDate);
+    public List<OutgoingVO> getOutgoingBySearch(String startDate, String endDate, String productName) {
+        System.out.println(productName);
+        return outgoingMapper.selectData(startDate, endDate, productName);
     }
 }

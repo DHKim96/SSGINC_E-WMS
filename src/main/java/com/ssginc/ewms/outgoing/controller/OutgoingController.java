@@ -32,9 +32,10 @@ public class OutgoingController {
     @GetMapping("/searchByDate")
     public ResponseEntity<List<OutgoingVO>> searchByDate(
             @RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate) {
+            @RequestParam("endDate") String endDate,
+            @RequestParam("productName") String productName) {
         try {
-            List<OutgoingVO> outgoingList = outgoingService.getOutgoingByDateRange(startDate, endDate);
+            List<OutgoingVO> outgoingList = outgoingService.getOutgoingBySearch(startDate, endDate, productName);
             return ResponseEntity.ok(outgoingList);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -5,32 +5,39 @@
 
     <!-- 출고 목록 조회 -->
     <select id="getOutgoingList" resultType="com.ssginc.ewms.outgoing.vo.OutgoingVO">
-        SELECT
-            o.outgoing_id AS outgoingId,
-            o.branch_name AS branchName,
-            p.product_name AS productName,
-            o.outgoing_quantity AS outgoingQuantity,
-            p.outgoing_price AS unitPrice,
-            (o.outgoing_quantity * p.outgoing_price) AS totalPrice,
-            o.outgoing_status AS outgoingStatus,
-            o.outgoing_date AS outgoingDate
+        SELECT o.outgoing_id AS outgoingId,
+               o.branch_name AS branchName,
+               p.product_name AS productName,
+               o.outgoing_quantity AS outgoingQuantity,
+               p.outgoing_price AS unitPrice,
+               (o.outgoing_quantity * p.outgoing_price) AS totalPrice,
+               o.outgoing_status AS outgoingStatus,
+               o.outgoing_date AS outgoingDate
         FROM outgoing o
                  JOIN product p ON o.product_id = p.product_id
     </select>
 
-    <select id="selectByDateRange" resultType="com.ssginc.ewms.outgoing.vo.OutgoingVO">
+    <!-- 데이터 조회 쿼리 -->
+    <select id="selectData" resultType="com.ssginc.ewms.outgoing.vo.OutgoingVO">
         SELECT
-            o.outgoing_id AS outgoingId,
-            o.branch_name AS branchName,
-            p.product_name AS productName,
-            o.outgoing_quantity AS outgoingQuantity,
-            p.outgoing_price AS unitPrice,
-            (o.outgoing_quantity * p.outgoing_price) AS totalPrice,
-            o.outgoing_status AS outgoingStatus,
-            o.outgoing_date AS outgoingDate
+        o.outgoing_id AS outgoingId,
+        o.branch_name AS branchName,
+        p.product_name AS productName,
+        o.outgoing_quantity AS outgoingQuantity,
+        p.outgoing_price AS unitPrice,
+        (o.outgoing_quantity * p.outgoing_price) AS totalPrice,
+        o.outgoing_status AS outgoingStatus,
+        o.outgoing_date AS outgoingDate
         FROM outgoing o
-                 JOIN product p ON o.product_id = p.product_id
-        WHERE o.outgoing_date BETWEEN #{startDate} AND #{endDate}
+        JOIN product p ON o.product_id = p.product_id
+        WHERE 1=1
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND o.outgoing_date BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="productName != null and productName != ''">
+            AND p.product_name LIKE CONCAT('%', #{productName}, '%')
+        </if>
     </select>
+
 
 </mapper>

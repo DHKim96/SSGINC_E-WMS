@@ -10,8 +10,9 @@ import java.util.List;
 @Mapper
 public interface OutgoingMapper {
     List<OutgoingVO> getOutgoingList();
-    List<OutgoingVO> selectByDateRange(
+    List<OutgoingVO> selectData(
             @Param("startDate") String startDate,
-            @Param("endDate") String endDate
+            @Param("endDate") String endDate,
+            @Param("productName") String productName
     );
 }
