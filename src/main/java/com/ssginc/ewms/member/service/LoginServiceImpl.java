@@ -3,6 +3,7 @@ package com.ssginc.ewms.member.service;
 import com.ssginc.ewms.member.dto.MemberRequest;
 import com.ssginc.ewms.member.mapper.MemberMapper;
 import com.ssginc.ewms.member.vo.MemberVO;
+import com.ssginc.ewms.util.MemberValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,16 +16,13 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public boolean validatePwd(MemberRequest member, MemberVO loginUser) {
-        return passwordEncoder.matches(memberRequest.getMemberPw(), member.getMemberPw());
+        return passwordEncoder.matches(member.getMemberPw(), loginUser.getMemberPw());
     }
 
-    @Override
-    public boolean findId(String email) {
-        return false;
-    }
 
     @Override
-    public boolean findPw(String id) {
-        return false;
+    public MemberVO selectMemberById(MemberRequest member) {
+        return memberMapper.selectMemberById(member.getMemberId().trim());
     }
+
 }

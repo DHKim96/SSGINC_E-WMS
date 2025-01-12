@@ -1,87 +1,98 @@
+/**
+ * 서버 응답 메시지를 지정된 HTML 요소에 표시.
+ * @param {Object} response - 서버 응답 객체.
+ */
+function handleResponse(response) {
+    if (response.status === 200) {
+        alert(response.data.message);
+    }
+}
 
-    // 모달 열기
-    function openModal(modalId) {
-        document.getElementById('modal-overlay').style.display = 'flex';
-        document.getElementById(modalId).style.display = 'block';
+/**
+ * 서버 에러 메시지를 지정된 HTML 요소에 표시.
+ * @param {Object} error - 에러 객체.
+ */
+function handleError(error) {
+    if (error.response) {
+        alert(error.response.data.message);
+    } else {
+        alert('서버와의 통신 중 문제가 발생했습니다.');
+    }
+}
+
+// 모달 열기
+function openModal(modalId) {
+    document.getElementById('modal-overlay').style.display = 'flex';
+    document.getElementById(modalId).style.display = 'block';
+}
+
+// 모달 닫기
+function closeModal() {
+    document.getElementById('modal-overlay').style.display = 'none';
+    document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
+}
+
+function showLoading() {
+    document.getElementById("loading-overlay").style.display = "flex";
+}
+
+function hideLoading() {
+    document.getElementById("loading-overlay").style.display = "none";
+}
+
+// 아이디 찾기
+async function findId() {
+    const email = document.getElementById('id-email').value.trim();
+
+    if (!email) {
+        alert('이메일을 입력해주세요');
+        return;
     }
 
-    // 모달 닫기
-    function closeModal() {
-        document.getElementById('modal-overlay').style.display = 'none';
-        document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
-    }
+    showLoading();
 
-    // 아이디 찾기
-    async function findId() {
-        const email = document.getElementById('id-email').value.trim();
-        if (!email) {
-            alert('이메일을 입력해주세요');
-            return;
-        }
-
-        const isUniqueEmail = await axios.get("/member/registration/checkEmail", {params: {email: email}}).data;
-        
-        console.log(isUniqueEmail);
-        
-        if (!isUniqueEmail) {
-            alert('입력한 이메일로 아이디가 전송되었습니다.');
-            
+    await axios.get("api/auth/id/find", {
+            params: { email }
+        })
+        .then((response) => {
+            handleResponse(response);
+        })
+        .catch((error) => {
+            handleError(error);
+        })
+        .finally(() => {
+            hideLoading();
             closeModal();
+        });
+}
 
-            await axios.get(("/member/login/findId"), {
-                params: {email: email}
-            })
-            .then((response) => {
-                if (!response.data) {
-                    console.log("검색 성공");
-                } else {
-                    console.log("검색 실패");
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-            
 
-        } else {
-            alert('가입하지 않은 이메일입니다.');
-        }
+// 비밀번호 찾기
+async function findPassword() {
+    const id = document.getElementById('pw-id').value.trim();
+    const email = document.getElementById('pw-email').value.trim();
+
+    if (!id) {
+        alert('아이디를 입력해주세요');
+        return;
     }
 
+    if (!email) {
+        alert('이메일을 입력해주세요');
+        return;
+    }
 
-    // 비밀번호 찾기
-   async function findPassword() {
-        const id = document.getElementById('pw-id').value.trim();
-        if (!id) {
-            alert('아이디를 입력해주세요');
-            return;
-        }
+    showLoading();
 
-        const isUniqueId = await axios.get("/member/registration/checkId", {params: {id: id}}).data;
-        
-        if (!isUniqueId) {
-            alert('가입 시 입력하신 이메일로 임시비밀번호가 전송되었습니다.');
-            
+    await axios.post("api/auth/password/find", {id: id, email: email})
+        .then((response) => {
+            handleResponse(response);
+        })
+        .catch((error) => {
+            handleError(error);
+        })
+        .finally(() => {
+            hideLoading();
             closeModal();
-            
-            await axios.get(("/member/login/findPw"))
-            .then((response) => {
-                if (!response.data) {
-                    console.log("성공");
-                } else {
-                    console.log("실패");
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-
-<<<<<<< Updated upstream
-
-        } else {
-            alert('존재하지 않는 아이디입니다.');
-        }
-    }
-=======
-    }
->>>>>>> Stashed changes
+        });
+}

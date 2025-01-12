@@ -10,7 +10,7 @@ import lombok.Getter;
  * 예외 처리 시 일관된 에러 코드 및 메시지를 사용할 수 있도록 설계되었습니다.
  */
 @Getter
-public abstract class AbstractionException extends Exception {
+public abstract class AbstractionException extends RuntimeException {
 
     /**
      * 에러 코드 번호

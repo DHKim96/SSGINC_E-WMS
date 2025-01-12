@@ -13,17 +13,6 @@ public interface LoginService {
      */
     boolean validatePwd(MemberRequest member, MemberVO loginUser);
 
-    /**
-     * 입력받은 이메일에 해당 회원의 아이디를 전송합니다.
-     * @param email 요청받은 회원 이메일
-     * @return 성공 여부
-     */
-    boolean findId(String email);
+    MemberVO selectMemberById(MemberRequest member);
 
-    /**
-     * 입력받은 아이디로 가입한 회원의 이메일에 임시 비밀번호를 전송합니다.
-     * @param id 요청받은 회원 아이디
-     * @return 전송 성공 여부
-     */
-    boolean findPw(String id);
 }
