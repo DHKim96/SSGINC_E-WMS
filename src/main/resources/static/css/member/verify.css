@@ -1,0 +1,51 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    font-family: 'Pretendard';
+  }
+
+  label {
+    margin-right: 10px;
+  }
+
+  #content {
+    padding: 20px;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .divider {
+    border-top: 2px solid #000;
+    margin: 10px 0 20px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-control {
+    max-width: 300px;
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  .btn-custom {
+    background-color: #f8a600;
+    color: #fff;
+    border: none;
+  }
+
+  .btn-custom:hover {
+    background-color: #fff;
+    color: #f8a600;
+    border: 1px solid #f8a600;
+    background: #fff;
+  }
+

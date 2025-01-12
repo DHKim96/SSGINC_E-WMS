@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-WMS</title>
+  <link rel="stylesheet" href="/css/member/verify.css">
+</head>
+<body>
+  <div layout:fragment="content" class>
+    <div id="content">
+      <div>
+        <h2 class="section-title">회원 정보 수정</h2>
+        <div class="divider"></div>
+        <div style="width: 50%; margin: auto;
+                    height: 100%;
+                    margin-top: 15%;
+                    margin-left: 35%;">
+          <p>*안전한 개인정보보호를 위해 비밀번호와 전화번호를 입력해주세요.</p>
+          <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" class="form-control" placeholder="비밀번호를 입력해주세요">
+            <button class="btn btn-custom">확인</button>
+          </div>
+          <div class="form-group">
+            <label for="phone">전화번호</label>
+            <input type="text" id="phone" class="form-control" placeholder="전화번호를 입력해주세요">
+            <button class="btn btn-custom">인증번호 받기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/member/verify.js"></script>
+</body>
+</html>
