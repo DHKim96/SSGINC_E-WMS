@@ -2,34 +2,96 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
+<head>
+  <link href="/css/inventory/inventory.css" rel="stylesheet" />
+</head>
 <body>
 <div layout:fragment="content">
-  <table class="table table-hover table-bordered" style="background-color: #f9f9f9;">
-    <thead class="bg-warning text-white">
-    <tr class="text-center">
-      <th scope="col">상품 번호</th>
-      <th scope="col">상품 이름</th>
-      <th scope="col">상품 분류</th>
-      <th scope="col">상품 단위</th>
-      <th scope="col">입고가</th>
-      <th scope="col">출고가</th>
-      <th scope="col">제품수량</th>
-      <th scope="col">유통기한</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr class="text-center">
-      <td>P00001</td>
-      <td>apple</td>
-      <td>fruit</td>
-      <td>EA</td>
-      <td>5000</td>
-      <td>7000</td>
-      <td>50</td>
-      <td>2025-03-31</td>
-    </tr>
-    </tbody>
-  </table>
+  <div class="col-md-12 p-4">
+    <h3>재고 현황</h3>
+    <hr>
+    <div class="row row-cols-3 md-3" style="padding-left: 50px;">
+      <div class="col-md-4">
+        <label for="sectorName" class="form-label">Sector</label>
+        <input type="text" id="sectorName" class="form-control" placeholder="저장공간을 입력하세요">
+      </div>
+      <div class="col-md-4">
+        <label for="date-range" class="form-label">유통기한</label>
+        <div class="input-group">
+          <input type="date" id="startDate" class="form-control">
+          <span class="input-group-text"></span>
+          <input type="date" id="endDate" class="form-control">
+        </div>
+      </div>
+      <div class="col-md-4">
+      </div>
+      <div class="col-md-4">
+        <label for="productName" class="form-label">상품명</label>
+        <input type="text" id="productName" class="form-control" placeholder="상품명을 입력하세요">
+      </div>
+      <div class="col-md-4">
+        <label for="supplierName" class="form-label">공급사명</label>
+        <input type="text" id="supplierName" class="form-control" placeholder="공급사명을 입력하세요">
+      </div>
+      <div class="col-md-4" style="padding-left: 30px; padding-top:30px; ">
+        <button type="button"
+                id="searchBtn"
+                onclick="searchItem()"
+                class="btn btn-warning text-white">검색</button>
+      </div>
+    </div>
+    <hr>
+
+    <!-- 테이블 -->
+    <table class="table table-bordered text-center align-middle">
+      <thead class="table">
+      <tr class="bg-warning text-white">
+        <th style="width: 50px;">선택</th>
+        <th>재고번호</th>
+        <th>저장공간</th>
+        <th>상품코드</th>
+        <th>상품명</th>
+        <th>분류명</th>
+        <th>공급사명</th>
+        <th>입고가</th>
+        <th>출고가</th>
+        <th>재고량</th>
+        <th>유통기한</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="inventory: ${inventories}">
+        <td style="padding-left: 18px; padding-top: 10px; width: 50px;">
+          <input class="form-check"
+                 type="checkbox"
+                 onclick="selectItem()"
+                 th:data-id="${inventory.productId}"
+                 th:id="check + ${inventory.productId}">
+        </td>
+        <td>I-00[[${inventory.inventoryId}]]</td>
+        <td>[[${inventory.sectorName}]]</td>
+        <td>P-00[[${inventory.productId}]]</td>
+        <td>[[${inventory.productName}]]</td>
+        <td>[[${inventory.categoryName}]]</td>
+        <td>[[${inventory.supplierName}]]</td>
+        <td>[[${inventory.incomePrice}]]</td>
+        <td>[[${inventory.outgoingPrice}]]</td>
+        <td>[[${inventory.inventoryQuantity}]]</td>
+        <td th:text="${#temporals.format(inventory.expirationDate, 'yyyy-MM-dd')}">[[${inventory.expirationDate}]]</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button type="button"
+              onclick="registerIncome()"
+              class="btn btn-warning text-white">입고 요청</button>
+      <button type="button"
+              onclick="registerOutgoing()"
+              class="btn btn-warning text-white">출고 요청</button>
+    </div>
+  </div>
+  <script src="/js/inventory/inventory.js"></script>
 </div>
 </body>
 </html>
