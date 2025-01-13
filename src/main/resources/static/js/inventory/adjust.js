@@ -38,7 +38,6 @@ function updateRealQuantity() {
         realQuantityList: realQuantityList
     }).then(response => {
         if (response.data > 0) {
-            alert("실사재고량 변경 완료!");
             location.reload();
         }
     }).catch(error => {
@@ -66,7 +65,6 @@ function adjustQuantity() {
         realQuantityList: realQuantityList
     }).then(response => {
         if (response.data > 0) {
-            alert("실사재고량 변경 완료!");
             location.reload();
         }
     }).catch(error => {
