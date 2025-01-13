@@ -1,6 +1,7 @@
 package com.ssginc.ewms.inventory.service;
 
 import com.ssginc.ewms.inventory.mapper.InventoryMapper;
+import com.ssginc.ewms.inventory.vo.InventoryAdjustVO;
 import com.ssginc.ewms.inventory.vo.InventoryStateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -43,5 +44,14 @@ public class InventoryService {
         List<InventoryStateVO> list =
                 inventoryMapper.searchInventory(sectorName, startDate, endDate, productName, supplierName);
         return list;
+    }
+
+    /**
+     * 현재 창고의 재고조정에 필요한 정보를 반환하는 메소드
+     * @param warehouseId   접속한 창고번호
+     * @return              재고조정을 위한 VO 리스트
+     */
+    public List<InventoryAdjustVO> getProductAdjustInventory(int warehouseId) {
+        return inventoryMapper.getAdjustInventoryStatus(warehouseId);
     }
 }
