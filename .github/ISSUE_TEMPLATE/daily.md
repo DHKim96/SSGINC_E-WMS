@@ -3,7 +3,7 @@ name: Daily
 about: 날짜별로 진행한 작업과 앞으로 진행할 작업에 대해 정리하는 이슈
 title: "[REPORT]"
 labels: documentation
-assignees: ''
+assignees: dckat
 
 ---
 

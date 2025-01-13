@@ -24,28 +24,28 @@
     <insert id="insertMember">
         insert into member
         (
-         member_id,
-         member_pw,
-         member_name,
-         member_email,
-         member_phone,
-         member_post,
-         member_addr,
-         member_birth,
-         warehouse_id
+            member_id,
+            member_pw,
+            member_name,
+            member_email,
+            member_phone,
+            member_post,
+            member_addr,
+            member_birth,
+            warehouse_id
         )
         values
-        (
-        #{memberId},
-        #{memberPw},
-        #{memberName},
-        #{memberEmail},
-        #{memberPhone},
-        #{memberPost},
-        #{memberAddr},
-        #{memberBirth},
-        0
-        )
+            (
+                #{memberId},
+                #{memberPw},
+                #{memberName},
+                #{memberEmail},
+                #{memberPhone},
+                #{memberPost},
+                #{memberAddr},
+                #{memberBirth},
+                1
+            )
     </insert>
 
     <select id="selectMemberIdByEmail" resultType="string">
@@ -54,6 +54,12 @@
 
     <select id="selectMemberEmailById" resultType="string">
         select member_email from member where member_id = #{id};
+    </select>
+    <select id="selectMemberPwByMemberNo" resultType="string">
+        select member_pw from member where member_no = #{memberNo};
+    </select>
+    <select id="selectMemberPhoneByMemberNo" resultType="string">
+        select member_phone from member where member_no = #{memberNo};
     </select>
 
     <update id="updateMemberPw">

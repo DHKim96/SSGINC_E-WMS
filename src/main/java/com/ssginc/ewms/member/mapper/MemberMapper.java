@@ -67,4 +67,8 @@ public interface MemberMapper {
     String selectMemberEmailById(String id);
 
     int updateMemberPw(Map<String, String> map);
+
+    String selectMemberPwByMemberNo(int memberNo);
+
+    String selectMemberPhoneByMemberNo(int memberNo);
 }

@@ -58,8 +58,8 @@ public abstract class AbstractionException extends Exception {
      */
     protected AbstractionException(ErrorCode errorCode, Object[] args, Throwable cause) {
         super(args != null ? String.format(errorCode.getMsg(), args) : errorCode.getMsg(), cause);
-        this.status = errorCode.getStatus();
         this.code = errorCode.getCode();
+        this.status = errorCode.getStatus();  // HTTP 상태 코드
         log.error(errorCode.getStatus() + " " + errorCode.getCode() + " " + errorCode.getMsg(), cause);
     }
 }
