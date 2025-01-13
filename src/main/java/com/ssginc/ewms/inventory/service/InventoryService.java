@@ -1,9 +1,11 @@
 package com.ssginc.ewms.inventory.service;
 
 import com.ssginc.ewms.inventory.mapper.InventoryMapper;
+import com.ssginc.ewms.inventory.vo.InventoryAdjustVO;
 import com.ssginc.ewms.inventory.vo.InventoryStateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -43,5 +45,52 @@ public class InventoryService {
         List<InventoryStateVO> list =
                 inventoryMapper.searchInventory(sectorName, startDate, endDate, productName, supplierName);
         return list;
+    }
+
+    /**
+     * 현재 창고의 재고조정에 필요한 정보를 반환하는 메소드
+     * @param warehouseId   접속한 창고번호
+     * @return              재고조정을 위한 VO 리스트
+     */
+    public List<InventoryAdjustVO> getProductAdjustInventory(int warehouseId) {
+        return inventoryMapper.getAdjustInventoryStatus(warehouseId);
+    }
+
+    /**
+     * 선택된 재고들의 실사 재고량을 수정하는 service 클래스 메소드
+     * @param idList             실사 재고량이 수정되어야 할 재고번호 리스트
+     * @param realQuantityList   재고 아이디별 변경되어야 할 실사 재고량 리스트
+     * @return                   update가 실행된 row의 총합
+     */
+    @Transactional
+    public int updateRealInventory(List<Integer> idList, List<Integer> realQuantityList) {
+        int count = 0;
+        for (int i = 0; i < idList.size(); i++) {
+            int result = inventoryMapper.updateRealInventory(idList.get(i), realQuantityList.get(i));
+
+            if (result == 1) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * 선택된 재고들의 재고량을 실사재고량으로 수정하는 service 클래스 메소드
+     * @param idList             재고량이 수정되어야 할 재고번호 리스트
+     * @param realQuantityList   해당 재고의 실사 재고량 리스트
+     * @return                   update가 실행된 row의 총합
+     */
+    @Transactional
+    public int updateQuantity(List<Integer> idList, List<Integer> realQuantityList) {
+        int count = 0;
+        for (int i = 0; i < idList.size(); i++) {
+            int result = inventoryMapper.updateQuantity(idList.get(i), realQuantityList.get(i));
+
+            if (result == 1) {
+                count++;
+            }
+        }
+        return count;
     }
 }

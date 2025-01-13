@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.ewms.inventory.mapper.InventoryMapper">
+
     <!--  현재 창고에 저장된 모든 재고현황을 검색하는 쿼리  -->
     <select id="getProductInventory"
             parameterType="int"
@@ -50,4 +51,37 @@
             AND su.supplier_name LIKE CONCAT('%', #{supplierName}, '%')
         </if>
     </select>
+
+    <!-- 현재 창고에서의 재고조정에 필요한 데이터를 검색하는 쿼리  -->
+    <select id="getAdjustInventoryStatus"
+            parameterType="int"
+            resultType="inventoryAdjustVO">
+        SELECT i.inventory_id, s.sector_name, i.product_id,
+               p.product_name, p.income_price,
+               p.outgoing_price, i.inventory_quantity,
+               i.real_inventory_quantity, i.expiration_date
+        FROM inventory i
+                 JOIN sector s ON i.sector_id = s.sector_id
+                 JOIN product p ON i.product_id = p.product_id
+                 JOIN category c ON p.category_id = c.category_id
+                 JOIN supplier su ON p.supplier_id = su.supplier_id
+        WHERE p.discontinued_status = 0
+        <if test="wareHouseId != 0">
+            AND wareHouseId = #{warehouseId}
+        </if>
+    </select>
+
+    <!-- 선택된 재고의 실사 재고량을 수정 -->
+    <update id="updateRealInventory"
+            parameterType="int">
+        UPDATE inventory SET real_inventory_quantity = #{realQuantity}
+        WHERE inventory_id = #{inventoryId}
+    </update>
+
+    <!-- 선택된 재고의 재고량을 실사 재고량과 같게 조정 -->
+    <update id="updateQuantity"
+            parameterType="int">
+        UPDATE inventory SET inventory_quantity = #{realQuantity}
+        WHERE inventory_id = #{inventoryId}
+    </update>
 </mapper>

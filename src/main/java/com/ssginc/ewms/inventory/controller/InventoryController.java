@@ -1,16 +1,17 @@
 package com.ssginc.ewms.inventory.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssginc.ewms.inventory.service.InventoryService;
+import com.ssginc.ewms.inventory.vo.InventoryAdjustVO;
 import com.ssginc.ewms.inventory.vo.InventoryStateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -62,6 +63,63 @@ public class InventoryController {
             return ResponseEntity.ok(searchList);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * 재고조정에서 필요한 정보들을 가져오는 컨트롤러 함수
+     * @param warehouseId   접속한 창고번호
+     * @param model         페이지에 보여줄 데이터
+     * @return 재고조정 페이지
+     */
+    @GetMapping("adjust/{warehouseId}")
+    public String adjust(@PathVariable int warehouseId, Model model) {
+        List<InventoryAdjustVO> list = inventoryService.getProductAdjustInventory(warehouseId);
+        model.addAttribute("inventories", list);
+        return "inventory/adjust";
+    }
+
+    /**
+     * 실사 재고량을 변경하기 위한 컨트롤러 메소드. 비동기 처리하여 클라이언트에게 결과값을 body로 전달
+     * @param node   변경을 수행하여야 할 요청 데이터
+     * @return       변경이 실행된 row 수 (처리가 다 되지 못했다면 0을 반환)
+     */
+    @PutMapping("updateRealInventory")
+    @ResponseBody
+    public int updateRealInventory(@RequestBody JsonNode node) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Integer> idList = objectMapper.
+                treeToValue(node.path("idList"), List.class);
+        List<Integer> realQuantityList = objectMapper.
+                treeToValue(node.path("realQuantityList"), List.class);
+
+        int result = inventoryService.updateRealInventory(idList, realQuantityList);
+        if (result == idList.size()) {
+            return result;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * 재고량을 실사재고량으로 변경하기 위한 컨트롤러 메소드. 비동기 처리하여 클라이언트에게 결과값을 body로 전달
+     * @param node   변경을 수행하여야 할 요청 데이터
+     * @return       변경이 실행된 row 수 (처리가 다 되지 못했다면 0을 반환)
+     */
+    @PutMapping("adjustQuantity")
+    @ResponseBody
+    public int adjustQuantity(@RequestBody JsonNode node) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Integer> idList = objectMapper.
+                treeToValue(node.path("idList"), List.class);
+        List<Integer> realQuantityList = objectMapper.
+                treeToValue(node.path("realQuantityList"), List.class);
+
+        int result = inventoryService.updateQuantity(idList, realQuantityList);
+        if (result == idList.size()) {
+            return result;
+        } else {
+            return 0;
         }
     }
 }
