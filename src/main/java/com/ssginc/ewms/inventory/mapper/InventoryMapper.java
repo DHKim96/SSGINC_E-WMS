@@ -52,4 +52,12 @@ public interface InventoryMapper {
      * @return              update 수행이 된 row 수
      */
     int updateRealInventory(int inventoryId, int realQuantity);
+
+    /**
+     * 재고량을 실제재고량과 같도록 수정
+     * @param inventoryId   변경을 위한 재고아이디 (대상)
+     * @param realQuantity  변경하여야 할 실제 재고량 (변경값)
+     * @return              update 수행이 된 row 수
+     */
+    int updateQuantity(int inventoryId, int realQuantity);
 }

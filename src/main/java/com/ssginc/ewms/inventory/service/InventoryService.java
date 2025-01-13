@@ -74,4 +74,23 @@ public class InventoryService {
         }
         return count;
     }
+
+    /**
+     * 선택된 재고들의 재고량을 실사재고량으로 수정하는 service 클래스 메소드
+     * @param idList             재고량이 수정되어야 할 재고번호 리스트
+     * @param realQuantityList   해당 재고의 실사 재고량 리스트
+     * @return                   update가 실행된 row의 총합
+     */
+    @Transactional
+    public int updateQuantity(List<Integer> idList, List<Integer> realQuantityList) {
+        int count = 0;
+        for (int i = 0; i < idList.size(); i++) {
+            int result = inventoryMapper.updateQuantity(idList.get(i), realQuantityList.get(i));
+
+            if (result == 1) {
+                count++;
+            }
+        }
+        return count;
+    }
 }

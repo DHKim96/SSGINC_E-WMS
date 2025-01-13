@@ -77,4 +77,11 @@
         UPDATE inventory SET real_inventory_quantity = #{realInventoryQuantity}
         WHERE inventory_id = #{inventoryId}
     </update>
+
+    <!-- 선택된 재고의 재고량을 실사 재고량과 같게 조정 -->
+    <update id="updateQuantity"
+            parameterType="int">
+        UPDATE inventory SET inventory_quantity = #{realInventoryQuantity}
+        WHERE inventory_id = #{inventoryId}
+    </update>
 </mapper>

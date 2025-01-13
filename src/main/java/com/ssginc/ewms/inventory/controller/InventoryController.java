@@ -81,7 +81,7 @@ public class InventoryController {
 
     /**
      * 실사 재고량을 변경하기 위한 컨트롤러 메소드. 비동기 처리하여 클라이언트에게 결과값을 body로 전달
-     * @param node   변경 대상을 위한
+     * @param node   변경을 수행하여야 할 요청 데이터
      * @return       변경이 실행된 row 수 (처리가 다 되지 못했다면 0을 반환)
      */
     @PutMapping("updateRealInventory")
@@ -94,6 +94,28 @@ public class InventoryController {
                 treeToValue(node.path("realQuantityList"), List.class);
 
         int result = inventoryService.updateRealInventory(idList, realQuantityList);
+        if (result == idList.size()) {
+            return result;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * 재고량을 실사재고량으로 변경하기 위한 컨트롤러 메소드. 비동기 처리하여 클라이언트에게 결과값을 body로 전달
+     * @param node   변경을 수행하여야 할 요청 데이터
+     * @return       변경이 실행된 row 수 (처리가 다 되지 못했다면 0을 반환)
+     */
+    @PutMapping("adjustQuantity")
+    @ResponseBody
+    public int adjustQuantity(@RequestBody JsonNode node) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Integer> idList = objectMapper.
+                treeToValue(node.path("idList"), List.class);
+        List<Integer> realQuantityList = objectMapper.
+                treeToValue(node.path("realQuantityList"), List.class);
+
+        int result = inventoryService.updateQuantity(idList, realQuantityList);
         if (result == idList.size()) {
             return result;
         } else {
