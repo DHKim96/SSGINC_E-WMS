@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <link href="/css/inventory/inventory.css" rel="stylesheet" />
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="col-md-12 p-4">
+        <h3>재고 조정</h3>
+        <hr>
+        <!-- 테이블 -->
+        <table class="table table-bordered text-center align-middle">
+            <thead class="table">
+            <tr class="bg-warning text-white">
+                <th style="padding-top: 10px; width: 30px;">
+                    <input class="form-check" type="checkbox"
+                           id="checkbox-inventory-all"
+                           onclick="selectAll(this)">
+                </th>
+                <th>재고번호</th>
+                <th style="width: 50px;">저장공간</th>
+                <th>상품코드</th>
+                <th>상품명</th>
+                <th>입고가</th>
+                <th>출고가</th>
+                <th>재고량</th>
+                <th>실사재고량</th>
+                <th>차이</th>
+                <th>유통기한</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="inventory: ${inventories}">
+                <td style="padding-top: 10px; width: 30px;">
+                    <input class="form-check"
+                           type="checkbox"
+                           onclick="selectItem(this)"
+                           th:data-id="${inventory.inventoryId}"
+                           th:id="check + ${inventory.inventoryId}">
+                </td>
+                <td th:id="inventoryId+${inventory.inventoryId}">I-00[[${inventory.inventoryId}]]</td>
+                <td>
+                    <input type="text" id="input-sector-name"
+                           th:id="sectorName + ${inventory.inventoryId}"
+                           class="text-center"
+                           style="width: 80px;"
+                           th:value="${inventory.sectorName}" readonly>
+                </td>
+                <td>P-00[[${inventory.productId}]]</td>
+                <td>[[${inventory.productName}]]</td>
+                <td>[[${inventory.incomePrice}]]</td>
+                <td>[[${inventory.outgoingPrice}]]</td>
+                <td>[[${inventory.inventoryQuantity}]]</td>
+                <td>
+                    <input type="text" id="input-real-quantity"
+                           th:id="realQuantity + ${inventory.inventoryId}"
+                           class="text-center"
+                           style="width: 80px;"
+                           th:value="${inventory.realInventoryQuantity}" readonly>
+                </td>
+                <td>[[${inventory.inventoryQuantity-inventory.realInventoryQuantity}]]</td>
+                <td th:text="${#temporals.format(inventory.expirationDate, 'yyyy-MM-dd')}">[[${inventory.expirationDate}]]</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+            <button type="button"
+                    class="btn btn-warning text-white"
+                    th:data-id="inventory.inventoryId"
+                    onclick="updateRealQuantity(this)">실사재고량 변경</button>
+            <button type="button"
+                    class="btn btn-warning text-white"
+                    onclick="adjustQuantity()">재고량 조정</button>
+            <button type="button"
+                    class="btn btn-warning text-white"
+                    onclick="updateSector()">저장 공간 변경</button>
+            <button type="button"
+                    class="btn btn-warning text-white"
+                    onclick="deleteInventory()">재고 폐기</button>
+        </div>
+    </div>
+    <script src="/js/inventory/adjust.js"></script>
+</div>
+</body>
+</html>
