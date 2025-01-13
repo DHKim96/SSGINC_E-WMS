@@ -1,5 +1,6 @@
 package com.ssginc.ewms.inventory.mapper;
 
+import com.ssginc.ewms.inventory.vo.InventoryAdjustVO;
 import com.ssginc.ewms.inventory.vo.InventoryStateVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -36,4 +37,11 @@ public interface InventoryMapper {
                                            String endDate,
                                            String productName,
                                            String supplierName);
+
+    /**
+     * 재고조정 페이지에서 최초 재고 리스트 가져오기
+     * @param warehouseId   창고아이디 (0은 모든 창고의 재고정보 반환)
+     * @return              재고조정 활용을 위한 VO 리스트
+     */
+    List<InventoryAdjustVO> getAdjustInventoryStatus(int warehouseId);
 }
