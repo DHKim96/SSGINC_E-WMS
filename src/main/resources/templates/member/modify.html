@@ -9,52 +9,138 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원정보 수정</title>
     <link rel="stylesheet" href="/css/member/modify.css">
+
+    <!-- JQuery -->
+    <script
+            src="https://code.jquery.com/jquery-3.7.1.slim.js"
+            integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc="
+            crossorigin="anonymous">
+
+    </script>
+
+    <!-- 다음 우편번호 API -->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 
 <body>
 <div layout:fragment="content">
-    <div class="update-container">
+    <div class="update-container flex flex-col align-center">
         <h1 class="title">회원 정보 수정</h1>
         <div class="profile-section">
             <div class="profile-image">
-                <img src="/img/member/profile-placeholder.png" alt="Profile Image">
+                <img src="/img/member/karina.png" alt="Profile Image">
                 <button class="edit-profile-btn">
                     <i class="fas fa-edit"></i>
                 </button>
             </div>
             <span class="profile-name">홍길동</span>
         </div>
-        <form id="update-form" class="update-form">
-            <div class="form-group">
-                <label for="memberId">아이디</label>
-                <input type="text" id="memberId" name="memberId" value="admin@naver.com" readonly>
+        <form th:action="@{/registration/register}" method="post" id="registration-form"
+              class="signup-form flex flex-col align-center">
+            <div id="register-input-id" class="form-group flex flex-col align-center">
+                <div class="input-group flex flex-row align-center">
+                    <label>아이디</label>
+                    <input type="text" name="memberId" th:value="${session.loginUser.getMemberId()}" readonly>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="newPassword">새 비밀번호</label>
-                <input type="password" id="newPassword" name="newPassword" placeholder="새 비밀번호를 입력해주세요">
-                <button type="button" class="btn">확인</button>
+
+            <div id="register-input-email" class="form-group flex flex-col align-center">
+                <div class="input-group flex flex-row align-center">
+                    <label>이메일</label>
+                    <input type="email" name="memberEmail" th:value="${session.loginUser.getMemberEmail()}" placeholder="이메일을 입력해주세요">
+                    <button type="button" id="member-email-auth" class="btn">본인 인증</button>
+                </div>
+                <div class="errMsg" style="width: 100%; margin-left: 40%">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="confirmPassword">비밀번호 확인</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="비밀번호를 다시 입력해주세요">
-                <button type="button" class="btn">확인</button>
+            <div id="email-auth-section" class="form-group flex flex-col align-center" style="display: none;">
+                <div class="input-group flex flex-row align-center">
+                    <div class="registerSpan timer" id="email-auth-timer"><h4></h4></div>
+                    <div class="register-inputForm" id="register-input-email-authNo"><input type="text"
+                                                                                            class="register-input"
+                                                                                            name="email-authNo"
+                                                                                            placeholder="인증번호를 입력해주세요."
+                                                                                            required></div>
+                    <button type="button" id="member-email-auth-btn" class="btn">본인 인증</button>
+                </div>
+                <div class="errMsg" style="width: 100%;"></div>
             </div>
-            <div class="form-group">
-                <label for="birth">생년월일</label>
-                <input type="date" id="birth" name="birth" value="1996-02-07" readonly>
+
+            <div id="register-input-name" class="form-group flex flex-col align-center">
+                <div class="input-group flex flex-row align-center">
+                    <label>이름</label>
+                    <input type="text" name="memberName" th:value="${session.loginUser.getMemberName()}" readonly>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="phone">전화번호</label>
-                <input type="text" id="phone" name="phone" placeholder="전화번호를 입력해주세요">
-                <button type="button" class="btn">확인</button>
+
+            <div id="password-section" class="form-group flex flex-row align-center" style="gap: 10px">
+                <label>비밀번호</label>
+                <button type="button" id="edit-password-btn" class="btn flex flex-row align-center justify-center"
+                        style="width: 320px;">
+                    비밀번호 수정
+                </button>
             </div>
-            <div class="form-group">
-                <label for="address">주소</label>
-                <input type="text" id="address" name="address" placeholder="주소">
-                <button type="button" class="btn">확인</button>
+
+
+            <div id="register-input-phone" class="form-group flex flex-col align-center">
+                <div class="input-group flex flex-row align-center">
+                    <label>전화번호</label>
+                    <input type="tel" name="memberPhone" th:value="${session.loginUser.getMemberPhone()}" >
+                    <button type="button" id="member-phone-auth" class="btn">본인 인증</button>
+                </div>
+                <div class="errMsg" style="width: 100%; margin-left: 40%">
+                </div>
             </div>
-            <button type="submit" class="submit-btn">수정 완료</button>
+            <div id="phone-auth-section" class="form-group flex flex-col align-center" style="display: none;">
+                <div class="input-group flex flex-row align-center">
+                    <div class="registerSpan timer" id="phone-auth-timer"><h4></h4></div>
+                    <div class="register-inputForm" id="register-input-phone-authNo"><input type="text"
+                                                                                            class="register-input"
+                                                                                            name="phone-authNo"
+                                                                                            placeholder="인증번호를 입력해주세요."
+                                                                                            required></div>
+                    <button type="button" id="member-phone-auth-btn" class="btn">본인 인증</button>
+                </div>
+                <div class="errMsg" style="width: 100%; margin-left: 40%"></div>
+            </div>
+
+            <div class="form-group flex flex-col align-center">
+                <div id="register-input-addr" class="input-group flex flex-row align-center">
+                    <label>주소</label>
+                    <!-- <input type="text" placeholder="주소를 입력해주세요"> -->
+                    <button type="button" id="addr-search-btn" class="btn flex flex-row align-center justify-center"
+                            style="width: 320px;">
+                        <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="7.5" cy="7" r="5" stroke="#FCB313"/>
+                            <path d="M14.5001 14L11.0001 10.5" stroke="#FCB313" stroke-linecap="round"/>
+                        </svg>
+                        <span style="font-size: 14px;">주소 검색</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="register-input-birth" class="form-group flex flex-col align-center">
+                <div class="input-group flex flex-row align-center">
+                    <label>생년월일</label>
+                    <input type="date" name="memberBirth" th:value="${session.loginUser.getMemberBirth()}"
+                           readonly>
+                </div>
+            </div>
+
+
+            <button type="button" id="registration-form-btn" class="submit-btn">정보 수정하기</button>
         </form>
+
+        <script src="/js/member/modify.js"></script>
+    </div>
+
+    <!-- 인증 번호 전송 중 로딩 메시지 -->
+    <div id="loading-overlay"
+         style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="color: white; font-size: 1.5rem; text-align: center; display: flex; flex-direction: column; align-items: center">
+            <div class="spinner" style="margin-bottom: 10px;"></div>
+            인증 번호 전송 중...
+        </div>
     </div>
 </div>
 </body>

@@ -1,6 +1,6 @@
 package com.ssginc.ewms.member.service;
 
-import com.ssginc.ewms.member.dto.MemberRequest;
+import com.ssginc.ewms.member.dto.MemberInsertRequest;
 import com.ssginc.ewms.member.vo.MemberVO;
 
 public interface LoginService {
@@ -11,8 +11,8 @@ public interface LoginService {
      * @param loginUser DB에서 조회된 회원 정보
      * @return 비밀번호가 일치하면 true, 그렇지 않으면 false
      */
-    boolean validatePwd(MemberRequest member, MemberVO loginUser);
+    boolean validatePwd(MemberInsertRequest member, MemberVO loginUser);
 
-    MemberVO selectMemberById(MemberRequest member);
+    MemberVO selectMemberById(MemberInsertRequest member);
 
 }

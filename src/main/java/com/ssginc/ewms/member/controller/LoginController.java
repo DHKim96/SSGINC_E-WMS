@@ -1,9 +1,8 @@
 package com.ssginc.ewms.member.controller;
 
-import com.ssginc.ewms.member.dto.MemberRequest;
+import com.ssginc.ewms.member.dto.MemberInsertRequest;
 import com.ssginc.ewms.member.service.LoginService;
 import com.ssginc.ewms.member.vo.MemberVO;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ public class LoginController {
     }
 
     @PostMapping("authenticate")
-    public String login(MemberRequest member,
+    public String login(MemberInsertRequest member,
                         HttpSession session,
                         RedirectAttributes redirectAttributes) {
 

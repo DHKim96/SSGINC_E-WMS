@@ -1,33 +1,15 @@
 package com.ssginc.ewms.member.service;
 
-import com.ssginc.ewms.member.dto.MemberRequest;
+import com.ssginc.ewms.member.dto.MemberInsertRequest;
 import com.ssginc.ewms.member.mapper.MemberMapper;
 import com.ssginc.ewms.util.MemberValidator;
-import com.ssginc.ewms.util.RandomGenerator;
-import com.ssginc.ewms.member.vo.MemberVO;
-import com.ssginc.ewms.util.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.nurigo.sdk.NurigoApp;
-import net.nurigo.sdk.message.exception.NurigoEmptyResponseException;
-import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
-import net.nurigo.sdk.message.exception.NurigoUnknownException;
-import net.nurigo.sdk.message.model.Balance;
-import net.nurigo.sdk.message.model.Message;
-import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.apache.ibatis.exceptions.PersistenceException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * MemberServiceImpl: 회원 관리 서비스 구현체.
@@ -57,7 +39,7 @@ public class RegisterServiceImpl implements RegisterService {
 
 
     @Override
-    public int insertMember(MemberRequest member) throws Exception {
+    public int insertMember(MemberInsertRequest member) throws Exception {
 
         memberValidator.validate(member);
 
