@@ -5,7 +5,6 @@ import com.ssginc.ewms.outgoing.vo.OutgoingVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -18,12 +17,11 @@ public class OutgoingService {
         this.outgoingMapper = outgoingMapper;
     }
 
-    public List<OutgoingVO> getOutgoingList() {
-        return outgoingMapper.getOutgoingList();
+    public List<OutgoingVO> getOutgoingBySearch(String startDate, String endDate, String productName, String productStatus) {
+        return outgoingMapper.getOutgoingList(startDate, endDate, productName, productStatus);
     }
 
-    public List<OutgoingVO> getOutgoingBySearch(String startDate, String endDate, String productName) {
-        System.out.println(productName);
-        return outgoingMapper.selectData(startDate, endDate, productName);
+    public void updateOutgoingStatus(int outgoingId, int status) {
+        outgoingMapper.updateOutgoingStatus(outgoingId, status);
     }
 }
