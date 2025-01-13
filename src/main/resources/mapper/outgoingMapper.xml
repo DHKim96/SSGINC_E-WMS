@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.ewms.outgoing.mapper.OutgoingMapper">
+    <update id="updateOutgoingStatus">
+        UPDATE outgoing
+        SET outgoing_status = #{status}
+        WHERE outgoing_id = #{outgoingId}
+    </update>
+
+    <!-- 데이터 조회 쿼리 -->
+    <select id="getOutgoingList" resultType="com.ssginc.ewms.outgoing.vo.OutgoingVO">
+        SELECT
+        o.outgoing_id AS outgoingId,
+        o.branch_name AS branchName,
+        p.product_name AS productName,
+        o.outgoing_quantity AS outgoingQuantity,
+        p.outgoing_price AS unitPrice,
+        (o.outgoing_quantity * p.outgoing_price) AS totalPrice,
+        o.outgoing_status AS outgoingStatus,
+        DATE_FORMAT(o.outgoing_date, '%Y-%m-%d') AS outgoingDate
+        FROM outgoing o
+        JOIN product p ON o.product_id = p.product_id
+        WHERE 1=1
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND o.outgoing_date BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="productName != null and productName != ''">
+            AND (
+            LOWER(p.product_name) LIKE CONCAT('%', LOWER(#{productName}), '%')
+            OR LOWER(p.product_name) LIKE CONCAT(LOWER(#{productName}), '%')
+            OR LOWER(p.product_name) LIKE CONCAT('%', LOWER(#{productName}))
+            )
+        </if>
+        <if test="productStatus != null and productStatus != ''">
+            AND o.outgoing_status = #{productStatus}
+        </if>
+        ORDER BY o.outgoing_id;
+    </select>
+</mapper>
