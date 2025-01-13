@@ -44,4 +44,12 @@ public interface InventoryMapper {
      * @return              재고조정 활용을 위한 VO 리스트
      */
     List<InventoryAdjustVO> getAdjustInventoryStatus(int warehouseId);
+
+    /**
+     * 실사재고량을 수정하는 함수
+     * @param inventoryId   변경을 위한 재고아이디 (대상)
+     * @param realQuantity  변경하여야 할 실제 재고량 (변경값)
+     * @return              update 수행이 된 row 수
+     */
+    int updateRealInventory(int inventoryId, int realQuantity);
 }

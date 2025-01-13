@@ -17,3 +17,31 @@ function selectItem(select) {
         !document.getElementById("realQuantity" + id).readOnly;
 
 }
+
+function updateRealQuantity() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    let idList = new Array();
+    let realQuantityList = new Array();
+
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            const inventoryId = parseInt(checkbox.getAttribute("data-id"));
+            const realQuantity = parseInt(document.getElementById("realQuantity" + inventoryId).value);
+
+            idList.push(inventoryId);
+            realQuantityList.push(realQuantity);
+        }
+    });
+
+    axios.put("/inventory/updateRealInventory", {
+        idList: idList,
+        realQuantityList: realQuantityList
+    }).then(response => {
+        if (response.data > 0) {
+            alert("실사재고량 변경 완료!");
+            location.reload();
+        }
+    }).catch(error => {
+        alert("수정실패! " + error);
+    });
+}

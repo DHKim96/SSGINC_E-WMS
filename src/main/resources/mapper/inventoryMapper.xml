@@ -52,7 +52,7 @@
         </if>
     </select>
 
-    <!-- 현재 창고에서의 재고조정에 필요한 데이터를 검색하는 쿼리 -->
+    <!-- 현재 창고에서의 재고조정에 필요한 데이터를 검색하는 쿼리  -->
     <select id="getAdjustInventoryStatus"
             parameterType="int"
             resultType="inventoryAdjustVO">
@@ -70,4 +70,11 @@
             AND wareHouseId = #{warehouseId}
         </if>
     </select>
+
+    <!-- 선택된 재고의 실사 재고량을 수정 -->
+    <update id="updateRealInventory"
+            parameterType="int">
+        UPDATE inventory SET real_inventory_quantity = #{realInventoryQuantity}
+        WHERE inventory_id = #{inventoryId}
+    </update>
 </mapper>

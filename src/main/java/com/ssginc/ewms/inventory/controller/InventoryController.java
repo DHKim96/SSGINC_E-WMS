@@ -1,5 +1,8 @@
 package com.ssginc.ewms.inventory.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssginc.ewms.inventory.service.InventoryService;
 import com.ssginc.ewms.inventory.vo.InventoryAdjustVO;
 import com.ssginc.ewms.inventory.vo.InventoryStateVO;
@@ -74,5 +77,27 @@ public class InventoryController {
         List<InventoryAdjustVO> list = inventoryService.getProductAdjustInventory(warehouseId);
         model.addAttribute("inventories", list);
         return "inventory/adjust";
+    }
+
+    /**
+     * 실사 재고량을 변경하기 위한 컨트롤러 메소드. 비동기 처리하여 클라이언트에게 결과값을 body로 전달
+     * @param node   변경 대상을 위한
+     * @return       변경이 실행된 row 수 (처리가 다 되지 못했다면 0을 반환)
+     */
+    @PutMapping("updateRealInventory")
+    @ResponseBody
+    public int updateRealInventory(@RequestBody JsonNode node) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Integer> idList = objectMapper.
+                treeToValue(node.path("idList"), List.class);
+        List<Integer> realQuantityList = objectMapper.
+                treeToValue(node.path("realQuantityList"), List.class);
+
+        int result = inventoryService.updateRealInventory(idList, realQuantityList);
+        if (result == idList.size()) {
+            return result;
+        } else {
+            return 0;
+        }
     }
 }
