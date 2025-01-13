@@ -1,16 +1,14 @@
 package com.ssginc.ewms.inventory.controller;
 
 import com.ssginc.ewms.inventory.service.InventoryService;
+import com.ssginc.ewms.inventory.vo.InventoryAdjustVO;
 import com.ssginc.ewms.inventory.vo.InventoryStateVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -63,5 +61,18 @@ public class InventoryController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    /**
+     * 재고조정에서 필요한 정보들을 가져오는 컨트롤러 함수
+     * @param warehouseId   접속한 창고번호
+     * @param model         페이지에 보여줄 데이터
+     * @return 재고조정 페이지
+     */
+    @GetMapping("adjust/{warehouseId}")
+    public String adjust(@PathVariable int warehouseId, Model model) {
+        List<InventoryAdjustVO> list = inventoryService.getProductAdjustInventory(warehouseId);
+        model.addAttribute("inventories", list);
+        return "inventory/adjust";
     }
 }
