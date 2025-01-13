@@ -36,8 +36,6 @@ public enum ErrorCode {
     DATABASE_ERROR(500, "DB_001", "데이터베이스 처리 중 오류가 발생했습니다."),
     DATA_CONFLICT(409, "DB_002", "데이터가 이미 존재합니다."),
 
-    MEMBER_NOT_FOUND(404, "E203", "일치하는 사용자를 찾을 수 없습니다."),
-
     // 리소스 접근 불가 에러코드
     RESOURCE_NOT_FOUND(404, "E204", "해당 리소스로 접근이 불가능합니다."),
 
@@ -63,7 +61,6 @@ public enum ErrorCode {
     AUTOCODE_NOT_CORRECTED(500, "ME05", "인증번호가 일치하지 않습니다."),
     EMAIL_NOT_CORRECTED(500, "ME06", "입력하신 이메일이 가입 시 입력하신 이메일과 일치하지 않습니다"),
     INVALID_MEMBER_FORMAT(500, "ME07", "유저의 정보 형식이 올바르지 않습니다." );
-    NOT_VALID_ERROR(404, "E210", "유효하지 않은 요청값입니다.");
 
     private final int status;
     private final String code;

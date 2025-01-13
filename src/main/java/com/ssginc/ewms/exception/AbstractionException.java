@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Getter
 @Slf4j
-public abstract class AbstractionException extends Exception {
+public abstract class AbstractionException extends RuntimeException {
 
     /**
      * 에러 코드 번호
