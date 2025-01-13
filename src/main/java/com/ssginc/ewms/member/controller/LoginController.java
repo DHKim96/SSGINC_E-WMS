@@ -3,6 +3,7 @@ package com.ssginc.ewms.member.controller;
 import com.ssginc.ewms.member.dto.MemberRequest;
 import com.ssginc.ewms.member.service.LoginService;
 import com.ssginc.ewms.member.vo.MemberVO;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,16 @@ public class LoginController {
 
     private final LoginService loginService;
 
-    @PostMapping("")
+    @GetMapping("")
+    public String loginForm(HttpSession session, RedirectAttributes redirectAttributes) {
+        if (session.getAttribute("loginUser") != null) {
+            redirectAttributes.addFlashAttribute("alertMsg", "이미 로그인된 상태입니다.");
+            return "redirect:/dashboard"; // 이미 로그인된 경우 대시보드로 리다이렉트
+        }
+        return "member/login"; // 로그인 페이지로 이동
+    }
+
+    @PostMapping("authenticate")
     public String login(MemberRequest member,
                         HttpSession session,
                         RedirectAttributes redirectAttributes) {
@@ -27,7 +37,7 @@ public class LoginController {
 
         if (session.getAttribute("loginUser") != null) {
             redirectAttributes.addFlashAttribute("alertMsg", "이미 로그인된 상태입니다.");
-            return "dashboard/dashboard";
+            return "redirect:/dashboard"; // 리다이렉트하지 않으면 url 이 변하지 않음
         }
 
         MemberVO loginUser = loginService.selectMemberById(member);
@@ -41,8 +51,8 @@ public class LoginController {
             return "redirect:/";
         }
 
-        // 로그인 성공
+        // 로그인 성공 처리
         session.setAttribute("loginUser", loginUser);
-        return "dashboard/dashboard"; // 성공 시 대시보드로 이동
+        return "redirect:/dashboard"; // 성공 시 대시보드로 이동
     }
 }

@@ -89,8 +89,10 @@ public class AuthController {
      * @return HTTP 응답 객체
      */
     @PostMapping("verify")
-    public ResponseEntity<ResponseDto<Map<String, String>>> verify(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<ResponseDto<Map<String, String>>> verify(@RequestBody Map<String, String> payload,
+                                                                   HttpSession session) {
         authService.verifyAuthCode(payload.get("key"), payload.get("value"));
+        session.setAttribute("authExpiration", System.currentTimeMillis() + 5 * 60 * 1000); // 세션 생성
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "인증이 완료됐습니다.", null));
     }
 
@@ -116,7 +118,7 @@ public class AuthController {
     public ResponseEntity<ResponseDto<Map<String, Boolean>>> verifyPhoneForModify (@RequestBody Map<String, String> payload, HttpSession session) {
         MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
         boolean res = authService.verifyPhoneForModify(loginUser, payload.get("phone"));
-        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "전화번호가 일치합니다.", Map.of("result", res)));
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "전화번호로 인증번호가 전송되었습니다.", Map.of("result", res)));
     }
 
 }

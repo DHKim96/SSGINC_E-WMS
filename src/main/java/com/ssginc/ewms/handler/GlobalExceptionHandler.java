@@ -36,6 +36,7 @@ public class GlobalExceptionHandler {
         response.put("code", e.getCode());
         response.put("message", e.getMessage());
         return ResponseEntity.status(e.getStatus()).body(response);
+
     }
 
     /**
@@ -58,7 +59,8 @@ public class GlobalExceptionHandler {
     public void handleGeneralException(HttpServletResponse response, Exception ex) throws IOException {
         log.error("Handled Exception: {}", ex.toString(), ex);
         // 리다이렉트 경로 설정
-        String redirectURL = "/error?message=" + URLEncoder.encode("알 수 없는 오류가 발생했습니다.", "UTF-8");
+        String redirectURL = "/error?message=" + URLEncoder.encode("서버로부터 예외가 발생했습니다.", "UTF-8");
+        log.info("Redirect URL: {}", redirectURL);
         response.sendRedirect(redirectURL);
     }
 }

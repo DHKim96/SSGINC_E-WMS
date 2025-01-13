@@ -26,7 +26,7 @@
                 alert([[${alertMsg}]]);
             </script>
         </div>
-        <form id="login-form" method="post" th:action="@{/login}" class="login-form">
+        <form id="login-form" method="post" th:action="@{/login/authenticate}" class="login-form">
             <input type="text" name="memberId" placeholder="아이디" class="input-field" required>
             <input type="password" name="memberPw" placeholder="비밀번호" class="input-field" required>
             <div class="remember-me">

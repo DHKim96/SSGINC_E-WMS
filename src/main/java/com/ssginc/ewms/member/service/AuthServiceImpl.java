@@ -267,7 +267,7 @@ public class AuthServiceImpl implements AuthService {
 
         String userPwd = memberMapper.selectMemberPwByMemberNo(loginUser.getMemberNo());
 
-        if (!passwordEncoder.matches(userPwd, password)){
+        if (!passwordEncoder.matches(password, userPwd)){
             throw new MemberNotFoundException(ErrorCode.INVALID_PASSWORD);
         }
 
@@ -280,13 +280,21 @@ public class AuthServiceImpl implements AuthService {
             throw new MemberNotFoundException(ErrorCode.NULL_POINT_ERROR);
         }
 
+        memberValidator.validatePhone(phone);
+
         String userPhone = memberMapper.selectMemberPhoneByMemberNo(loginUser.getMemberNo());
 
         if (!userPhone.equals(phone)) {
-            throw new MemberNotFoundException(ErrorCode.INVALID_PASSWORD);
+            throw new MemberNotFoundException(ErrorCode.PHONE_NOT_CORRECTED);
         }
 
-        return false;
+        String authCode = generatedSecret(phone); // 인증번호 저장
+
+        String text = "[EWMS] 인증번호는 [" + authCode + "] 입니다.";
+
+        sendSms(phone, text);
+
+        return true;
     }
 
     /**
