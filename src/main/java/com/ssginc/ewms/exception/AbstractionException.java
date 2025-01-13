@@ -2,6 +2,7 @@ package com.ssginc.ewms.exception;
 
 import com.ssginc.ewms.util.ErrorCode;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 애플리케이션의 공통 예외 처리 추상 클래스.
@@ -10,14 +11,14 @@ import lombok.Getter;
  * 예외 처리 시 일관된 에러 코드 및 메시지를 사용할 수 있도록 설계되었습니다.
  */
 @Getter
-public abstract class AbstractionException extends RuntimeException {
+@Slf4j
+public abstract class AbstractionException extends Exception {
 
     /**
      * 에러 코드 번호
      */
-    private final String code;
-
     private final int status;
+    private final String code;
 
     /**
      * 에러 코드만으로 예외를 생성합니다.
@@ -59,10 +60,6 @@ public abstract class AbstractionException extends RuntimeException {
         super(args != null ? String.format(errorCode.getMsg(), args) : errorCode.getMsg(), cause);
         this.code = errorCode.getCode();
         this.status = errorCode.getStatus();  // HTTP 상태 코드
-    }
-
-    @Override
-    public String toString() {
-        return "Error Code: " + code + ", Message: " + getMessage();
+        log.error(errorCode.getStatus() + " " + errorCode.getCode() + " " + errorCode.getMsg(), cause);
     }
 }
