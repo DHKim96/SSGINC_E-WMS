@@ -9,7 +9,6 @@ import com.ssginc.ewms.member.vo.MemberVO;
 import com.ssginc.ewms.util.ErrorCode;
 import com.ssginc.ewms.util.MemberValidator;
 import com.ssginc.ewms.util.RandomGenerator;
-import com.ssginc.ewms.util.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
@@ -84,7 +83,6 @@ public class AuthServiceImpl implements AuthService {
             return Long.compare(this.expirationTime, other.expirationTime);
         }
     }
-
 
     private final ConcurrentHashMap<String, String> authNumbers = new ConcurrentHashMap<>();  // 인증번호 저장 (key: 이메일 또는 전화번호, value: 인증번호)
    
@@ -259,6 +257,36 @@ public class AuthServiceImpl implements AuthService {
         }
 
         authNumbers.remove(key);
+    }
+
+    @Override
+    public boolean verifyPassword(MemberVO loginUser, String password) {
+        if (loginUser == null) {
+            throw new MemberNotFoundException(ErrorCode.NULL_POINT_ERROR);
+        }
+
+        String userPwd = memberMapper.selectMemberPwByMemberNo(loginUser.getMemberNo());
+
+        if (!passwordEncoder.matches(userPwd, password)){
+            throw new MemberNotFoundException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean verifyPhoneForModify(MemberVO loginUser, String phone) {
+        if (loginUser == null) {
+            throw new MemberNotFoundException(ErrorCode.NULL_POINT_ERROR);
+        }
+
+        String userPhone = memberMapper.selectMemberPhoneByMemberNo(loginUser.getMemberNo());
+
+        if (!userPhone.equals(phone)) {
+            throw new MemberNotFoundException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        return false;
     }
 
     /**

@@ -25,6 +25,11 @@ public class LoginController {
 
         log.info("로그인 객체 = {}", member);
 
+        if (session.getAttribute("loginUser") != null) {
+            redirectAttributes.addFlashAttribute("alertMsg", "이미 로그인된 상태입니다.");
+            return "dashboard/dashboard";
+        }
+
         MemberVO loginUser = loginService.selectMemberById(member);
 
         if (loginUser == null) {

@@ -1,5 +1,7 @@
 package com.ssginc.ewms.member.service;
 
+import com.ssginc.ewms.member.vo.MemberVO;
+
 /**
  * 회원 인증과 관련한 작업을 수행하는 서비스.
  * 
@@ -49,4 +51,15 @@ public interface AuthService {
      * @param value 인증 번호
      */
     void verifyAuthCode(String key, String value);
+
+    /**
+     * 회원 정보 수정 시 본인 인증 단계에서 회원의 비밀번호와 입력 받은 비밀번호의 일치 여부를 확인합니다.
+     *
+     * @param loginUser 로그인한 회원 정보
+     * @param password  입력 받은 비밀번호
+     */
+    boolean verifyPassword(MemberVO loginUser, String password);
+
+
+    boolean verifyPhoneForModify(MemberVO loginUser, String phone);
 }

@@ -2,6 +2,8 @@ package com.ssginc.ewms.member.controller;
 
 import com.ssginc.ewms.member.dto.ResponseDto;
 import com.ssginc.ewms.member.service.AuthService;
+import com.ssginc.ewms.member.vo.MemberVO;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -90,6 +92,31 @@ public class AuthController {
     public ResponseEntity<ResponseDto<Map<String, String>>> verify(@RequestBody Map<String, String> payload) {
         authService.verifyAuthCode(payload.get("key"), payload.get("value"));
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "인증이 완료됐습니다.", null));
+    }
+
+    /**
+     * 회원 정보 수정 시 본인 인증 단계에서 회원의 비밀번호와 입력 받은 비밀번호의 일치 여부를 확인합니다.
+     * @param payload 입력 받은 비밀번호
+     * @return HTTP 응답 객체
+     */
+    @PostMapping("password/verify")
+    public ResponseEntity<ResponseDto<Map<String, Boolean>>> verifyPassword (@RequestBody Map<String, String> payload,
+                                                                            HttpSession session) {
+        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+        boolean res = authService.verifyPassword(loginUser, payload.get("password"));
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "비밀번호가 일치합니다.", Map.of("result", res)));
+    }
+
+    /**
+     * 회원 정보 수정 시 본인 인증 단계에서 회원의 전화번호와 입력 받은 전화번호의 일치 여부를 확인합니다.
+     * @param payload 입력 받은 전화번호
+     * @return HTTP 응답 객체
+     */
+    @PostMapping("phone/verify")
+    public ResponseEntity<ResponseDto<Map<String, Boolean>>> verifyPhoneForModify (@RequestBody Map<String, String> payload, HttpSession session) {
+        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+        boolean res = authService.verifyPhoneForModify(loginUser, payload.get("phone"));
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "전화번호가 일치합니다.", Map.of("result", res)));
     }
 
 }

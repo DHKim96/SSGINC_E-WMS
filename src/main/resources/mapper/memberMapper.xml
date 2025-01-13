@@ -44,7 +44,7 @@
                 #{memberPost},
                 #{memberAddr},
                 #{memberBirth},
-                0
+                1
             )
     </insert>
 
@@ -54,6 +54,12 @@
 
     <select id="selectMemberEmailById" resultType="string">
         select member_email from member where member_id = #{id};
+    </select>
+    <select id="selectMemberPwByMemberNo" resultType="string">
+        select member_pw from member where member_no = #{memberNo};
+    </select>
+    <select id="selectMemberPhoneByMemberNo" resultType="string">
+        select member_phone from member where member_no = #{memberNo};
     </select>
 
     <update id="updateMemberPw">

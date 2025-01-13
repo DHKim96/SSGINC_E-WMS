@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 
@@ -53,7 +54,8 @@ public class RegisterController {
      * @return 대시보드 페이지
      */
     @PostMapping("register")
-    public String register(MemberRequest member) {
+    public String register(MemberRequest member,
+                            RedirectAttributes redirectAttributes) {
 
         int res = 0;
 
@@ -62,14 +64,15 @@ public class RegisterController {
 
             if (res == 0){
                 log.error("회원가입 실패");
-                return "redirect:/member/registration";
+                return "redirect:/registration";
             } else {
+                redirectAttributes.addFlashAttribute("alertMsg", "회원가입에 성공했습니다.");
                 return "member/login";
             }
 
         } catch (Exception e) {
             log.error("회원가입 실패 = {}", e.getMessage());
-            return "redirect:/member/registration";
+            return "redirect:/registration";
         }
     }
 }
