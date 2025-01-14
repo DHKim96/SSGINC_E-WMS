@@ -34,9 +34,6 @@ public class DashboardController {
 
         List<IncomeResponseDto> list = dashboardService.selectIncomeListByType(type);
 
-        log.info("type = {}", type);
-        log.info("입고 데이터 - {}", list.size());
-
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "입고 데이터 조회에 성공했습니다.", list));
     }
 
@@ -46,6 +43,22 @@ public class DashboardController {
 
         List<OutgoingResponseDto> list = dashboardService.selectOutgoingListByType(type);
 
+        log.info("{} 출고량 조회 수 = {}", type, list.size());
+
         return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "출고 데이터 조회에 성공했습니다.", list));
     }
+
+
+    @GetMapping("chart/top-outgoing-branches")
+    @ResponseBody
+    public ResponseEntity<ResponseDto<List<OutgoingResponseDto>>> getTopOutgoingBranches(
+            @RequestParam("year") String year,
+            @RequestParam(value = "month", required = false) String month,
+            @RequestParam(value = "day", required = false) String day) {
+
+        List<OutgoingResponseDto> result = dashboardService.selectTopOutgoingBranchesByDate(year, month, day);
+
+        return ResponseEntity.ok(new ResponseDto<>(HttpStatus.OK.value(), "최다 출고 지점 조회 성공", result));
+    }
+
 }

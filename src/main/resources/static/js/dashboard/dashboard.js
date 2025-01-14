@@ -1,65 +1,57 @@
-// ============================================================= 입출고 분석 차트 ===========================================================================
+// ============================================================= 공통 유틸리티 함수 ===========================================================================
 
-let chartInstance = null; // Chart.js 인스턴스를 저장할 변수
+// // 로딩 스피너
+// function showLoadingSpinner() {
+//     const spinner = document.getElementById('loading-spinner');
+//     if (spinner) spinner.style.display = 'block';
+// }
+//
+// function hideLoadingSpinner() {
+//     const spinner = document.getElementById('loading-spinner');
+//     if (spinner) spinner.style.display = 'none';
+// }
 
-// 입출고 분석 차트
-const ctx = document.getElementById('line-chart').getContext('2d');
+// 날짜 옵션 갱신 함수
+function updateDayOptions(year, month) {
+    const daySelect = document.getElementById('day-select');
 
-// 차트 옵션
-const options = {
-    responsive: true,
-    maintainAspectRatio: true,
-    plugins: {
-        legend: {
-            display: false,
-        },
-    },
-    scales: {
-        x: {
-            grid: {
-                display: false,
-            },
-        },
-        y: {
-            grid: {
-                color: 'rgba(0, 0, 0, 0.1)',
-            },
-            ticks: {
-                stepSize: 10,
-            },
-        },
-    },
-};
-
-// 초기 차트 생성 함수
-function initializeChart(data) {
-    if (chartInstance) {
-        chartInstance.destroy(); // 기존 차트 삭제
+    // 연도와 월이 선택되지 않은 경우 초기화
+    if (!year || !month) {
+        daySelect.innerHTML = `<option value="">전체</option>`;
+        return;
     }
-    chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: data,
-        options: options,
-    });
+
+    // 해당 월의 마지막 날짜 계산
+    const daysInMonth = new Date(year, month, 0).getDate();
+    let dayOptions = `<option value="">전체</option>`;
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayValue = day < 10 ? `0${day}` : day; // 01, 02 형식 유지
+        dayOptions += `<option value="${dayValue}">${day}일</option>`;
+    }
+
+    daySelect.innerHTML = dayOptions;
 }
 
-// REST API 요청 함수 (axios 사용)
+// ============================================================= 입출고 분석 차트 ===========================================================================
+
+let lineChartInstance = null;
+
 async function fetchChartData(sort, type) {
     try {
-
-        const response = sort === "income" ? await axios.get(`/dashboard/chart/income/${type}`) : await axios.get(`/dashboard/chart/outgoing/${type}`) ;
+        // showLoadingSpinner();
+        const response = await axios.get(`/dashboard/chart/${sort}/${type}`);
+        // hideLoadingSpinner();
 
         if (response.data.status !== 200) {
             throw new Error(response.data.message || '데이터 요청 실패');
         }
 
-        // 데이터 포맷팅
-        const chartData = {
-            labels: sort === "income" ? response.data.data.map(item => item.incomeDate) : response.data.data.map(item => item.incomeDate),
+        return {
+            labels: response.data.data.map((item) => item.date),
             datasets: [
                 {
-                    label: sort === "income" ? "입고량" : "출고량",
-                    data: sort === "income" ? response.data.data.map(item => parseInt(item.cumulativeSum)) : response.data.data.map(item => parseInt(item.incomeQuantity, 10)),
+                    label: sort === 'income' ? '입고량' : '출고량',
+                    data: response.data.data.map((item) => parseInt(item.cumulativeSum || 0, 10)),
                     borderColor: 'rgba(74, 144, 226, 1)',
                     backgroundColor: 'rgba(74, 144, 226, 0.2)',
                     fill: true,
@@ -68,174 +60,189 @@ async function fetchChartData(sort, type) {
                 },
             ],
         };
-
-        return chartData;
-
     } catch (error) {
+        // hideLoadingSpinner();
         console.error('Error fetching chart data:', error);
-        alert('데이터를 불러오는 중 오류가 발생했습니다.');
+        alert(error.response.data.message || '데이터를 불러오는 중 오류가 발생했습니다.');
         return null;
     }
 }
 
-// 초기 차트 데이터 설정 및 렌더링
+function initializeLineChart(data) {
+    if (lineChartInstance) {
+        lineChartInstance.destroy();
+    }
+    lineChartInstance = new Chart(document.getElementById('line-chart').getContext('2d'), {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { display: false } },
+                y: { grid: { color: 'rgba(0, 0, 0, 0.1)' }, ticks: { stepSize: 10 } },
+            },
+        },
+    });
+}
+
 async function loadInitialChart() {
-    const initialData = await fetchChartData('income', 'monthly');
+    const initialData = await fetchChartData('income', 'daily');
     if (initialData) {
-        initializeChart(initialData);
+        initializeLineChart(initialData);
     }
 }
 
-// Show Select 이벤트 리스너
-document.getElementById('show-select').addEventListener('change', async (event) => {
-    const selectedSort = event.target.value; // 입고량/출고량
-    const selectedType = document.querySelector("#short-by-select").value;
+// ============================================================= 최다 출고 지점 차트 ===========================================================================
 
+let outgoingChartInstance = null;
+
+async function fetchTopOutgoingBranches(year, month, day) {
     try {
-        // 데이터 fetch
-        const chartData = await fetchChartData(selectedSort, selectedType);
-        if (chartData) {
-            initializeChart(chartData); // 차트 갱신
+        // showLoadingSpinner();
+        const response = await axios.get('/dashboard/chart/top-outgoing-branches', {
+            params: { year, month, day },
+        });
+        // hideLoadingSpinner();
+
+        if (response.data.status !== 200) {
+            throw new Error(response.data.message || '데이터 요청 실패');
         }
+
+        return {
+            labels: response.data.data.map((item) => item.branchName),
+            datasets: [
+                {
+                    label: '출고량',
+                    data: response.data.data.map((item) => parseInt(item.outgoingQuantity, 10)),
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                },
+            ],
+        };
     } catch (error) {
-        console.error("Error fetching chart data:", error);
-        alert("데이터를 가져오는 중 문제가 발생했습니다.");
+        // hideLoadingSpinner();
+        console.error('Error fetching outgoing branches data:', error);
+        alert(error.response.data.message || '데이터를 불러오는 중 오류가 발생했습니다.');
+        return null;
     }
-});
+}
+
+function initializeOutgoingChart(data) {
+    if (outgoingChartInstance) {
+        outgoingChartInstance.destroy();
+    }
+    outgoingChartInstance = new Chart(document.getElementById('shipment-bar-chart').getContext('2d'), {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            scales: {
+                x: { grid: { display: false } },
+                y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.1)' } },
+            },
+            plugins: { legend: { display: false } },
+        },
+    });
+}
+
+async function loadInitialOutgoingChart() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // 현재 월
+    const initialData = await fetchTopOutgoingBranches(year, month, null);
+    if (initialData) {
+        initializeOutgoingChart(initialData);
+    }
+}
 
 
-// Short By Select 이벤트 리스너
-document.getElementById('short-by-select').addEventListener('change', async (event) => {
-    const selectedType = event.target.value; // 일자별, 월별, 년도별 선택
-    const selectedSort = document.querySelector("#show-select").value;
-
+// ============================================================= 날씨 ===========================================================================
+async function requestWeather() {
     try {
-        // 서버에서 데이터 요청
-        const chartData = await fetchChartData(selectedSort, selectedType);
-        if (chartData) {
-            initializeChart(chartData); // 차트 업데이트
-        }
-    } catch (error) {
-        console.error("Error fetching chart data:", error);
-        alert("데이터를 가져오는 중 문제가 발생했습니다.");
+        const response = await axios.get('/weather');
+        console.log(response);
+        renderWeatherInfo(response.data.data.response.body.items.item);
+    } catch (err) {
+        console.error(err);
+        alert(error.response.data.message || '날씨 데이터를 불러오는 중 오류가 발생했습니다.');
     }
-});
-
-// 페이지 로드 시 초기 차트 로드
-loadInitialChart();
-
-// ============================================================= 출고 지점 차트 ===========================================================================
-
-// 출고 지정 바 차트
-const ctx2 = document.getElementById('shipment-bar-chart').getContext('2d');
-new Chart(ctx2, {
-    type: 'bar',
-    data: {
-        labels: ['Miami', 'New York', 'Washington', 'California', 'Chicago'],
-        datasets: [{
-            label: '출고 지정',
-            data: [40, 35, 30, 25, 20],
-            backgroundColor: 'rgba(75, 192, 192, 0.7)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1,
-        }]
-    },
-    options: {
-        indexAxis: 'y', // Horizontal bar
-        scales: {
-            x: {
-                beginAtZero: true,
-            },
-        },
-        plugins: {
-            legend: {
-                display: false,
-            },
-        },
-    }
-});
-
-async function requestWeather(){
-
-
-    // T1H : 기온
-    // RN1 : 1시간 강수량
-    // REH : 습도
-    // PTY : 강수형태
-    // VEC : 풍향
-    // WSD : 풍속
-    // UUU : 동서바람성분
-    // VVV : 남북바람성분
-
-    // 이미지 :
-     await axios.get("/weather")
-        .then((res) => {
-            console.log(res);
-            renderWeatherInfo(res.data.data.response.body.items.item);
-        })
-        .catch((err) => {
-            console.log(err);
-            alert(err.data.message);
-        })
 }
 
 function renderWeatherInfo(weatherData) {
-
-    console.log(weatherData);
-
-    const categoryMap = {
-        PTY: "강수형태",
-        T1H: "기온",
-        REH: "습도",
-        RN1: "1시간 강수량",
-    };
-
     const iconMap = {
-        sunnyDay: "/img/dashboard/weather/sunnyDay.png",
-        cloudyDay: "/img/dashboard/weather/cloudyDay.png",
-        grayDay: "/img/dashboard/weather/grayDay.png",
-        grayNight: "/img/dashboard/weather/grayNight.png",
-        overcast: "/img/dashboard/weather/overcast.png",
-        rainy: "/img/dashboard/weather/rainny.png",
-        snow: "/img/dashboard/weather/snow.png",
-        sunnyNight: "/img/dashboard/weather/sunnyNight1.png",
+        sunnyDay: '/img/dashboard/weather/sunnyDay.png',
+        cloudyDay: '/img/dashboard/weather/cloudyDay.png',
+        grayDay: '/img/dashboard/weather/grayDay.png',
+        grayNight: '/img/dashboard/weather/grayNight.png',
+        overcast: '/img/dashboard/weather/overcast.png',
+        rainy: '/img/dashboard/weather/rainny.png',
+        snow: '/img/dashboard/weather/snow.png',
+        sunnyNight: '/img/dashboard/weather/sunnyNight1.png',
     };
 
-    let weatherIcon = "";
-    let weatherDescription = "";
-    const rainType = weatherData.find((item) => item.category === "PTY").obsrValue || "0";
-    const temperature = weatherData.find((item) => item.category === "T1H").obsrValue || "0";
-    const humidity = weatherData.find((item) => item.category === "REH").obsrValue || "0";
+    let weatherIcon = '';
+    let weatherDescription = '';
+    const rainType = weatherData.find(item => item.category === 'PTY')?.obsrValue || '0';
+    const temperature = weatherData.find(item => item.category === 'T1H')?.obsrValue || '0';
+    const humidity = weatherData.find(item => item.category === 'REH')?.obsrValue || '0';
 
-    // 날씨 조건에 따라 아이콘 및 설명 설정
-    if (rainType === "0") {
-        if (temperature > 0) {
-            weatherIcon = iconMap.sunnyDay;
-            weatherDescription = "맑음";
-        } else if (temperature <= 0) {
-            weatherIcon = iconMap.snow;
-            weatherDescription = "눈";
-        }
-    } else if (rainType === "1") {
-        weatherIcon = iconMap.rainy;
-        weatherDescription = "비";
-    } else if (rainType === "2" || rainType === "3") {
-        weatherIcon = iconMap.snow;
-        weatherDescription = "눈";
-    } else {
-        weatherIcon = iconMap.overcast;
-        weatherDescription = "흐림";
-    }
+    const weatherConditions = {
+        "0": { icon: iconMap.sunnyDay, description: "맑음" },
+        "1": { icon: iconMap.rainy, description: "비" },
+        "2": { icon: iconMap.snow, description: "눈" },
+        "3": { icon: iconMap.snow, description: "눈" },
+    };
 
-    // HTML 요소 업데이트
-    document.querySelector(".weather-card img").src = weatherIcon;
-    document.querySelector("#degree").innerText = temperature;
-    document.querySelector(".weather-card p:nth-of-type(2)").innerText = weatherDescription;
-    document.querySelector(
-        ".weather-card .flex.flex-col p:nth-of-type(2) span:last-of-type"
-    ).innerText = humidity;
+    const weather = weatherConditions[rainType] || { icon: iconMap.overcast, description: "흐림" };
+    weatherIcon = weather.icon;
+    weatherDescription = weather.description;
+
+    document.querySelector('.weather-card img').src = weatherIcon;
+    document.querySelector('#degree').innerText = Math.round(parseInt(temperature));
+    document.querySelector('#description').innerText = weatherDescription;
+    document.querySelector('#humidity').innerText = humidity;
 }
+// ============================================================= 초기화 ===========================================================================
 
-document.addEventListener(('DOMContentLoaded'), () => {
-    requestWeather();
-})
+document.addEventListener('DOMContentLoaded', async () => {
+    // 차트 초기화
+    await loadInitialChart();
+    await loadInitialOutgoingChart();
+    await requestWeather();
+
+    // 날짜 선택 이벤트 리스너
+    document.getElementById('year-select').addEventListener('change', () => {
+        const year = document.getElementById('year-select').value;
+        const month = document.getElementById('month-select').value;
+        updateDayOptions(year, month);
+    });
+
+    document.getElementById('month-select').addEventListener('change', () => {
+        const year = document.getElementById('year-select').value;
+        const month = document.getElementById('month-select').value;
+        updateDayOptions(year, month);
+    });
+
+    // 최다 출고 지점 차트 조회 버튼 이벤트 리스너
+    document.getElementById('fetch-branches-btn').addEventListener('click', async () => {
+        const year = document.getElementById('year-select').value;
+        const month = document.getElementById('month-select').value || null;
+        const day = document.getElementById('day-select').value || null;
+
+        const chartData = await fetchTopOutgoingBranches(year, month, day);
+        if (chartData) {
+            initializeOutgoingChart(chartData);
+        }
+    });
+
+    // 입출고 분석 차트 갱신 이벤트 리스너
+    document.getElementById('show-select').addEventListener('change', async () => {
+        await loadInitialChart();
+    });
+    document.getElementById('short-by-select').addEventListener('change', async () => {
+        await loadInitialChart();
+    });
+});

@@ -84,8 +84,6 @@
 
         <!-- Charts and Sections -->
         <div class="dashboard-top">
-
-
             <!-- 입출고 분석 차트 -->
             <div class="chart-container">
                 <div class="chart-contents flex flex-col">
@@ -151,18 +149,18 @@
                     </li>
                 </ul>
             </div>
-
             <!-- Weather Information -->
             <div class="weather-card">
-                <p style="font-size: 15px;">오전</p>
+                <p style="font-size: 15px;">오후</p>
                 <div class="temp flex flex-row align-center">
                     <img src="/img/dashboard/weather/sunnyDay.png" alt="">
-                    <span id="degree">0</span>°
+                    <span id="degree"></span>°
                 </div>
                 <div class="flex flex-col align-center" style="gap: 15px;">
-                    <p style="font-size: 20px;">맑음</p>
-                    <div style="font-size: 14px;"><span style="color: #77777A;">강수확률</span> <span
-                            style="color: #000;">1</span>%
+                    <p id="description" style="font-size: 20px;"></p>
+                    <div style="font-size: 14px;">
+                        <span style="color: #77777A;">강수확률</span>
+                        <span id="humidity" style="color: #000;"></span>%
                     </div>
                     <div class="buttons">
                         <div>
@@ -176,10 +174,9 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
-        <!-- 출고 배송 현황과 출고 지정 -->
+        <!-- 출고 배송 현황과 출고 지점 -->
         <div class="dashboard-bottom flex flex-row align-center">
 
             <!-- 출고 배송 현황 표 -->
@@ -190,23 +187,14 @@
                     <tr>
                         <td>1234</td>
                         <td>05-12-2021</td>
-                        <td style="width: 30%;">Donec</td>
+                        <td>Donec</td>
                         <td><span class="status shipping">Shipping</span></td>
-                        <td style="width: 20%;">$954</td>
+                        <td>$954</td>
                         <td>
-                            <svg width="15" height="16" viewBox="0 0 15 16" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <g clip-path="url(#clip0_125_2826)">
-                                    <path d="M4.80322 12.6826C4.80322 12.6826 4.8527 12.6331 4.95166 12.5342C5.05062 12.4352 5.1001 12.2503 5.1001 11.9795C5.1001 11.7087 5.00114 11.4743 4.80322 11.2764C4.60531 11.0785 4.37093 10.9795 4.1001 10.9795C3.82926 10.9795 3.59489 11.0785 3.39697 11.2764C3.19906 11.4743 3.1001 11.7087 3.1001 11.9795C3.1001 12.2503 3.19906 12.4847 3.39697 12.6826C3.59489 12.8805 3.82926 12.9795 4.1001 12.9795C4.37093 12.9795 4.60531 12.8805 4.80322 12.6826ZM2.1001 7.97949H5.1001V5.97949H3.86572C3.79801 5.97949 3.74072 6.00293 3.69385 6.0498L2.17041 7.57324C2.12354 7.62012 2.1001 7.67741 2.1001 7.74512V7.97949ZM11.8032 12.6826C11.8032 12.6826 11.8527 12.6331 11.9517 12.5342C12.0506 12.4352 12.1001 12.2503 12.1001 11.9795C12.1001 11.7087 12.0011 11.4743 11.8032 11.2764C11.6053 11.0785 11.3709 10.9795 11.1001 10.9795C10.8293 10.9795 10.5949 11.0785 10.397 11.2764C10.1991 11.4743 10.1001 11.7087 10.1001 11.9795C10.1001 12.2503 10.1991 12.4847 10.397 12.6826C10.5949 12.8805 10.8293 12.9795 11.1001 12.9795C11.3709 12.9795 11.6053 12.8805 11.8032 12.6826ZM14.1001 3.47949V11.4795C14.1001 11.5576 14.0897 11.6266 14.0688 11.6865C14.048 11.7464 14.0129 11.7946 13.9634 11.8311C13.9139 11.8675 13.8709 11.8975 13.8345 11.9209C13.798 11.9443 13.7368 11.96 13.6509 11.9678C13.5649 11.9756 13.5063 11.9808 13.4751 11.9834C13.4438 11.986 13.3774 11.986 13.2759 11.9834C13.1743 11.9808 13.1157 11.9795 13.1001 11.9795C13.1001 12.5316 12.9048 13.0029 12.5142 13.3936C12.1235 13.7842 11.6522 13.9795 11.1001 13.9795C10.548 13.9795 10.0767 13.7842 9.68604 13.3936C9.29541 13.0029 9.1001 12.5316 9.1001 11.9795H6.1001C6.1001 12.5316 5.90479 13.0029 5.51416 13.3936C5.12354 13.7842 4.65218 13.9795 4.1001 13.9795C3.54801 13.9795 3.07666 13.7842 2.68604 13.3936C2.29541 13.0029 2.1001 12.5316 2.1001 11.9795H1.6001C1.58447 11.9795 1.52588 11.9808 1.42432 11.9834C1.32275 11.986 1.25635 11.986 1.2251 11.9834C1.19385 11.9808 1.13525 11.9756 1.04932 11.9678C0.963379 11.96 0.902181 11.9443 0.865723 11.9209C0.829264 11.8975 0.786296 11.8675 0.736816 11.8311C0.687337 11.7946 0.652181 11.7464 0.631348 11.6865C0.610514 11.6266 0.600098 11.5576 0.600098 11.4795C0.600098 11.3441 0.649577 11.2269 0.748535 11.1279C0.847493 11.029 0.964681 10.9795 1.1001 10.9795V8.47949C1.1001 8.43783 1.0988 8.34668 1.09619 8.20605C1.09359 8.06543 1.09359 7.96647 1.09619 7.90918C1.0988 7.85189 1.10531 7.76204 1.11572 7.63965C1.12614 7.51725 1.14307 7.4209 1.1665 7.35059C1.18994 7.28027 1.2264 7.20085 1.27588 7.1123C1.32536 7.02376 1.38395 6.94564 1.45166 6.87793L2.99854 5.33105C3.09749 5.2321 3.229 5.14876 3.39307 5.08105C3.55713 5.01335 3.70947 4.97949 3.8501 4.97949H5.1001V3.47949C5.1001 3.34408 5.14958 3.22689 5.24854 3.12793C5.34749 3.02897 5.46468 2.97949 5.6001 2.97949H13.6001C13.7355 2.97949 13.8527 3.02897 13.9517 3.12793C14.0506 3.22689 14.1001 3.34408 14.1001 3.47949Z"
-                                          fill="#212529"/>
-                                </g>
-                                <defs>
-                                    <clipPath id="clip0_125_2826">
-                                        <rect width="14" height="14.4" fill="white"
-                                              transform="matrix(1 0 0 -1 0.100098 15.1797)"/>
-                                    </clipPath>
-                                </defs>
-                            </svg>
+                            <div class="bar bar-shipping">
+                                <div style="width: 50%;"></div>
+                            </div>
+                            <span>3H</span>
                         </td>
                     </tr>
                     <tr>
@@ -224,15 +212,44 @@
 
             <!-- 출고 지정 바 차트 -->
             <div class="chart-container" style="width: 30%">
-                <h3>최대 출고 지정</h3>
+                <h3>최다 출고 지점</h3>
                 <canvas id="shipment-bar-chart"></canvas>
+                <div class="controls flex flex-row">
+                    <div>
+                        <label for="short-by-select">ShortBy</label>
+                        <select id="year-select">
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                        </select>
+                        <select id="month-select">
+                            <option value="">월 전체</option>
+                            <option value="01">1월</option>
+                            <option value="02">2월</option>
+                            <option value="03">3월</option>
+                            <option value="03">4월</option>
+                            <option value="03">5월</option>
+                            <option value="03">6월</option>
+                            <option value="03">7월</option>
+                            <option value="03">8월</option>
+                            <option value="03">9월</option>
+                            <option value="03">10월</option>
+                            <option value="03">11월</option>
+                            <option value="03">12월</option>
+                        </select>
+                        <select id="day-select">
+                            <option value="">일자 전체</option>
+                        </select>
+                        <button id="fetch-branches-btn">조회</button>
+                    </div>
+                </div>
             </div>
 
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/js/dashboard/dashboard.js"></script>
+    <script src="/js/dashboard/dashboard.js" defer></script>
 
 </div>
 </body>

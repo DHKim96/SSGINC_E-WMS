@@ -124,7 +124,7 @@
         /* 섹션 사용률 */
         
         .sections-container {
-            width: 20%;
+            width: 25%;
             background: #fff;
             padding: 20px;
             border-radius: 8px;
@@ -162,7 +162,7 @@
         }
 
         .bar {
-            width: 60%;
+            width: 40%;
             background: #e0e0e0;
             height: 8px;
             position: relative;
@@ -180,7 +180,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: fit-content;
+            width: 15%;
             background: #fff;
             padding: 20px;
             border: solid 1px #DEE2E6;
@@ -216,7 +216,7 @@
 
 
         .dashboard-bottom {
-            justify-content: space-around;
+            justify-content: space-between;
         }
         
         /* 테이블 스타일 */
@@ -231,14 +231,14 @@
         }
         
         table {
-            width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
         }
         
         table td {
             border-top: 1px solid #DEE2E6;
             padding: 10px;
-            text-align: center;
+            text-align: justify;
         }
         
         .status {
@@ -248,12 +248,38 @@
             border-radius: 10px;
         }
 
+        /* 번호 */
         tr td:nth-child(1) {
             color: #2F579A;
+            width: 70px;
         }
-
+        /* 일자 */
         tr td:nth-child(2) {
             color: #6C757D;
+            width: 100px;
+        }
+        /* 출고지점 */
+        tr td:nth-child(3) {
+            width: 150px;
+        }
+        /* 상태 */
+        tr td:nth-child(4) {
+            width: 100px;
+        }
+        /* 출고액 */
+        tr td:nth-child(5) {
+            width: 80px;
+        }
+        /* 예상 시간 */
+        tr td:nth-child(6) {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 150px;
+        }
+
+        .bar-shipping {
+            width: 50%;
         }
 
 

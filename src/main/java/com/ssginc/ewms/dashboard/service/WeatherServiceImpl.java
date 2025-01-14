@@ -29,7 +29,7 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Override
     public JsonNode getWeatherInfo() {
-        LocalDateTime dateTime = LocalDateTime.now();
+        LocalDateTime dateTime = LocalDateTime.now().minusHours(1);
 
         String uriString = UriComponentsBuilder.fromHttpUrl(END_POINT)
                 .queryParam("pageNo", 1)

@@ -23,4 +23,14 @@ public interface DashboardService {
      * @return 기간별 출고량
      */
     List<OutgoingResponseDto> selectOutgoingListByType(String type);
+
+
+    /**
+     * 선택한 기간의 최다 출고 지점 5개를 조회합니다.
+     * @param year 연도
+     * @param month 월
+     * @param day 일
+     * @return 최다 출고 지점 및 출고량 담은 dto
+     */
+    List<OutgoingResponseDto> selectTopOutgoingBranchesByDate(String year, String month, String day);
 }
