@@ -19,8 +19,8 @@ public class InventoryStateVO {
     private String productName;
     private String categoryName;
     private String supplierName;
-    private int incomePrice;
-    private int outgoingPrice;
+    private int incomeUnitPrice;
+    private int outgoingUnitPrice;
     private int inventoryQuantity;
     private LocalDate expirationDate;
 }
