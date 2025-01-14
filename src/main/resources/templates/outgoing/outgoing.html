@@ -58,6 +58,7 @@
                 <th>
                     <input type="checkbox" id="selectAll">
                 </th>
+                <th>주문번호</th>
                 <th>지점명</th>
                 <th>상품명</th>
                 <th>수량</th>
@@ -98,7 +99,7 @@
         document.getElementById('start-date').value = '';
         document.getElementById('end-date').value = '';
         document.getElementById('product-name').value = '';
-        document.getElementById('status').value = '';
+        document.getElementById('status').value = '0';
 
         // 초기 상태로 데이터 로드
         searchAndUpdateTable();
@@ -154,6 +155,7 @@
             const row = `
         <tr class="text-center" data-row-id="${item.outgoingId}"> <!-- 고유 ID 저장 -->
             <td><input type="checkbox" class="rowCheckbox" ${isChecked} ${isDisabled}></td>
+            <td>OG-${item.outgoingId}</td>
             <td>${item.branchName}</td>
             <td>${item.productName}</td>
             <td>${formattedQuantity}</td>
