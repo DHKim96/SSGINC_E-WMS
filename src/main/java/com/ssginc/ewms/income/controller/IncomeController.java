@@ -1,8 +1,15 @@
 package com.ssginc.ewms.income.controller;
 
+import com.ssginc.ewms.handler.GlobalExceptionHandler;
 import com.ssginc.ewms.income.service.IncomeService;
+import com.ssginc.ewms.income.vo.IncomeFormVO;
 import com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO;
 import com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO;
+import com.ssginc.ewms.poi.PoiService;
+import com.ssginc.ewms.shipper.service.ShipperService;
+import com.ssginc.ewms.shipper.vo.ShipperVO;
+import com.ssginc.ewms.smtp.service.SmtpService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,8 +18,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 @Slf4j
@@ -21,6 +28,38 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class IncomeController {
     private final IncomeService incomeService;
+    private final ShipperService shipperService;
+    private final PoiService poiService;
+    private final SmtpService smtpService;
+
+    @GetMapping("register/{inventoryId}")
+    public String displayIncomeInfo(@PathVariable int inventoryId, Model model) {
+        IncomeFormVO incomeFormVO = incomeService.getIncomeFormByProductId(inventoryId);
+        List<ShipperVO> shipperVOList = shipperService.findShipperList();
+
+        log.info(incomeFormVO.toString());
+        log.info(shipperVOList.toString());
+
+        model.addAttribute("incomeForm", incomeFormVO);
+        model.addAttribute("shippers", shipperVOList);
+        return "income/register";
+    }
+
+    @PostMapping("register")
+    public String registerIncome(IncomeFormVO incomeRequest) {
+        int result = incomeService.insertIncomeRequest(incomeRequest);
+
+        if (result == 1) {
+            try {
+                poiService.makeIncomeFile(incomeRequest);
+                smtpService.sendRequest(0, incomeRequest.getSupplierEmail(), "attach/income.docx", "income.docx");
+            } catch (IOException | MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return "redirect:/inventory/inventory/1";
+    }
 
     @GetMapping("incomemanagement")
     public String Incomemanagement(Model model) {
@@ -50,7 +89,6 @@ public class IncomeController {
         }
 
     }
-
 
     @GetMapping("/details/{incomeId}")
     @ResponseBody
@@ -92,11 +130,6 @@ public class IncomeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
-
-
-
-
-
 
     @GetMapping("inspectionmanagement")
     public String Inspectionmanagement(Model model) {
@@ -151,10 +184,6 @@ public class IncomeController {
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
     }
-
-
-
-
 
     @GetMapping("accumulationmanagement")
     public String Accumulationmanagement(Model model) {
@@ -213,7 +242,6 @@ public class IncomeController {
         }
     }
 
-
     @PostMapping("/InspectionCapacity")
     @ResponseBody
     public ResponseEntity<List<IncomeProductSectorWarehouseInventoryVO>> getInspectionCapacity(
@@ -236,7 +264,6 @@ public class IncomeController {
        }
     }
 
-
     @PostMapping("/updateStatus")
     @ResponseBody
     public ResponseEntity<Boolean> updateIncomeStatus(@RequestBody Map<String, Integer> request) {
@@ -251,13 +278,4 @@ public class IncomeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
-
-
-
-
-
-
-
-
-
 }
