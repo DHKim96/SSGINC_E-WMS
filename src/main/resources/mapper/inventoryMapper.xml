@@ -71,6 +71,13 @@
         </if>
     </select>
 
+    <select id="getInventoryCapacityByInventoryId" resultType="int">
+        SELECT p.unit_capacity * i.inventory_quantity
+        FROM product p
+        INNER JOIN inventory i ON i.product_id = p.product_id
+        WHERE i.inventory_id = #{inventoryId}
+    </select>
+
     <!-- 선택된 재고의 실사 재고량을 수정 -->
     <update id="updateRealInventory"
             parameterType="int">
@@ -84,4 +91,20 @@
         UPDATE inventory SET inventory_quantity = #{realQuantity}
         WHERE inventory_id = #{inventoryId}
     </update>
+
+    <update id="updateSector">
+        UPDATE inventory SET sector_id = #{sectorId}
+        WHERE inventory_id = #{inventoryId}
+    </update>
+
+    <delete id="deleteInventories"
+            parameterType="list">
+        DELETE FROM inventory
+        WHERE inventory_id IN
+        <foreach item="inventoryId"
+                 collection="list"
+                 open="(" separator="," close=")">
+            #{inventoryId}
+        </foreach>
+    </delete>
 </mapper>

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssginc.ewms.inventory.service.InventoryService;
 import com.ssginc.ewms.inventory.vo.InventoryAdjustVO;
 import com.ssginc.ewms.inventory.vo.InventoryStateVO;
+import com.ssginc.ewms.member.mapper.MemberMapper;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ import java.util.List;
 public class InventoryController {
 
     private final InventoryService inventoryService;
+    private final MemberMapper memberMapper;
 
     /**
      * 재고현황의 정보를
@@ -119,6 +122,39 @@ public class InventoryController {
         if (result == idList.size()) {
             return result;
         } else {
+            return 0;
+        }
+    }
+
+    @PutMapping("updateSector")
+    @ResponseBody
+    public int updateSector(@RequestBody JsonNode node) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Integer> idList = objectMapper.
+                treeToValue(node.path("idList"), List.class);
+        List<String> sectorList = objectMapper.
+                treeToValue(node.path("sectorList"), List.class);
+
+        int result = inventoryService.updateSector(idList, sectorList);
+        if (result > 0) {
+            return result;
+        } else {
+            return 0;
+        }
+    }
+
+    @DeleteMapping("deleteInventory")
+    @ResponseBody
+    public int deleteInventories(@RequestBody JsonNode node) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Integer> idList = objectMapper.
+                treeToValue(node.path("idList"), List.class);
+
+        int result = inventoryService.deleteInventories(idList);
+        if (result == idList.size()) {
+            return result;
+        }
+        else {
             return 0;
         }
     }

@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * 재고현황 데이터를 보여주기 위해 정의한 VO 클래스
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -60,4 +60,21 @@ public interface InventoryMapper {
      * @return              update 수행이 된 row 수
      */
     int updateQuantity(int inventoryId, int realQuantity);
+
+    /**
+     * 재고의 sector 변경
+     * @param inventoryId   변경을 위한 재고아이디 (대상)
+     * @param sectorId      재고별 변경되어야 할 sector 아이디 값
+     * @return              update 수행이 된 row 수
+     */
+    int updateSector(int inventoryId, int sectorId);
+
+    int deleteInventories(List<Integer> inventoryIdList);
+
+    /**
+     * 재고별 용량을 구하는 함수
+     * @param inventoryId   변경을 위한 재고아이디 (대상)
+     * @return              현재 재고의 용량
+     */
+    int getInventoryCapacityByInventoryId(int inventoryId);
 }

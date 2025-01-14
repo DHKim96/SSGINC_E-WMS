@@ -48,6 +48,9 @@ public enum ErrorCode {
     // 데이터 값 처리 에러코드
     NULL_POINT_ERROR(404, "E209", "Null Pointer에 접근하였습니다."),
     NOT_VALID_ERROR(404, "E210", "유효하지 않은 요청값입니다."),
+    DUPLICATE_SECTOR_ERROR(500, "E211", "중복된 Sector가 입력되었습니다."),
+    SECTOR_NOT_EXIST(404, "E212", "만족하는 sector를 찾을수 없습니다."),
+    EXCEED_CAPACITY_ERROR(500, "E213", "허용 용량을 초과한 재고의 이동입니다."),
 
     // 일반 에러
     UNKNOWN_ERROR(400,"COMMON_001", "알 수 없는 오류가 발생했습니다."),
