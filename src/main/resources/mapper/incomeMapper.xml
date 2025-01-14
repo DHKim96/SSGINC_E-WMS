@@ -3,6 +3,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.ewms.income.mapper.IncomeMapper">
 
+    <insert id="insertIncomeRequest">
+        INSERT INTO income(income_expected_date, income_type, income_status,
+                           income_expected_quantity, shipper_id, product_id, sector_id)
+        VALUES (#{incomeExpectedDate}, #{incomeType}, #{incomeStatus},
+                #{incomeExpectedQuantity}, #{shipperId}, #{productId}, #{sectorId})
+    </insert>
+
     <update id="updateCancleStatus" parameterType="list">
         UPDATE income
         SET income_status = 4
@@ -287,5 +294,12 @@
         FROM warehouse
     </select>
 
-
+    <select id="getIncomeFormByInventoryId" resultType="incomeFormVO">
+        SELECT p.product_name, s.sector_name, su.supplier_name, su.supplier_email
+        FROM product p
+                 INNER JOIN supplier su ON p.supplier_id = su.supplier_id
+                 INNER JOIN inventory i ON p.product_id = i.product_id
+                 INNER JOIN sector s ON s.sector_id = i.sector_id
+        WHERE i.inventory_id = #{inventoryId}
+    </select>
 </mapper>

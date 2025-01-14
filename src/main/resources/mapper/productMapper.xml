@@ -12,4 +12,10 @@
         INNER JOIN inventory i ON p.product_id = i.product_id
         WHERE i.inventory_id = #{inventoryId}
     </select>
+
+    <select id="getProductIdByName"
+            parameterType="string"
+            resultType="int">
+        SELECT product_id FROM product WHERE product_name = #{productName}
+    </select>
 </mapper>

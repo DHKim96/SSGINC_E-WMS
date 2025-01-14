@@ -26,4 +26,6 @@ public interface SectorMapper {
      * @return           현재 sector에 저장된 총 적재용량
      */
     Integer getStoreCapacityBySectorId(int sectorId);
+
+    SectorVO findSectorByName(String sectorName);
 }

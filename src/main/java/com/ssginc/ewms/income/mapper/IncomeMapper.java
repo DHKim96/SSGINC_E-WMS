@@ -1,5 +1,7 @@
 package com.ssginc.ewms.income.mapper;
 
+import com.ssginc.ewms.income.vo.IncomeFormVO;
+import com.ssginc.ewms.income.vo.IncomeRequestVO;
 import org.apache.ibatis.annotations.Mapper;
 import com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO;
 import com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO;
@@ -46,6 +48,9 @@ public interface IncomeMapper {
     int updateIncomeStatusComplete(Integer productId);//kjo-19
 
 
+    IncomeFormVO getIncomeFormByInventoryId(int inventoryId);
+
+    int insertIncomeRequest(IncomeRequestVO incomeRequestVO);
 }
 
 

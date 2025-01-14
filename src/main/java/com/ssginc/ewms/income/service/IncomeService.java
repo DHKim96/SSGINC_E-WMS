@@ -1,11 +1,19 @@
 package com.ssginc.ewms.income.service;
 
 import com.ssginc.ewms.income.mapper.IncomeMapper;
+import com.ssginc.ewms.income.vo.IncomeFormVO;
 import com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO;
+import com.ssginc.ewms.income.vo.IncomeRequestVO;
 import com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO;
+import com.ssginc.ewms.product.mapper.ProductMapper;
+import com.ssginc.ewms.sector.mapper.SectorMapper;
+import com.ssginc.ewms.sector.vo.SectorVO;
+import com.ssginc.ewms.shipper.mapper.ShipperMapper;
+import com.ssginc.ewms.shipper.vo.ShipperVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -22,7 +30,11 @@ public class IncomeService {
             default: return "알 수 없음";
         }
     }
+
     private final IncomeMapper incomeMapper;
+    private final ProductMapper productMapper;
+    private final ShipperMapper shipperMapper;
+    private final SectorMapper sectorMapper;
 
 
     public List<IncomeShipperProductSuppierVO> fourFilterSelect(IncomeShipperProductSuppierVO incomeShipperProductSuppierVO){
@@ -106,5 +118,39 @@ public class IncomeService {
 
     public List<Integer> selectWarehouseId() {
         return incomeMapper.selectWarehouseId();
+    }
+
+    public IncomeFormVO getIncomeFormByProductId(int inventoryId) {
+        IncomeFormVO incomeFormVO = incomeMapper.getIncomeFormByInventoryId(inventoryId);
+        return incomeFormVO;
+    }
+
+    public int insertIncomeRequest(IncomeFormVO incomeRequest) {
+        IncomeRequestVO incomeRequestVO = new IncomeRequestVO();
+
+        int productId = productMapper.getProductIdByName(incomeRequest.getProductName());
+        ShipperVO shipperVO = shipperMapper.getShipperByName(incomeRequest.getShipperName());
+        SectorVO sectorVO = sectorMapper.findSectorByName(incomeRequest.getSectorName());
+
+        if (shipperVO == null || sectorVO == null) {
+            throw new NullPointerException();
+        }
+
+        incomeRequestVO.setProductId(productId);
+        incomeRequestVO.setShipperId(shipperVO.getShipperId());
+
+        if (incomeRequest.getIncomeType().equals("normalIncome")) {
+            incomeRequestVO.setIncomeType(0);
+            incomeRequestVO.setIncomeStatus(0);
+
+        } else if (incomeRequest.getIncomeType().equals("emergencyIncome")) {
+            incomeRequestVO.setIncomeType(1);
+            incomeRequestVO.setIncomeStatus(1);
+        }
+        incomeRequestVO.setIncomeExpectedQuantity(incomeRequest.getIncomeQuantity());
+        incomeRequestVO.setIncomeExpectedDate(LocalDate.parse(incomeRequest.getIncomeExpectedDate()));
+        incomeRequestVO.setSectorId(sectorVO.getSectorId());
+
+        return incomeMapper.insertIncomeRequest(incomeRequestVO);
     }
 }
