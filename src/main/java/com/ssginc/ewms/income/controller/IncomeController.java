@@ -1,8 +1,15 @@
 package com.ssginc.ewms.income.controller;
 
+import com.ssginc.ewms.handler.GlobalExceptionHandler;
 import com.ssginc.ewms.income.service.IncomeService;
+import com.ssginc.ewms.income.vo.IncomeFormVO;
 import com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO;
 import com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO;
+import com.ssginc.ewms.poi.PoiService;
+import com.ssginc.ewms.shipper.service.ShipperService;
+import com.ssginc.ewms.shipper.vo.ShipperVO;
+import com.ssginc.ewms.smtp.service.SmtpService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,8 +18,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 @Slf4j
@@ -21,6 +28,38 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class IncomeController {
     private final IncomeService incomeService;
+    private final ShipperService shipperService;
+    private final PoiService poiService;
+    private final SmtpService smtpService;
+
+    @GetMapping("register/{inventoryId}")
+    public String displayIncomeInfo(@PathVariable int inventoryId, Model model) {
+        IncomeFormVO incomeFormVO = incomeService.getIncomeFormByProductId(inventoryId);
+        List<ShipperVO> shipperVOList = shipperService.findShipperList();
+
+        log.info(incomeFormVO.toString());
+        log.info(shipperVOList.toString());
+
+        model.addAttribute("incomeForm", incomeFormVO);
+        model.addAttribute("shippers", shipperVOList);
+        return "income/register";
+    }
+
+    @PostMapping("register")
+    public String registerIncome(IncomeFormVO incomeRequest) {
+        int result = incomeService.insertIncomeRequest(incomeRequest);
+
+        if (result == 1) {
+            try {
+                poiService.makeIncomeFile(incomeRequest);
+                smtpService.sendRequest(0, incomeRequest.getSupplierEmail(), "attach/income.docx", "income.docx");
+            } catch (IOException | MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return "redirect:/inventory/inventory/1";
+    }
 
     @GetMapping("incomemanagement")
     public String Incomemanagement(Model model) {
@@ -50,7 +89,6 @@ public class IncomeController {
         }
 
     }
-
 
     @GetMapping("/details/{incomeId}")
     @ResponseBody
@@ -92,11 +130,6 @@ public class IncomeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
-
-
-
-
-
 
     @GetMapping("inspectionmanagement")
     public String Inspectionmanagement(Model model) {
@@ -152,10 +185,6 @@ public class IncomeController {
         }
     }
 
-
-
-
-
     @GetMapping("accumulationmanagement")
     public String Accumulationmanagement(Model model) {
         System.out.println("=========================================적치관리 화면 요청 Kjo-13시작");
@@ -196,16 +225,19 @@ public class IncomeController {
 
     @PostMapping("/sectorCapacity")
     @ResponseBody
-    public ResponseEntity<List<IncomeProductSectorWarehouseInventoryVO>> getSectorCapacity(@RequestBody Map<String, Integer> request) {
+    public ResponseEntity<List<IncomeProductSectorWarehouseInventoryVO>> getSectorCapacity(
+            @RequestBody Map<String, Object> request) {
         try {
-            System.out.println("==========================================Kjo-16시작");
-            int sectorId = request.get("sectorId");
-            System.out.println("내가 가져온 창고에 해당하는 섹터 아이디==========="+sectorId);
+            // 체크박스/드롭다운 등에서 온 warehouseId, sectorId를 가져온다고 가정
+            log.info("kjo-16시작");
+            int sectorId = (int) request.get("sectorId");
+            log.info("내가받아온 섹터아이디{}",sectorId);
             List<IncomeProductSectorWarehouseInventoryVO> capacity = incomeService.getSectorAvailableCapacity(sectorId);
-            log.info("적재 가능 용량 = {}",capacity);
+            log.info("내가받아온 용량계산{}",capacity);
+            log.info("kjo-16성공");
             return ResponseEntity.ok(capacity);
         } catch (Exception e) {
-            log.error("적재중 에러 발생={}",e.getMessage());
+            log.error("적재가능용량 조회 중 에러 발생: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -232,7 +264,6 @@ public class IncomeController {
        }
     }
 
-
     @PostMapping("/updateStatus")
     @ResponseBody
     public ResponseEntity<Boolean> updateIncomeStatus(@RequestBody Map<String, Integer> request) {
@@ -247,13 +278,4 @@ public class IncomeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
         }
     }
-
-
-
-
-
-
-
-
-
 }

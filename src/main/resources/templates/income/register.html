@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <link href="/css/income/register.css" rel="stylesheet"/>
+</head>
+<body>
+<div layout:fragment="content" class="flex" style="justify-content: center; align-items: center; padding-top: 60px;">
+    <div class="register-container">
+        <div>
+            <h1 class="title">입고 요청</h1>
+            <form action="/income/register" method="post" id="register-form">
+                <div id="register-product-name" class="form-group flex fle x-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">상품명</label>
+                        <input type="text" id="productName" name="productName" th:value="${incomeForm.productName}" readonly>
+                    </div>
+                </div>
+
+                <div id="register-sector-name" class="form-group flex flex-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">적치 공간</label>
+                        <input type="text" id="sectorName" name="sectorName" th:value="${incomeForm.sectorName}" readonly>
+                    </div>
+                </div>
+
+                <div id="register-supplier-name" class="form-group flex flex-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">공급사 이름</label>
+                        <input type="text" id="supplierName" name="supplierName" th:value="${incomeForm.supplierName}" readonly>
+                    </div>
+                </div>
+
+                <div id="register-supplier-email" class="form-group flex flex-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">공급사 이메일</label>
+                        <input type="text" id="supplierEmail" name="supplierEmail" th:value="${incomeForm.supplierEmail}" readonly>
+                    </div>
+                </div>
+
+                <div id="register-shipper-name" class="form-group flex flex-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">화주사</label>
+                        <select id="shipperName" name="shipperName"
+                                class="form-select form-select-lg mb-3"
+                                aria-label="size 2 select example" required>
+                            <option id="none" selected></option>
+                            <option th:each="shipper: ${shippers}">
+                                [[${shipper.shipperName}]]
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="register-income-type" class="form-group flex flex-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">입고유형</label>
+                        <select id="incomeType" name="incomeType" class="form-select form-select-lg mb-3" aria-label="size 2 select example" required>
+                            <option selected></option>
+                            <option value="normalIncome">일반 입고</option>
+                            <option value="emergencyIncome">긴급 입고</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="register-income-quantity" class="form-group flex flex-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">입고 수량</label>
+                        <input type="text" id="incomeQuantity" name="incomeQuantity" placeholder="입고 수량을 입력해주세요(ex: 100, 200)" required>
+                    </div>
+                </div>
+
+                <div id="register-input-expected-income-date" class="form-group flex flex-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">입고예정일</label>
+                        <input type="date" id="incomeExpectedDate" name="incomeExpectedDate" th:min="${nowDate}" max="2025-12-31" required>
+                    </div>
+                </div>
+                <button type="button" id="registration-form-btn" onclick="registerIncome()" class="submit-btn">입고 등록하기</button>
+            </form>
+        </div>
+    </div>
+    <script src="/js/income/register.js"></script>
+</div>
+</body>
+</html>

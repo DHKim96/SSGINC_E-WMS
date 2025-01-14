@@ -78,3 +78,35 @@ function updateTable(data) {
         tbody.insertAdjacentHTML('beforeend', row);
     });
 }
+
+function registerIncome() {
+    if (!checked) {
+        alert("입고 요청할 물품이 없습니다.");
+        return;
+    }
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+    let inventoryId;
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            inventoryId = parseInt(checkbox.getAttribute("data-id"));
+        }
+    });
+    location.href = "/income/register/" + inventoryId;
+}
+
+function registerOutgoing() {
+    if (!checked) {
+        alert("출고 요청할 물품이 없습니다.");
+        return;
+    }
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+    let inventoryId;
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            inventoryId = parseInt(checkbox.getAttribute("data-id"));
+        }
+    });
+    location.href = "/outgoing/register/" + inventoryId;
+}

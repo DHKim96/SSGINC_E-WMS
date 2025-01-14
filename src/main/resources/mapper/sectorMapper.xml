@@ -25,4 +25,9 @@
         GROUP BY i.sector_id
         HAVING i.sector_id = #{sectorId}
     </select>
+
+    <select id="findSectorByName" resultType="sectorVO">
+        SELECT * FROM sector
+        WHERE sector_name = #{sectorName}
+    </select>
 </mapper>
