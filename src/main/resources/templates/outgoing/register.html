@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <link href="/css/outgoing/register.css" rel="stylesheet"/>
+</head>
+<body>
+<div layout:fragment="content" class="flex" style="justify-content: center; align-items: center; padding-top: 60px;">
+    <div class="register-container">
+        <div>
+            <h1 class="title">출고 요청</h1>
+            <form action="/outgoing/register" method="post" id="register-form">
+                <div id="register-product-name" class="form-group flex fle x-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">상품명</label>
+                        <input type="text" id="productName" name="productName" th:value="${outgoingForm.productName}" readonly>
+                    </div>
+                </div>
+
+                <div id="register-sector-name" class="form-group flex fle x-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">피킹 공간</label>
+                        <input type="text" id="sectorName" name="sectorName" th:value="${outgoingForm.sectorName}" readonly>
+                    </div>
+                </div>
+
+                <div id="register-shipper-name" class="form-group flex flex-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">화주사 이름</label>
+                        <select id="shipperName" name="shipperName"
+                                class="form-select form-select-lg mb-3" required>
+                            <option selected></option>
+                            <option th:each="shipper: ${shippers}">
+                                [[${shipper.shipperName}]]
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="register-outgoing-type" class="form-group flex flex-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">출고유형</label>
+                        <select id="outgoingType" name="outgoingType" class="form-select form-select-lg mb-3" aria-label="size 2 select example" required>
+                            <option selected>출고 유형을 선택해주세요</option>
+                            <option value="normalOutgoing">일반 출고</option>
+                            <option value="emergencyOutgoing">긴급 출고</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="register-outgoing-branch" class="form-group flex flex-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">출고 지점</label>
+                        <select id="branchName" name="branchName"
+                                class="form-select form-select-lg mb-3" required>
+                            <option selected></option>
+                            <option th:each="branch: ${branches}">
+                                [[${branch.branchName}]]
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="register-outgoing-quantity" class="form-group flex flex-col align-center">
+                    <div class="input-group flex flex-row align-center">
+                        <label class="item-label">출고 수량</label>
+                        <input type="text" id="outgoingQuantity" name="outgoingQuantity" placeholder="출고 수량을 입력해주세요(ex: 100, 200)" required>
+                    </div>
+                </div>
+                <button type="button" id="registration-form-btn" onclick="registerOutgoing()" class="submit-btn">출고 등록하기</button>
+            </form>
+        </div>
+    </div>
+    <script src="/js/outgoing/register.js"></script>
+</div>
+</body>
+</html>

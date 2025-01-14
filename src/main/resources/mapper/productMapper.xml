@@ -18,4 +18,10 @@
             resultType="int">
         SELECT product_id FROM product WHERE product_name = #{productName}
     </select>
+
+    <select id="getProductByName"
+            resultType="productVO">
+        SELECT * FROM product
+        WHERE product_name = #{productName}
+    </select>
 </mapper>

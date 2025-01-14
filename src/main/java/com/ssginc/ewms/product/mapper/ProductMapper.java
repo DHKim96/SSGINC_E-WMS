@@ -8,4 +8,6 @@ public interface ProductMapper {
     ProductVO getProductByInventoryId(int inventoryId);
 
     int getProductIdByName(String productName);
+
+    ProductVO getProductByName(String productName);
 }
