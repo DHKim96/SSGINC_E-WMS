@@ -87,7 +87,7 @@ function updateSector() {
                 return;
             }
             idList.push(inventoryId);
-            sectorList.push(realQuantity);
+            sectorList.push(sectorName);
         }
     });
 
@@ -114,8 +114,16 @@ function deleteInventory() {
         }
     });
 
+    if (idList.length === 0) {
+        alert("삭제할 재고가 없습니다.");
+        return;
+    }
+
+    console.log(idList);
     axios.delete("/inventory/deleteInventory", {
-        idList: idList
+        data: {
+            idList: idList
+        }
     }).then(response => {
         if (response.data > 0) {
             location.reload();

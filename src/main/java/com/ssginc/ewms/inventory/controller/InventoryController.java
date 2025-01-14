@@ -7,7 +7,6 @@ import com.ssginc.ewms.inventory.service.InventoryService;
 import com.ssginc.ewms.inventory.vo.InventoryAdjustVO;
 import com.ssginc.ewms.inventory.vo.InventoryStateVO;
 import com.ssginc.ewms.member.mapper.MemberMapper;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -145,13 +144,13 @@ public class InventoryController {
 
     @DeleteMapping("deleteInventory")
     @ResponseBody
-    public int deleteInventories(@RequestBody JsonNode node) throws JsonProcessingException {
+    public int deleteInventory(@RequestBody JsonNode node) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         List<Integer> idList = objectMapper.
                 treeToValue(node.path("idList"), List.class);
 
         int result = inventoryService.deleteInventories(idList);
-        if (result == idList.size()) {
+        if (result > 0) {
             return result;
         }
         else {

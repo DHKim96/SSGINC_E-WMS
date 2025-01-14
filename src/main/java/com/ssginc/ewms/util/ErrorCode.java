@@ -51,6 +51,8 @@ public enum ErrorCode {
     DUPLICATE_SECTOR_ERROR(500, "E211", "중복된 Sector가 입력되었습니다."),
     SECTOR_NOT_EXIST(404, "E212", "만족하는 sector를 찾을수 없습니다."),
     EXCEED_CAPACITY_ERROR(500, "E213", "허용 용량을 초과한 재고의 이동입니다."),
+    LACK_SAFETY_QUANTITY(500, "E214", "안전재고량 미만의 재고입니다."),
+
 
     // 일반 에러
     UNKNOWN_ERROR(400,"COMMON_001", "알 수 없는 오류가 발생했습니다."),

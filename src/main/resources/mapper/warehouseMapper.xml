@@ -7,7 +7,7 @@
             parameterType="int"
             resultType="int">
         SELECT w.warehouse_id
-        FROM warehouse
+        FROM warehouse w
         INNER JOIN sector s ON s.warehouse_id = w.warehouse_id
         INNER JOIN inventory i ON i.sector_id = s.sector_id
         WHERE inventory_id = #{inventoryId}

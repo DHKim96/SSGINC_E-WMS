@@ -19,9 +19,9 @@
     </select>
 
     <select id="getStoreCapacityBySectorId" resultType="int">
-        SELECT sum(p.unit_capacity * i.inventory_quantity)
+        SELECT SUM(p.unit_capacity * i.inventory_quantity)
         FROM product p
-                 INNER JOIN inventory i ON i.product_id = p.product_id
+        INNER JOIN inventory i ON i.product_id = p.product_id
         GROUP BY i.sector_id
         HAVING i.sector_id = #{sectorId}
     </select>

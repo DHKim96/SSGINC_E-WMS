@@ -77,4 +77,8 @@ public interface InventoryMapper {
      * @return              현재 재고의 용량
      */
     int getInventoryCapacityByInventoryId(int inventoryId);
+
+    int getTotalInventoryById(int productId, int warehouseId);
+
+    int getInventoryQuantityById(int inventoryId);
 }

@@ -8,7 +8,7 @@ public interface SectorMapper {
     /**
      * 창고아이디와 공간 이름에 기반하여 sector 정보를 불러오는 함수
      * @param warehouseId   창고 아이디
-     * @param sectorName          공간 이름
+     * @param sectorName    공간 이름
      * @return              현재 sector에 저장된 총 적재용량
      */
     SectorVO findSectorByWareHouseIdAndSectorName(int warehouseId, String sectorName);
@@ -25,5 +25,5 @@ public interface SectorMapper {
      * @param sectorId   변경을 위한 재고아이디 (대상)
      * @return           현재 sector에 저장된 총 적재용량
      */
-    int getStoreCapacityBySectorId(int sectorId);
+    Integer getStoreCapacityBySectorId(int sectorId);
 }
