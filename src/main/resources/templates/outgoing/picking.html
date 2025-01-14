@@ -192,7 +192,7 @@
 
         checkboxes.forEach(checkbox => {
             const row = checkbox.closest('tr'); // 체크박스가 속한 행
-            const priceCell = row.querySelector('td:nth-child(7)'); // 총 금액 열
+            const priceCell = row.querySelector('td:nth-child(8)'); // 총 금액 열
             const price = parseInt(priceCell.textContent.trim().replace(/,/g, ''), 10);
             if (!isNaN(price)) {
                 total += price;
@@ -307,6 +307,9 @@
         const userConfirmation = confirm("승인이 완료되었습니다. 출고 완료 페이지로 이동하시겠습니까?");
         if (userConfirmation) {
             window.location.href = '/outgoing/complete'; // "예"를 선택하면 페이지 이동
+        }
+        else{
+            searchAndUpdateTable();
         }
     });
 
