@@ -9,8 +9,8 @@
             resultType="inventoryStateVO">
         SELECT i.inventory_id, s.sector_name, i.product_id,
                p.product_name, c.category_name,
-               su.supplier_name, p.income_price,
-               p.outgoing_price, i.inventory_quantity,
+               su.supplier_name, p.income_unit_price,
+               p.outgoing_unit_price, i.inventory_quantity,
                i.expiration_date
         FROM inventory i
                  JOIN sector s ON i.sector_id = s.sector_id
@@ -26,8 +26,8 @@
             resultType="inventoryStateVO">
         SELECT i.inventory_id, s.sector_name, i.product_id,
         p.product_name, c.category_name,
-        su.supplier_name, p.income_price,
-        p.outgoing_price, i.inventory_quantity,
+        su.supplier_name, p.income_unit_price,
+        p.outgoing_unit_price, i.inventory_quantity,
         i.expiration_date
         FROM inventory i
         JOIN sector s ON i.sector_id = s.sector_id

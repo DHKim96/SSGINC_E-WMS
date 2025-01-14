@@ -70,8 +70,8 @@ function updateTable(data) {
             <td>${item.productName}</td>
             <td>${item.categoryName}</td>
             <td>${item.supplierName}</td>
-            <td>${item.incomePrice}</td>
-            <td>${item.outgoingPrice}</td>
+            <td>${item.incomeUnitPrice}</td>
+            <td>${item.outgoingUnitPrice}</td>
             <td>${item.inventoryQuantity}</td>
             <td>${item.expirationDate}</td>
         </tr>`;

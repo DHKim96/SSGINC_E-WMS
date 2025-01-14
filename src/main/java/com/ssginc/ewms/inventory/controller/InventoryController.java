@@ -38,6 +38,7 @@ public class InventoryController {
     @GetMapping("inventory/{warehouseId}")
     public String inventory(@PathVariable int warehouseId, Model model) {
         List<InventoryStateVO> list = inventoryService.getProductInventory(warehouseId);
+        System.out.println(list);
         model.addAttribute("inventories", list);
         return "inventory/inventory";
     }
