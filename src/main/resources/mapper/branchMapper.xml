@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.ewms.branch.mapper.BranchMapper">
+    <select id="getBranchByName" resultType="branchVO">
+        SELECT *
+        FROM branch
+        WHERE branch_name = #{branchName}
+    </select>
+    <select id="findBranchList" resultType="branchVO">
+        SELECT *
+        FROM branch
+    </select>
+</mapper>
