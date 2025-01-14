@@ -17,8 +17,11 @@
 </head>
 
 <body>
-<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-warning">
     <!-- Navbar Brand-->
+    <a href="/dashboard">
+        <img src="/img/member/emart-logo-small.png">
+    </a>
     <a class="navbar-brand ps-3">E-WMS</a>
     <!-- Navbar-->
     <div class="collapse navbar-collapse justify-content-end" id="collapsibleNavbar">
@@ -54,35 +57,32 @@
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                     </a>
 
-
                     <div class="sb-sidenav-menu-heading">입고 관리</div>
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
-                       data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                        입고 예정 현황
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                    <a class="nav-link collapsed" href="/income/incomemanagement">
                         <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                        입고 및 적치
+                        입고 관리
                     </a>
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                    <a class="nav-link collapsed" href="/income/inspectionmanagement">
                         <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                        입고 취소
+                        검수 관리
+                    </a>
+                    <a class="nav-link collapsed" href="/income/accumulationmanagement">
+                        <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                        적치 관리
                     </a>
 
                     <div class="sb-sidenav-menu-heading">출고관리</div>
-                    <a class="nav-link" href="">
+                    <a class="nav-link" href="/outgoing/outgoing">
                         <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                        출고 예정 현황
+                        출고 예정
                     </a>
-                    <a class="nav-link" href="">
+                    <a class="nav-link" href="/outgoing/picking">
                         <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                        출고 및 피킹
+                        출고 대기
                     </a>
-                    <a class="nav-link" href="">
+                    <a class="nav-link" href="/outgoing/complete">
                         <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                        출고 취소
+                        출고 완료
                     </a>
 
                     <div class="sb-sidenav-menu-heading">대시보드</div>
@@ -109,18 +109,6 @@
     <div id="layoutSidenav_content">
         <main layout:fragment="content">
         </main>
-        <footer class="py-4 bg-light mt-auto">
-            <div class="container-fluid px-4">
-                <div class="d-flex align-items-center justify-content-between small">
-                    <div class="text-muted">Copyright &copy; Your Website 2023</div>
-                    <div>
-                        <a href="/">Privacy Policy</a>
-                        &middot;
-                        <a href="/">Terms &amp; Conditions</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>

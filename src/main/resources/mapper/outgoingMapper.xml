@@ -2,55 +2,57 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.ewms.outgoing.mapper.OutgoingMapper">
+
     <update id="updateOutgoingStatus">
         UPDATE outgoing
         SET outgoing_status = #{status}
         WHERE outgoing_id = #{outgoingId};
     </update>
 
+    <!-- 특정 출고 ID의 재고 수량 조회 -->
     <select id="getInventoryQuantity" resultType="int">
-        SELECT inventory_quantity
-        FROM inventory
-        WHERE product_id = (
-            SELECT product_id
-            FROM outgoing
-            WHERE outgoing_id = #{outgoingId}
-        )
+        SELECT COALESCE(i.inventory_quantity, 0) AS inventory_quantity
+        FROM inventory i
+                 INNER JOIN outgoing o ON i.product_id = o.product_id
+        WHERE o.outgoing_id = #{outgoingId};
     </select>
 
+    <!-- 특정 출고 ID의 출고 수량 조회 -->
     <select id="getOutgoingQuantity" resultType="int">
-        SELECT outgoing_quantity
-        FROM outgoing
-        WHERE outgoing_id = #{outgoingId}
+        SELECT o.outgoing_quantity
+        FROM outgoing o
+        WHERE o.outgoing_id = #{outgoingId};
     </select>
 
+    <!-- 재고 수량 업데이트 -->
     <update id="updateQuantity">
-        UPDATE inventory
-        SET inventory_quantity = inventory_quantity - (
-            SELECT outgoing_quantity
-            FROM outgoing
-            WHERE outgoing_id = #{outgoingId}
-        )
-        WHERE product_id = (
-            SELECT product_id
-            FROM outgoing
-            WHERE outgoing_id = #{outgoingId}
-        );
+        UPDATE inventory i
+            INNER JOIN outgoing o
+        ON i.product_id = o.product_id
+            SET i.inventory_quantity = i.inventory_quantity - o.outgoing_quantity
+        WHERE o.outgoing_id = #{outgoingId}
+    </update>
+
+    <update id="updateOutgoingDate">
+        UPDATE outgoing
+        SET outgoing_date = #{outgoingDate}
+        WHERE outgoing_id = #{outgoingId}
     </update>
 
     <!-- 데이터 조회 쿼리 -->
     <select id="getOutgoingList" resultType="com.ssginc.ewms.outgoing.vo.OutgoingVO">
         SELECT
         o.outgoing_id AS outgoingId,
-        o.branch_name AS branchName,
+        b.branch_name AS branchName,
         p.product_name AS productName,
         o.outgoing_quantity AS outgoingQuantity,
-        p.outgoing_price AS unitPrice,
-        (o.outgoing_quantity * p.outgoing_price) AS totalPrice,
+        p.outgoing_unit_price AS unitPrice,
+        (o.outgoing_quantity * p.outgoing_unit_price) AS totalPrice,
         o.outgoing_status AS outgoingStatus,
-        DATE_FORMAT(o.outgoing_date, '%Y-%m-%d') AS outgoingDate
+        DATE_FORMAT(o.outgoing_request_date, '%Y-%m-%d') AS outgoingDate
         FROM outgoing o
         JOIN product p ON o.product_id = p.product_id
+        JOIN branch b ON b.branch_id = o.branch_id -- branch와 연결
         WHERE 1=1
         <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
             AND o.outgoing_date BETWEEN #{startDate} AND #{endDate}
@@ -60,6 +62,9 @@
             LOWER(p.product_name) LIKE CONCAT('%', LOWER(#{productName}), '%')
             OR LOWER(p.product_name) LIKE CONCAT(LOWER(#{productName}), '%')
             OR LOWER(p.product_name) LIKE CONCAT('%', LOWER(#{productName}))
+            OR (p.product_name) LIKE CONCAT('%', (#{productName}))
+            OR (p.product_name) LIKE CONCAT(LOWER(#{productName}), '%')
+            OR (p.product_name) LIKE CONCAT('%', LOWER(#{productName}), '%')
             )
         </if>
         <if test="productStatus != null and productStatus != ''">
@@ -71,17 +76,18 @@
     <select id="getOutgoingWithInventory" resultType="com.ssginc.ewms.outgoing.vo.OutgoingVO">
         SELECT
         o.outgoing_id AS outgoingId,
-        o.branch_name AS branchName,
+        b.branch_name AS branchName,
         p.product_name AS productName,
         o.outgoing_quantity AS outgoingQuantity,
-        p.outgoing_price AS unitPrice,
-        (o.outgoing_quantity * p.outgoing_price) AS totalPrice,
+        p.outgoing_unit_price AS unitPrice, -- outgoing_price 대신 outgoing_unit_price 사용
+        (o.outgoing_quantity * p.outgoing_unit_price) AS totalPrice,
         o.outgoing_status AS outgoingStatus,
-        DATE_FORMAT(o.outgoing_date, '%Y-%m-%d') AS outgoingDate,
+        DATE_FORMAT(o.outgoing_request_date, '%Y-%m-%d') AS outgoingDate,
         COALESCE(i.inventory_quantity, 0) - COALESCE(p.safety_quantity, 0) AS inventoryQuantity
         FROM outgoing o
         JOIN product p ON o.product_id = p.product_id
         JOIN inventory i ON p.product_id = i.product_id
+        JOIN branch b ON b.branch_id = o.branch_id
         WHERE 1=1
         <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
             AND o.outgoing_date BETWEEN #{startDate} AND #{endDate}
@@ -98,27 +104,4 @@
         </if>
         ORDER BY o.outgoing_id;
     </select>
-
-    <!--        SELECT-->
-    <!--        o.outgoing_id AS outgoingId,-->
-    <!--        o.branch_name AS branchName,-->
-    <!--        p.product_name AS productName,-->
-    <!--        o.outgoing_quantity AS outgoingQuantity,-->
-    <!--        p.outgoing_price AS unitPrice,-->
-    <!--        (o.outgoing_quantity * p.outgoing_price) AS totalPrice,-->
-    <!--        o.outgoing_status AS outgoingStatus,-->
-    <!--        DATE_FORMAT(o.outgoing_date, '%Y-%m-%d') AS outgoingDate,-->
-    <!--        (i.inventory_quantity - p.safety_quantity) AS inventoryQuantity-->
-    <!--        FROM outgoing o-->
-    <!--        JOIN product p ON o.product_id = p.product_id-->
-    <!--        JOIN inventory i ON p.product_id = i.product_id-->
-    <!--        JOIN sector s ON i.sector_id = s.sector_id-->
-    <!--        JOIN warehouse w ON s.warehouse_id = w.warehouse_id-->
-    <!--        WHERE w.warehouse_id = #{warehouseId}-->
-    <!--        AND p.product_id IN-->
-    <!--        <foreach item="productId" collection="productIds" open="(" separator="," close=")">-->
-    <!--            #{productId}-->
-    <!--        </foreach>-->
-    <!--        ORDER BY o.outgoing_id;-->
-
 </mapper>

@@ -90,4 +90,5 @@ public class OutgoingController {
         model.addAttribute("outgoingList", outgoingList);
         return "outgoing/complete";
     }
+
 }
