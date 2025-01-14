@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.ewms.income.mapper.IncomeMapper">
+
+    <update id="updateCancleStatus" parameterType="list">
+        UPDATE income
+        SET income_status = 4
+        WHERE income_status = 0
+        AND income_id IN
+        <foreach collection="list" item="incomeId" open="(" separator="," close=")">
+            #{incomeId}
+        </foreach>
+    </update>
+
+    <update id="updateActualQuantityAndStatus" parameterType="IncomeShipperProductSuppierVO">
+        UPDATE income
+        SET actual_quantity = #{actualQuantity},
+            income_status   = 2
+        WHERE product_id     = #{productId}
+          AND income_status  = 1
+    </update>
+
+
+    <update id="updateUnderReview" parameterType="List">
+        UPDATE income i
+        SET i.income_status = 1
+        WHERE i.income_status = 0
+        AND i.income_id IN
+        <foreach collection="list" item="incomeId" open="(" separator="," close=")">
+            #{incomeId}
+        </foreach>
+
+    </update>
+
+    <update id="updateIncomeStatusComplete" parameterType="int">
+        UPDATE income i
+            JOIN product p ON i.product_id = p.product_id
+            SET i.income_status = 3
+        WHERE i.product_id = #{productId}
+    </update>
+
+
+    <select id="fourFilterSelect" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO"
+            parameterType="IncomeShipperProductSuppierVO">
+        SELECT
+        i.income_id AS incomeId,
+        s.shipper_name AS shipperName,
+        sup.supplier_name AS supplierName,
+        CASE i.income_status
+        WHEN 0 THEN '예정'
+        WHEN 1 THEN '검수 중'
+        WHEN 2 THEN '적치 중'
+        WHEN 3 THEN '완료'
+        WHEN 4 THEN '취소'
+        END AS statusText,
+        i.income_expected_date AS incomeExpectedDate,
+        i.income_price AS incomePrice,
+        p.product_name AS productName
+        FROM income i
+        JOIN shipper s ON i.shipper_id = s.shipper_id
+        JOIN product p ON i.product_id = p.product_id
+        JOIN supplier sup ON p.supplier_id = sup.supplier_id
+        WHERE 1=1
+        <if test="incomeExpectedDate != null">
+            AND i.income_expected_date = #{incomeExpectedDate}
+        </if>
+        <if test="supplierName != null and supplierName != ''">
+            AND sup.supplier_name LIKE CONCAT('%', #{supplierName}, '%')
+        </if>
+        <if test="shipperName != null and shipperName != ''">
+            AND s.shipper_name LIKE CONCAT('%', #{shipperName}, '%')
+        </if>
+        <if test="incomeId > 0">
+            AND i.income_id = #{incomeId}
+        </if>
+        ORDER BY i.income_id DESC
+    </select>
+
+
+    <select id="detailsSelect" parameterType="int" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO">
+        SELECT p.product_name             AS productName,
+               i.income_expected_quantity AS incomeExpectedQuantity,
+               p.product_unit             AS productUnit,
+               i.income_status            AS incomeStatus
+        FROM income i
+                 JOIN product p ON i.product_id = p.product_id
+        WHERE i.income_status = 0
+          AND i.income_id = #{incomeId}
+        ORDER BY p.product_name
+    </select>
+
+    <select id="selectIncomePrices" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO"
+            parameterType="List">
+        SELECT
+        income_id AS incomeId,
+        income_price AS incomePrice
+        FROM income
+        WHERE income_id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getExpectedIncomeList" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO">
+        SELECT i.income_id                                                    AS incomeId,
+               s.shipper_name                                                 AS shipperName,
+               sup.supplier_name                                              AS supplierName,
+               i.income_status                                                AS incomeStatus,
+               i.income_expected_date                                         AS incomeExpectedDate,
+               i.income_price                                                 AS incomePrice,
+               CONCAT(p.product_name, ' (', i.income_expected_quantity, '개)') AS productName
+        FROM income i
+                 JOIN shipper s ON i.shipper_id = s.shipper_id
+                 JOIN product p ON i.product_id = p.product_id
+                 JOIN supplier sup ON p.supplier_id = sup.supplier_id
+        WHERE i.income_status = 0
+        ORDER BY i.income_expected_date LIMIT 7
+
+    </select>
+
+    <select id="getExpectedNormalIncomeList"
+            resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO">
+        SELECT i.income_id                AS incomeId,
+               i.income_expected_quantity AS incomeExpectedQuantity,
+               i.income_type              AS incomeType,
+               i.income_status            AS incomeStatus
+        FROM income i
+        WHERE i.income_status = 0
+          AND i.income_type = 0
+    </select>
+
+    <select id="getUrgentIncomeProducts" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO">
+        SELECT p.product_name AS productName
+        FROM income i
+                 JOIN
+             product p ON i.product_id = p.product_id
+        WHERE i.income_status = 0
+          AND i.income_type = 1
+    </select>
+
+    <select id="getUnderReviewList" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO">
+        SELECT p.product_id               AS productId,
+               p.product_name             AS productName,
+               i.income_type              AS incomeType,
+               i.income_expected_quantity AS incomeExpectedQuantity,
+               i.actual_quantity          AS actualQuantity,
+               i.income_status            AS incomeStatus
+        FROM income i
+                 JOIN product p ON i.product_id = p.product_id
+        WHERE i.income_status = 1
+    </select>
+
+    <select id="actualFilter" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO" parameterType="int">
+        i
+        .
+        income_id
+        AS incomeId,
+            i.income_expected_quantity AS expectedQuantity,
+            CASE
+                WHEN i.income_type = 0 THEN '일반'
+                WHEN i.income_type = 1 THEN '긴급'
+        END
+        AS incomeType,
+            CASE
+                WHEN i.income_status = 0 THEN '입고 예정'
+                WHEN i.income_status = 1 THEN '검수 중'
+                WHEN i.income_status = 2 THEN '적치 중'
+                WHEN i.income_status = 3 THEN '입고 완료'
+                WHEN i.income_status = 4 THEN '입고 취소'
+        END
+        AS inspectionStatus
+        FROM
+            income i
+        JOIN
+            product p ON i.product_id = p.product_id
+        WHERE
+            p.product_id =
+        #{productId}
+        AND
+        i
+        .
+        income_status
+        =
+        0
+        AND
+        i
+        .
+        income_type
+        =
+        0
+    </select>
+    <select id="underReviewFilter" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO"
+            parameterType="int">
+        SELECT i.income_id                AS incomeId,
+               i.income_expected_quantity AS expectedQuantity,
+               CASE
+                   WHEN i.income_type = 0 THEN '일반'
+                   WHEN i.income_type = 1 THEN '긴급'
+                   END                    AS incomeType,
+               CASE
+                   WHEN i.income_status = 0 THEN '입고 예정'
+                   WHEN i.income_status = 1 THEN '검수 중'
+                   WHEN i.income_status = 2 THEN '적치 중'
+                   WHEN i.income_status = 3 THEN '입고 완료'
+                   WHEN i.income_status = 4 THEN '입고 취소'
+                   END                    AS inspectionStatus
+        FROM income i
+                 JOIN
+             product p ON i.product_id = p.product_id
+        WHERE p.product_id = #{productId}
+          AND i.income_status = 0
+          AND i.income_type = 0
+    </select>
+
+    <select id="getStorageInProgressList"
+            resultType="com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO">
+        SELECT p.product_id               AS productId,
+               p.product_name             AS productName,
+               i.income_type              AS incomeType,
+               i.income_expected_quantity AS incomeExpectedQuantity,
+               i.actual_quantity          AS actualQuantity,
+               i.income_status            AS incomeStatus,
+               s.sector_id                AS sectorId,
+               s.allow_capacity           AS allowCapacity,
+               w.warehouse_id             AS warehouseId,
+               inv.inventory_quantity     AS inventoryQuantity
+        FROM income i
+                 JOIN product p ON i.product_id = p.product_id
+                 JOIN sector s ON i.sector_id = s.sector_id
+                 JOIN warehouse w ON s.warehouse_id = w.warehouse_id
+                 LEFT JOIN inventory inv ON i.product_id = inv.product_id
+        WHERE i.income_status = 2
+
+    </select>
+    <select id="getStorageStatusByProductIdFIlter"
+            resultType="com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO" parameterType="int">
+        SELECT p.product_id      AS productId,
+               p.product_name    AS productName,
+               i.actual_quantity AS actualQuantity,
+               s.warehouse_id    AS warehouseId,
+               i.sector_id       AS sectorId,
+               p.product_unit    AS productUnit,
+               '적치 중'            AS storageStatus
+        FROM income i
+                 JOIN
+             product p ON i.product_id = p.product_id
+                 JOIN
+             sector s ON i.sector_id = s.sector_id
+        WHERE i.income_status = 2
+          AND p.product_id = #{productId}
+
+    </select>
+    <select id="getWarehouseSectorList"
+            resultType="com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO">
+        SELECT w.warehouse_id AS warehouseId,
+               s.sector_id    AS sectorId
+        FROM warehouse w
+                 JOIN sector s ON w.warehouse_id = s.warehouse_id
+        ORDER BY w.warehouse_id, s.sector_id
+    </select>
+    <select id="getSectorAvailableCapacity"
+            resultType="com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO" parameterType="int">
+        SELECT s.sector_id                AS sectorId,
+               COALESCE(s.allow_capacity - SUM(COALESCE(i.inventory_quantity * p.unit_capacity, 0)),
+                        s.allow_capacity) AS availableCapacity
+        FROM sector s
+                 LEFT JOIN inventory i ON s.sector_id = i.sector_id
+                 LEFT JOIN product p ON i.product_id = p.product_id
+        WHERE s.sector_id = #{sectorId}
+        GROUP BY s.sector_id,
+                 s.allow_capacity
+    </select>
+    <select id="getInspectionCapacity"
+            resultType="com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO" parameterType="int">
+        SELECT i.income_id,
+               i.income_expected_quantity * p.unit_capacity AS allocatedCapacity,
+               p.product_id
+        FROM income i
+                 JOIN product p ON i.product_id = p.product_id
+        WHERE i.income_status = 2
+          AND p.product_id = #{productId}
+    </select>
+
+    <select id="selectWarehouseId" resultType="java.lang.Integer">
+        SELECT warehouse_id
+        FROM warehouse
+    </select>
+
+
+</mapper>

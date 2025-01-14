@@ -6,12 +6,13 @@
     <link href="/css/style.css" rel="stylesheet"/>
     <link rel="stylesheet" href="/css/outgoing/outgoing.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script defer src="/js/outgoing/outgoing.js"></script>
+    <script defer src="/js/outgoing/picking.js"></script>
+
 </head>
 <body>
 <div layout:fragment="content">
     <div class="col-md-12 p-4">
-        <h3>출고 현황</h3>
+        <h3>출고 대기</h3>
         <hr>
         <div class="container mt-4">
             <div class="row align-items-center">
@@ -32,7 +33,6 @@
                 <div class="col-auto">
                     <select id="status" class="form-select">
                         <option value="" id="all">전체</option> <!-- 전체를 공백 값으로 처리 -->
-                        <option value="0">출고 예정</option>
                         <option value="1">출고 대기</option>
                         <option value="2">출고 완료</option>
                         <option value="3">출고 취소</option>
@@ -63,6 +63,7 @@
                 <th>지점명</th>
                 <th>상품명</th>
                 <th>수량</th>
+                <th>재고</th>
                 <th>출고금액</th>
                 <th>총금액</th>
                 <th>상태</th>

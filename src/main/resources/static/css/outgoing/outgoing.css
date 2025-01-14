@@ -1,0 +1,48 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: center;
+}
+
+th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+thead th {
+    background-color: #f2c94c;
+    color: white;
+    font-weight: bold;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+#footer-bar {
+    width: 500px;
+    height: 50px;
+    font-size: 14px;
+    text-align: center;
+    position: fixed;
+    bottom: 5%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    right: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+#footer-bar strong, #footer-bar span, #footer-bar button {
+    color: white;
+    font-size: 14px;
+    align-content: center;
+    height: 30px;
+}

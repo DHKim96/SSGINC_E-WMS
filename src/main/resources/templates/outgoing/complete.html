@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <link href="/css/style.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/outgoing/outgoing.css">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script defer src="/js/outgoing/complete.js"></script>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="col-md-12 p-4">
+    <h3>출고 완료</h3>
+    <hr>
+    <div class="container mt-4">
+      <div class="row align-items-center">
+        <!-- 날짜 선택 -->
+        <div class="col-auto">
+          <input type="date" id="start-date" class="form-control">
+        </div>
+        <div class="col-auto">
+          <input type="date" id="end-date" class="form-control">
+        </div>
+
+        <!-- 상품명 검색 -->
+        <div class="col-auto">
+          <input type="text" id="product-name" class="form-control" placeholder="상품명을 입력하세요.">
+        </div>
+
+        <!-- 상태 검색 -->
+        <div class="col-auto">
+          <select id="status" class="form-select">
+            <option value="" id="all">전체</option> <!-- 전체를 공백 값으로 처리 -->
+            <option value="1">출고 대기</option>
+            <option value="2">출고 완료</option>
+            <option value="3">출고 취소</option>
+          </select>
+        </div>
+
+        <div class="col-auto">
+          <button id="search-btn" class="btn btn-warning text-white">검색</button>
+        </div>
+
+        <!-- 날짜 정렬 및 초기화 -->
+        <div class="col-auto">
+          <button id="sort-date-btn" class="btn btn-warning text-white">날짜 정렬</button>
+        </div>
+        <div class="col-auto">
+          <button id="reset-btn" class="btn btn-warning text-white" onclick="location.reload()">초기화</button>
+        </div>
+      </div>
+    </div>
+    <label class="form-label d-block">&nbsp;</label>
+    <table class="table table-bordered text-center align-middle">
+      <thead class="table">
+      <tr class="bg-warning text-white">
+        <th>주문번호</th>
+        <th>지점명</th>
+        <th>상품명</th>
+        <th>수량</th>
+        <th>재고</th>
+        <th>출고금액</th>
+        <th>총금액</th>
+        <th>상태</th>
+        <th>출고 요청 날짜</th>
+      </tr>
+      </thead>
+      <div id="table-result">
+        <tbody>
+
+        </tbody>
+      </div>
+    </table>
+  </div>
+</div>
+</body>
+</html>
