@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <link href="/css/product.css" rel="stylesheet"/>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="col-md-12">
+        <h3>적치 관리</h3>
+        <hr>
+        <div class="col-md-12" style="width: 1624px; height: 45px; padding: 10px">
+            <div class="search-section d-flex justify-content-center" style="padding: 20px;">
+                <div class="d-flex align-items-center gap-4">
+
+                    <div class="d-flex align-items-center" style="width: 549px; height: 61px; gap: 10px">
+                        <label style="width: 108px; height: 41px; margin-bottom: 0; font-weight: 500; border: 1px solid #ced4da; display: flex; align-items: center; justify-content: center; text-align: center;">상품코드</label>
+                        <input type="text"
+                               class="form-control"
+                               placeholder="상품코드를 입력하세요"
+                               style="width: 190px; height: 40px; border: 1px solid #ced4da;">
+                        <button class="btn btn-warning ms-2 text-nowrap" style="height: 40px; width: 75px;">검색</button>
+                        <button class="btn btn-warning ms-2 text-nowrap" style="height: 40px; width: 100px;">초기화
+                        </button>
+                        <button class="btn btn-warning ms-2 text-nowrap" style="height: 40px; width: 170px;"
+                                data-bs-toggle="modal" data-bs-target="#inspectionModal">적치위치등록
+                        </button>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 메인 테이블 -->
+    <div class="mt-4" style="width: 1615px; height: 647px; padding: 30px">
+        <table class="table table-bordered text-center align-middle" >
+            <thead>
+            <tr class="bg-warning text-white">
+                <th style="width: 40px; height: 40px">#</th>
+                <th style="width: 40px; height: 40px">
+                    <input type="checkbox"/>
+                </th>
+                <th style="width: 290px; height: 40px">상품코드</th>
+                <th style="width: 230px; height: 40px">상품명</th>
+                <th style="width: 150px; height: 40px">실제수량</th>
+                <th style="width: 290px; height: 40px">창고ID</th>
+                <th style="width: 290px; height: 40px">섹터ID</th>
+                <th style="width: 150px; height: 40px">단위</th>
+                <th style="width: 135px; height: 40px">적치상태</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="IncomeProductSectorWarehouseInventoryVO, iterStat : ${StorageInProgressList}">
+                <td style="width: 40px; height: 40px">[[${iterStat.count}]]</td>
+                <td style="width: 40px; height: 40px">
+                    <input type="checkbox" th:id="'checkbox-' + ${iterStat.index}"/>
+                </td>
+                <td style="width: 290px; height: 40px">[[${IncomeProductSectorWarehouseInventoryVO.productId}]]</td>
+                <td style="width: 230px; height: 40px">[[${IncomeProductSectorWarehouseInventoryVO.productName}]]</td>
+                <td style="width: 150px; height: 40px">[[${IncomeProductSectorWarehouseInventoryVO.actualQuantity}]]
+                </td>
+                <td style="width: 290px; height: 40px">[[${IncomeProductSectorWarehouseInventoryVO.warehouseId}]]</td>
+                <td style="width: 290px; height: 40px">[[${IncomeProductSectorWarehouseInventoryVO.sectorId}]]</td>
+                <td style="width: 150px; height: 40px">
+                    [[${IncomeProductSectorWarehouseInventoryVO.inventoryQuantity}]]
+                </td>
+                <td style="width: 135px" th:text="${IncomeProductSectorWarehouseInventoryVO.incomeStatus == 0 ? '입고예정' :
+            (IncomeProductSectorWarehouseInventoryVO.incomeStatus == 1 ? '검수중' :
+            (IncomeProductSectorWarehouseInventoryVO.incomeStatus == 2 ? '적치중' :
+            (IncomeProductSectorWarehouseInventoryVO.incomeStatus == 3 ? '입고완료' : '입고취소')))}"></td>
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+
+
+
+    <!--    모달-->
+    <div class="modal fade" id="inspectionModal" tabindex="-1" aria-labelledby="inspectionModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 800px;">
+            <div class="modal-content" style="width: 800px; height: 500px;">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="inspectionModalLabel">적재 가능</h5>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label">상품코드:</label>
+                            <input type="text" class="form-control" readonly>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">상품명:</label>
+                            <input type="text" class="form-control" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex gap-3">
+                            <div class="col-6">
+                                <label class="form-label">창고ID:</label>
+                                <select class="form-select" id="warehouseSelect">
+                                    <option value="" selected disabled>창고ID 선택</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">섹터ID:</label>
+                                <select class="form-select" id="sectorSelect">
+                                    <option value="" selected disabled>섹터ID 선택</option>
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label">적재가능용량:</label>
+                            <input type="text" class="form-control" id="SectorAvailableCapacity" readonly>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">적재할당량:</label>
+                            <input type="text" class="form-control" id="InspectionCapacity" readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="border p-2 text-center text-success">적재 가능</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-warning" id="check">확인</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</body>
+<th:block layout:fragment="script">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+            const storageButton = document.querySelector('[data-bs-target="#inspectionModal"]');
+            let selectedProduct = null;
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    // 다른 체크박스 선택 해제
+                    checkboxes.forEach(cb => {
+                        if (cb !== this) cb.checked = false;
+                    });
+
+                    if (this.checked) {
+                        const row = this.closest('tr');
+                        selectedProduct = {
+                            productId: row.querySelector('td:nth-child(3)').textContent.trim(),
+                            productName: row.querySelector('td:nth-child(4)').textContent.trim()
+                        };
+                    } else {
+                        selectedProduct = null;
+                    }
+                });
+            });
+
+            storageButton.addEventListener('click', function (e) {
+                if (!selectedProduct) {
+                    e.preventDefault();
+                    alert('상품을 선택해주세요.');
+                    return;
+                }
+
+                const modal = document.getElementById('inspectionModal');
+                const productIdInput = modal.querySelector('.row .col-6:nth-child(1) input');
+                const productNameInput = modal.querySelector('.row .col-6:nth-child(2) input');
+
+                productIdInput.value = selectedProduct.productId;
+                productNameInput.value = selectedProduct.productName;
+
+                // readonly 속성 추가
+                productIdInput.setAttribute('readonly', true);
+                productNameInput.setAttribute('readonly', true);
+
+                getInspectionCapacity(selectedProduct.productId);
+
+                function getInspectionCapacity(productId) {
+                    axios.post('/income/InspectionCapacity', {productId: productId})
+                        .then(response => {
+                            if (response.data && response.data.length > 0) {
+                                document.getElementById('InspectionCapacity').value = response.data[0].allocatedCapacity || '';
+                            } else {
+                                document.getElementById('InspectionCapacity').value = '';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Failed to fetch inspection capacity:', error);
+                            document.getElementById('InspectionCapacity').value = '';
+                        });
+                }
+            });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            axios.post('/income/warehouseIds')
+                .then(response => {
+                    const warehouseSelect = document.getElementById('warehouseSelect');
+                    response.data.forEach(warehouseId => {
+                        const option = document.createElement('option');
+                        option.value = warehouseId;
+                        option.textContent = warehouseId;
+                        warehouseSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching warehouse IDs:', error);
+                });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const warehouseSelect = document.getElementById('warehouseSelect');
+            const sectorSelect = document.getElementById('sectorSelect');
+
+            // 창고 ID 선택 이벤트 리스너
+            warehouseSelect.addEventListener('change', function () {
+                const selectedWarehouseId = this.value;
+
+                // 섹터 선택 초기화
+                sectorSelect.innerHTML = '<option value="" selected disabled>섹터ID 선택</option>';
+
+                if (selectedWarehouseId) {
+                    axios.post('/income/sectorIds')
+                        .then(response => {
+                            const sectors = response.data.filter(item =>
+                                item.warehouseId === parseInt(selectedWarehouseId)
+                            );
+
+                            sectors.forEach(sector => {
+                                const option = document.createElement('option');
+                                option.value = sector.sectorId;
+                                option.textContent = sector.sectorId;
+                                sectorSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('섹터 ID 조회 실패:', error);
+                        });
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const sectorSelect = document.getElementById('sectorSelect');
+            const availableCapacityInput = document.getElementById('SectorAvailableCapacity');
+            const warehouseSelect = document.getElementById('warehouseSelect');
+
+            // 체크박스 변경 시 입력값 초기화
+            const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        // 다른 체크박스 선택 해제
+                        checkboxes.forEach(cb => {
+                            if (cb !== this) cb.checked = false;
+                        });
+
+                        // 입력값 초기화
+                        warehouseSelect.value = '';
+                        sectorSelect.innerHTML = '<option value="" selected disabled>섹터ID 선택</option>';
+                        availableCapacityInput.value = '';
+                    }
+                });
+            });
+
+            sectorSelect.addEventListener('change', function () {
+                const selectedSectorId = this.value;
+
+                if (selectedSectorId) {
+                    axios.post('/income/sectorCapacity', {
+                        sectorId: selectedSectorId
+                    })
+                        .then(response => {
+                            if (response.data && response.data.length > 0) {
+                                const capacity = response.data[0].availableCapacity;
+                                availableCapacityInput.value = capacity > 0 ? capacity : 0;
+                            } else {
+                                availableCapacityInput.value = '';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('적재가능용량 조회 실패:', error);
+                            availableCapacityInput.value = '';
+                        });
+                } else {
+                    availableCapacityInput.value = '';
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const sectorSelect = document.getElementById('sectorSelect');
+            const availableCapacityInput = document.getElementById('SectorAvailableCapacity');
+            const inspectionCapacityInput = document.getElementById('InspectionCapacity');
+            const statusDiv = document.querySelector('.col-12 .border');
+
+            // 초기 상태 표시
+            statusDiv.textContent = '적재 상태';
+            statusDiv.className = 'border p-2 text-center';
+
+            // 적재 상태를 업데이트하는 함수
+            function updateStorageStatus() {
+                const availableCapacity = parseInt(availableCapacityInput.value) || 0;
+                const inspectionCapacity = parseInt(inspectionCapacityInput.value) || 0;
+
+                // 적재가능용량이 0이거나 검수용량이 적재가능용량보다 클 경우
+                if (availableCapacity === 0 || inspectionCapacity > availableCapacity) {
+                    statusDiv.className = 'border p-2 text-center text-danger';
+                    statusDiv.textContent = '적재 불가능';
+                } else if (inspectionCapacity > 0 && availableCapacity > 0) {
+                    statusDiv.className = 'border p-2 text-center text-success';
+                    statusDiv.textContent = '적재 가능';
+                } else {
+                    statusDiv.textContent = '적재 상태';
+                    statusDiv.className = 'border p-2 text-center';
+                }
+            }
+
+            // 적재가능용량이 변경될 때 상태 업데이트
+            availableCapacityInput.addEventListener('change', updateStorageStatus);
+
+            // 섹터 선택 시 이벤트 처리
+            sectorSelect.addEventListener('change', function () {
+                const selectedSectorId = this.value;
+
+                if (selectedSectorId) {
+                    axios.post('/income/sectorCapacity', {
+                        sectorId: selectedSectorId
+                    })
+                        .then(response => {
+                            if (response.data && response.data.length > 0) {
+                                const capacity = response.data[0].availableCapacity;
+                                availableCapacityInput.value = capacity > 0 ? capacity : 0;
+                                updateStorageStatus();
+                            } else {
+                                availableCapacityInput.value = '';
+                                updateStorageStatus();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('적재가능용량 조회 실패:', error);
+                            availableCapacityInput.value = '';
+                            updateStorageStatus();
+                        });
+                } else {
+                    availableCapacityInput.value = '';
+                    updateStorageStatus();
+                }
+            });
+
+            // InspectionCapacity 값 변경 감지를 위한 MutationObserver 설정
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
+                        updateStorageStatus();
+                    }
+                });
+            });
+
+            observer.observe(inspectionCapacityInput, {
+                attributes: true
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkButton = document.getElementById('check');
+            const statusDiv = document.querySelector('.col-12 .border');
+
+            checkButton.addEventListener('click', function() {
+                // 적재 가능 상태일 때만 처리
+                if (statusDiv.textContent === '적재 가능') {
+                    // 선택된 체크박스의 incomeId 가져오기
+                    const selectedCheckbox = document.querySelector('tbody input[type="checkbox"]:checked');
+                    if (!selectedCheckbox) {
+                        alert('선택된 상품이 없습니다.');
+                        return;
+                    }
+
+                    const row = selectedCheckbox.closest('tr');
+                    const productId = row.querySelector('td:nth-child(3)').textContent.trim();
+
+                    // 서버로 업데이트 요청
+                    axios.post('/income/updateStatus', {
+                        productId: productId
+                    })
+                        .then(response => {
+                            if (response.data) {
+                                alert('입고완료 처리되었습니다.');
+                                location.reload(); // 페이지 새로고침
+                            } else {
+                                alert('처리 중 오류가 발생했습니다.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Status update failed:', error);
+                            alert('처리 중 오류가 발생했습니다.');
+                        });
+
+                    // 모달 닫기
+                    const modal = document.getElementById('inspectionModal');
+                    const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                    bootstrapModal.hide();
+                }
+            });
+        });
+
+
+
+
+
+    </script>
+
+</th:block>
+</html>

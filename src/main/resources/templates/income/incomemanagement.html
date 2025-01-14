@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <link href="/css/product.css" rel="stylesheet"/>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="col-md-12">
+        <h3>입고 현황</h3>
+        <hr>
+        <div class="col-md-12" style="width: 1624px; height: 45px; padding: 10px">
+            <div class="search-section" style="padding: 20px;">
+                <div class="d-flex align-items-center gap-4">
+                    <div class="d-flex align-items-center" style="width: 349px; height: 61px; gap: 10px">
+                        <label style="width: 116px; height: 41px; margin-bottom: 0; font-weight: 500; border: 1px solid #ced4da; display: flex; align-items: center; justify-content: center; text-align: center;">입고예정일</label>
+
+                        <input type="date"
+                               class="form-control"
+                               style="width: 207px; height: 41px; border: 1px solid #ced4da;">
+                    </div>
+
+                    <div class="d-flex align-items-center" style="width: 368px; height: 61px; gap: 10px">
+                        <label style="width: 116px; height: 41px; margin-bottom: 0; font-weight: 500; border: 1px solid #ced4da; display: flex; align-items: center; justify-content: center; text-align: center;">공급자</label>
+                        <input type="text"
+                               class="form-control"
+                               placeholder="공급자를 입력하세요"
+                               style="width: 190px; height: 40px; border: 1px solid #ced4da;">
+                    </div>
+                    <div class="d-flex align-items-center" style="width: 363px; height: 61px; gap: 10px">
+                        <label style="width: 116px; height: 41px; margin-bottom: 0; font-weight: 500; border: 1px solid #ced4da; display: flex; align-items: center; justify-content: center; text-align: center;">화주사</label>
+                        <input type="text"
+                               class="form-control"
+                               placeholder="화주사를 입력하세요"
+                               id="shipperNameInput"
+                               style="width: 190px; height: 40px; border: 1px solid #ced4da;">
+                    </div>
+                    <div class="d-flex align-items-center" style="width: 549px; height: 61px; gap: 10px">
+                        <label style="width: 108px; height: 41px; margin-bottom: 0; font-weight: 500; border: 1px solid #ced4da; display: flex; align-items: center; justify-content: center; text-align: center;">입고예정번호</label>
+                        <input type="text"
+                               class="form-control"
+                               placeholder="입고예정번호 입력"
+                               style="width: 190px; height: 40px; border: 1px solid #ced4da;">
+                        <button class="btn btn-warning" style="height: 40px; width: 75px; margin-left: 10px;" id="search">검색
+                        </button>
+                        <button class="btn btn-warning" style="height: 40px; width: 75px;">초기화</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 메인 테이블 -->
+
+    <div class="mt-4" style="width: 1615px; height: 320px; padding: 30px">
+        <table class="table table-bordered text-center align-middle" id="mainTable">
+            <thead>
+            <tr class="bg-warning text-white">
+                <th style="width: 40px; height: 40px">#</th>
+                <th style="width: 40px; height: 40px"><input type="checkbox"/></th>
+                <th style="width: 200px; height: 40px">입고번호</th>
+                <th style="width: 150px; height: 40px">화주사</th>
+                <th style="width: 150px; height: 40px">공급자</th>
+                <th style="width: 200px; height: 40px">입고 상태</th>
+                <th style="width: 230px; height: 40px">입고 예정일</th>
+                <th style="width: 230px; height: 40px">입고 가격</th>
+                <th style="width: 375px; height: 40px">비고</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="incomeShipperProductSuppierVO, iterStat : ${ExpectedIncomeList}">
+                <td style="width: 40px; height: 40px">[[${iterStat.count}]]</td>
+                <td style="width: 40px; height: 40px">
+                    <input type="checkbox" class="income-checkbox"
+                           th:data-income-id="${incomeShipperProductSuppierVO.incomeId}"
+                           onchange="handleCheckboxChange(this)"/>
+                </td>
+                <td style="width: 200px; height: 40px">[[${incomeShipperProductSuppierVO.incomeId}]]</td>
+                <td style="width: 150px; height: 40px">[[${incomeShipperProductSuppierVO.shipperName}]]</td>
+                <td style="width: 150px; height: 40px">[[${incomeShipperProductSuppierVO.supplierName}]]</td>
+                <td style="width: 200px; height: 40px">[[${incomeShipperProductSuppierVO.statusText}]]</td>
+                <td style="width: 230px; height: 40px">[[${incomeShipperProductSuppierVO.incomeExpectedDate}]]</td>
+                <td style="width: 230px; height: 40px">[[${incomeShipperProductSuppierVO.incomePrice}]]</td>
+                <td style="width: 375px; height: 40px">[[${incomeShipperProductSuppierVO.productName}]]</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- 상세 정보 섹션 -->
+    <div class="mt-4" style="width: 1615px; height: 271px; padding: 30px">
+        <h3>상세 정보</h3>
+        <table id="detailsTable" class="table table-bordered text-center align-middle">
+            <thead>
+            <tr class="bg-warning text-white">
+                <th style="width: 40px; height: 40px">#</th>
+                <th style="width: 40px; height: 40px"><input type="checkbox"/></th>
+                <th style="width: 450px; height: 40px">상품명</th>
+                <th style="width: 350px; height: 40px">입고예정수량</th>
+                <th style="width: 350px; height: 40px">단위</th>
+                <th style="width: 385px; height: 40px">입고 상태</th>
+            </tr>
+        </table>
+    </div>
+    <div class="d-flex align-items-center justify-content-between bg-white"
+         style="width: 1615px; height: 40px; margin: 24px 0 0; padding: 0 30px;">
+        <div class="d-flex align-items-center gap-2 bg-warning" style="height: 40px;border: 1px solid black;">
+            <button class="btn btn-warning border-end px-2">&lt;&lt;</button>
+            <button class="btn btn-warning border-end px-2">1</button>
+            <button class="btn btn-warning border-end px-2">2</button>
+            <button class="btn btn-warning border-end px-2">3</button>
+            <button class="btn btn-warning border-end px-2">4</button>
+            <button class="btn btn-warning border-end px-2">5</button>
+            <button class="btn btn-warning border-end px-2">6</button>
+            <button class="btn btn-warning border-end px-2">7</button>
+            <button class="btn btn-warning border-end px-2">8</button>
+            <button class="btn btn-warning border-end px-2">9</button>
+            <button class="btn btn-warning border-end px-2">10</button>
+            <button class="btn btn-warning border-end px-2">&gt;&gt;</button>
+        </div>
+        <div style="padding: 0 100px;">
+            총 금액: 3,770,000 원
+        </div>
+
+        <div class="bg-warning" style="border: 1px solid black;">
+            <button id="cancelRequestBtn" class="btn btn-warning border"
+                    onclick="cancelStatus(this)">입고 취소 요청
+            </button>
+        </div>
+
+    </div>
+
+
+</div>
+</body>
+<th:block layout:fragment="script">
+    <script>
+        function handleCheckboxChange(checkbox) {
+            const cancelButton = document.getElementById('cancelRequestBtn');
+            const incomeId = checkbox.getAttribute('data-income-id');
+            const detailsTable = document.querySelector('#detailsTable');
+            const tbody = detailsTable.querySelector('tbody') ||
+                detailsTable.insertAdjacentElement('beforeend', document.createElement('tbody'));
+
+
+            if (checkbox.checked) {
+                fetch(`/income/details/${incomeId}`)
+                    .then(response => response.json())
+                    .then(details => {
+                        details.forEach((detail, index) => {
+                            const row = `
+                        <tr data-income-id="${incomeId}">
+                            <td style="width: 40px; height: 40px">${tbody.children.length + 1}</td>
+                            <td style="width: 40px; height: 40px">
+                                <input type="checkbox" class="detail-checkbox" data-income-id="${incomeId}"
+                                       onchange="handleDetailCheckboxChange(this)"/>
+                            </td>
+                            <td style="width: 450px; height: 40px">${detail.productName}</td>
+                            <td style="width: 350px; height: 40px">${detail.incomeExpectedQuantity}</td>
+                            <td style="width: 350px; height: 40px">${detail.productUnit}</td>
+                            <td style="width: 385px; height: 40px">${
+                                detail.incomeStatus === 0 ? '입고예정' :
+                                    detail.incomeStatus === 1 ? '검수중' :
+                                        detail.incomeStatus === 2 ? '적치중' :
+                                            detail.incomeStatus === 3 ? '입고완료' : '입고취소'
+                            }</td>
+                        </tr>
+                    `;
+                            tbody.insertAdjacentHTML('beforeend', row);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        checkbox.checked = false;
+                    });
+            } else {
+                const rowsToRemove = tbody.querySelectorAll(`tr[data-income-id="${incomeId}"]`);
+                rowsToRemove.forEach(row => row.remove());
+
+                const remainingRows = tbody.querySelectorAll('tr');
+                remainingRows.forEach((row, index) => {
+                    row.querySelector('td').textContent = index + 1;
+                });
+            }
+        }
+
+        // 상세정보 체크박스 이벤트 핸들러 추가
+        function handleDetailCheckboxChange(checkbox) {
+            const incomeId = checkbox.getAttribute('data-income-id');
+            const cancelButton = document.getElementById('cancelRequestBtn');
+
+            if (checkbox.checked) {
+                const selectedIds = new Set(cancelButton.getAttribute('data-income-ids')?.split(',') || []);
+                selectedIds.add(incomeId);
+                cancelButton.setAttribute('data-income-ids', Array.from(selectedIds).join(','));
+
+            } else {
+                const selectedIds = new Set(cancelButton.getAttribute('data-income-ids')?.split(',') || []);
+                selectedIds.delete(incomeId);
+                if (selectedIds.size > 0) {
+                    cancelButton.setAttribute('data-income-ids', Array.from(selectedIds).join(','));
+                } else {
+                    cancelButton.removeAttribute('data-income-ids');
+                }
+            }
+        }
+
+        // document.getElementById('cancelRequestBtn').addEventListener('click', function() {
+        //     const selectedIds = this.getAttribute('data-income-ids')?.split(',') || [];
+        //     if (selectedIds.length > 0) {
+        //         console.log('취소 요청할 입고번호 목록:', selectedIds);
+        //     } else {
+        //         console.log('선택된 입고번호가 없습니다');
+        //     }
+        // });
+        function cancelStatus() {
+            const incomeId = document.getElementById('cancelRequestBtn').getAttribute('data-income-ids');
+            if (!incomeId) {
+                alert('취소할 항목을 선택해주세요');
+                return;
+            }
+
+            console.log('취소 요청할 입고번호 목록:', incomeId);
+
+            axios.post('/income/cancle', {
+                incomeId: incomeId
+            })
+                .then(function (response) {
+                    if (response.data) {
+                        alert('취소 처리가 완료되었습니다');
+                        location.reload();
+                    } else {
+                        alert('취소 처리에 실패했습니다');
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                    alert('취소 처리 중 오류가 발생했습니다');
+                });
+        }
+
+        document.getElementById('search').addEventListener('click', function () {
+            const incomeExpectedDate = document.querySelector('input[type="date"]').value;
+            const supplierName = document.querySelector('input[placeholder="공급자를 입력하세요"]').value;
+            const shipperName = document.getElementById('shipperNameInput').value;
+            const incomeId = document.querySelector('input[placeholder="입고예정번호 입력"]').value;
+
+
+
+            // 날짜 형식을 ISO 8601로 변환
+            const formattedDate = incomeExpectedDate ? `${incomeExpectedDate}T00:00:00` : null;
+
+            const requestData = {
+                incomeExpectedDate: formattedDate,
+                supplierName: supplierName || null,
+                shipperName: shipperName || null,
+                incomeId: incomeId || null
+            };
+            console.log('요청 데이터:', requestData);
+
+            fetch('/income/filter', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('#mainTable tbody');
+                    tableBody.innerHTML = '';
+
+                    data.forEach((item, index) => {
+                        const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><input type="checkbox" class="income-checkbox" data-income-id="${item.incomeId}" /></td>
+                        <td>${item.incomeId}</td>
+                        <td>${item.shipperName}</td>
+                        <td>${item.supplierName}</td>
+                        <td>${item.statusText}</td>
+                        <td>${item.incomeExpectedDate}</td>
+                        <td>${item.incomePrice}</td>
+                        <td>${item.productName}</td>
+                    </tr>`;
+                        tableBody.insertAdjacentHTML('beforeend', row);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+
+
+
+    </script>
+</th:block>
+</html>
