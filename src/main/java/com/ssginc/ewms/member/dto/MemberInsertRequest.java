@@ -14,7 +14,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class MemberRequest {
+public class MemberInsertRequest {
 
     /**
      * 회원 아이디

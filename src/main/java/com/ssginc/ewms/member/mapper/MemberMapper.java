@@ -1,9 +1,9 @@
 package com.ssginc.ewms.member.mapper;
 
-import com.ssginc.ewms.member.dto.MemberRequest;
+import com.ssginc.ewms.member.dto.MemberInsertRequest;
+import com.ssginc.ewms.member.dto.MemberUpdateRequest;
 import com.ssginc.ewms.member.vo.MemberVO;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.Map;
 
@@ -60,7 +60,7 @@ public interface MemberMapper {
      * @param member 회원 요청 데이터
      * @return 삽입된 행의 수 (정상적으로 삽입되면 1)
      */
-    int insertMember(MemberRequest member);
+    int insertMember(MemberInsertRequest member);
 
     String selectMemberIdByEmail(String email);
 
@@ -71,4 +71,6 @@ public interface MemberMapper {
     String selectMemberPwByMemberNo(int memberNo);
 
     String selectMemberPhoneByMemberNo(int memberNo);
+
+    int updateMember(MemberUpdateRequest member);
 }

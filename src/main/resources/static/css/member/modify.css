@@ -1,0 +1,250 @@
+/* 회원정보 수정 CSS */
+body {
+    font-family: Pretendard;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.update-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.profile-image {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #f8a600;
+}
+
+.edit-profile-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: #f8a600;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.profile-name {
+    font-weight: 600;
+    font-size: 20px;
+}
+/* style.css */
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.signup-container {
+    width: 580px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.title {
+    font-size: 28px;
+    color: #f8a600;
+    margin-bottom: 50px;
+}
+
+.signup-form {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+}
+
+.form-group {
+    width: 100%;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group {
+    gap: 12px;
+    width: 100%;
+}
+
+.errMsg {
+    font-size: 12px;
+    color: red;
+}
+
+label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+    width: 18%;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="date"]  {
+    width: 320px;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: inline-block;
+    height: 53px;
+}
+
+input::placeholder {
+    font-size: 12px;
+    font-weight: 100;
+}
+
+.btn {
+    width: 90px;
+    height: 53px;
+    padding: 8px;
+    font-size: 12px;
+    color: #f8a600;
+    border: 1px solid #f8a600;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.pointer-none {
+    pointer-events: none;
+}
+
+.btn:hover,
+.btn:hover svg *{
+    background: #f8a600;
+    color: #fff;
+    stroke: #fff;
+}
+
+.radio-group {
+    display: flex;
+    gap: 10px;
+}
+
+.radio-group label {
+    font-size: 14px;
+}
+
+.submit-btn {
+    width: 320px;
+    height: 53px;
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #f8a600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background-color: #fff;
+    color: #f8a600;
+    border: 1px solid #f8a600;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.timer {
+    width: 18%;
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: red;
+}
+
+#address-search-result {
+    width: min-content;
+    gap: 12px;
+}
+
+input[name="memberId"],
+input[name="memberName"],
+input[name="memberBirth"] {
+    background-color: #ece9e9;
+    text-align: center;
+}
+
+
+/* 스피너 */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+}

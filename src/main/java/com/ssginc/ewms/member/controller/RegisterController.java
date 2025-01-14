@@ -1,6 +1,6 @@
 package com.ssginc.ewms.member.controller;
 
-import com.ssginc.ewms.member.dto.MemberRequest;
+import com.ssginc.ewms.member.dto.MemberInsertRequest;
 import com.ssginc.ewms.member.service.RegisterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,8 +54,8 @@ public class RegisterController {
      * @return 대시보드 페이지
      */
     @PostMapping("register")
-    public String register(MemberRequest member,
-                            RedirectAttributes redirectAttributes) {
+    public String register(MemberInsertRequest member,
+                           RedirectAttributes redirectAttributes) {
 
         int res = 0;
 

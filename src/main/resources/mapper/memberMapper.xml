@@ -53,19 +53,41 @@
     </select>
 
     <select id="selectMemberEmailById" resultType="string">
-        select member_email from member where member_id = #{id};
+        select member_email from member where member_id = #{id}
     </select>
     <select id="selectMemberPwByMemberNo" resultType="string">
-        select member_pw from member where member_no = #{memberNo};
+        select member_pw from member where member_no = #{memberNo}
     </select>
     <select id="selectMemberPhoneByMemberNo" resultType="string">
-        select member_phone from member where member_no = #{memberNo};
+        select member_phone from member where member_no = #{memberNo}
     </select>
 
     <update id="updateMemberPw">
         update member
         set member_pw = #{generatedPw}
         where member_id = #{id}
+    </update>
+
+    <update id="updateMember">
+        update member
+        <set>
+            <if test="memberPw != null">
+                member_pw = #{memberPw},
+            </if>
+            <if test="memberEmail != null">
+                member_email = #{memberEmail},
+            </if>
+            <if test="memberPhone != null">
+                member_phone = #{memberPhone},
+            </if>
+            <if test="memberPost != null">
+                member_post = #{memberPost},
+            </if>
+            <if test="memberAddr != null">
+                member_addr = #{memberAddr}
+            </if>
+        </set>
+        where member_id = #{memberId}
     </update>
 
 </mapper>

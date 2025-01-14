@@ -1,7 +1,6 @@
 package com.ssginc.ewms.member.service;
 
-import com.ssginc.ewms.member.dto.MemberRequest;
-import com.ssginc.ewms.member.vo.MemberVO;
+import com.ssginc.ewms.member.dto.MemberInsertRequest;
 
 /**
  * 회원 관리 기능을 관장하는 서비스입니다.
@@ -32,6 +31,6 @@ public interface RegisterService {
      * @return 저장된 행의 개수 (정상적으로 저장되면 1)
      * @throws Exception 저장 중 에러 발생 시 예외 발생
      */
-    int insertMember(MemberRequest member) throws Exception;
+    int insertMember(MemberInsertRequest member) throws Exception;
 
 }

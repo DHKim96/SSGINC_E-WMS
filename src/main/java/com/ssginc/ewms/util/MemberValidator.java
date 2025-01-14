@@ -1,7 +1,7 @@
 package com.ssginc.ewms.util;
 
 import com.ssginc.ewms.exception.InvalidFormatException;
-import com.ssginc.ewms.member.dto.MemberRequest;
+import com.ssginc.ewms.member.dto.MemberInsertRequest;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -10,7 +10,7 @@ import java.time.LocalDate;
  * 유저 정보를 검증하는 클래스
  */
 @Component
-public class MemberValidator implements Validator<MemberRequest> {
+public class MemberValidator implements Validator<MemberInsertRequest> {
 
     private final String idReg;
     private final String passwordReg;
@@ -27,7 +27,7 @@ public class MemberValidator implements Validator<MemberRequest> {
     }
 
     @Override
-    public boolean validate(MemberRequest object) {
+    public boolean validate(MemberInsertRequest object) {
         if (object == null) {
             throw new InvalidFormatException(ErrorCode.NULL_POINT_ERROR);
         }
