@@ -17,8 +17,8 @@ public class InventoryAdjustVO {
     private String sectorName;
     private int productId;
     private String productName;
-    private int incomePrice;
-    private int outgoingPrice;
+    private int incomeUnitPrice;
+    private int outgoingUnitPrice;
     private int inventoryQuantity;
     private int realInventoryQuantity;
     private LocalDate expirationDate;
