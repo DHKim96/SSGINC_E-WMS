@@ -46,7 +46,6 @@ async function searchAndUpdateTable() {
 function updateTable(data, selectedRows = []) {
     const tbody = document.querySelector('tbody');
     tbody.innerHTML = ''; // 기존 테이블 데이터 초기화
-    console.log(data);
     if (data.length === 0) {
         tbody.innerHTML = '<tr><td colspan="9">데이터가 없습니다.</td></tr>'; // 데이터가 없는 경우 메시지 표시
         return;
@@ -139,8 +138,8 @@ document.getElementById('sort-date-btn').addEventListener('click', function () {
 
     // 날짜를 기준으로 행 정렬
     rows.sort((a, b) => {
-        const dateA = new Date(a.querySelector('td:nth-child(9)').textContent.trim());
-        const dateB = new Date(b.querySelector('td:nth-child(9)').textContent.trim());
+        const dateA = new Date(a.querySelector('td:nth-child(10)').textContent.trim());
+        const dateB = new Date(b.querySelector('td:nth-child(10)').textContent.trim());
 
         // 오름차순/내림차순에 따라 정렬
         return isAscending ? dateA - dateB : dateB - dateA;

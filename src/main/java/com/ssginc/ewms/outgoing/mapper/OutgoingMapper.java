@@ -29,5 +29,6 @@ public interface OutgoingMapper {
 
     Integer getInventoryQuantity(@Param("outgoingId") int outgoingId);
     Integer getOutgoingQuantity(@Param("outgoingId") int outgoingId);
+    void updateOutgoingDate(@Param("outgoingId") int outgoingId, @Param("outgoingDate") String outgoingDate);
 
 }

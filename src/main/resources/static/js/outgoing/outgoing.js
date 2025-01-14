@@ -140,7 +140,7 @@ function updateTotalAmount() {
 
     checkboxes.forEach(checkbox => {
         const row = checkbox.closest('tr'); // 체크박스가 속한 행 가져오기
-        const priceCell = row.querySelector('td:nth-child(6)'); // 총 금액 셀 가져오기 (6번째 열 기준)
+        const priceCell = row.querySelector('td:nth-child(7)'); // 총 금액 셀 가져오기 (6번째 열 기준)
         const price = parseInt(priceCell.textContent.trim().replace(/,/g, ''), 10); // 금액을 정수로 변환
         if (!isNaN(price)) {
             total += price; // 총 금액 합산
@@ -157,8 +157,8 @@ document.getElementById('sort-date-btn').addEventListener('click', function () {
 
     // 날짜를 기준으로 행 정렬
     rows.sort((a, b) => {
-        const dateA = new Date(a.querySelector('td:nth-child(8)').textContent.trim());
-        const dateB = new Date(b.querySelector('td:nth-child(8)').textContent.trim());
+        const dateA = new Date(a.querySelector('td:nth-child(9)').textContent.trim());
+        const dateB = new Date(b.querySelector('td:nth-child(9)').textContent.trim());
 
         // 오름차순/내림차순에 따라 정렬
         return isAscending ? dateA - dateB : dateB - dateA;
@@ -214,7 +214,7 @@ document.getElementById('approve-btn').addEventListener('click', async () => {
             checkbox.checked = false; // 선택 해제
             checkbox.disabled = true; // 비활성화
             const row = checkbox.closest('tr');
-            const statusCell = row.querySelector('td:nth-child(7)'); // 상태 셀 업데이트
+            const statusCell = row.querySelector('td:nth-child(8)'); // 상태 셀 업데이트
             if (statusCell) {
                 statusCell.textContent = '출고 대기'; // 상태 업데이트
             }

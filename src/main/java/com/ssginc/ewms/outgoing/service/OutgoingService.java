@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -50,6 +52,10 @@ public class OutgoingService {
 
         // 재고 업데이트
         outgoingMapper.updateQuantity(outgoingId);
+
+        // 날짜 업데이트
+        String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        outgoingMapper.updateOutgoingDate(outgoingId, currentDateTime); // 상태도 함께 업데이트
     }
 
 }
