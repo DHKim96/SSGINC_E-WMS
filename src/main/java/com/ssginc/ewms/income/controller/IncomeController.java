@@ -52,7 +52,7 @@ public class IncomeController {
         if (result == 1) {
             try {
                 poiService.makeIncomeFile(incomeRequest);
-                smtpService.sendRequest(0, "kdc9619@naver.com", "attach/income.docx", "income.docx");
+                smtpService.sendRequest(0, incomeRequest.getSupplierEmail(), "attach/income.docx", "income.docx");
             } catch (IOException | MessagingException e) {
                 throw new RuntimeException(e);
             }
