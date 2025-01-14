@@ -71,6 +71,30 @@
         </if>
     </select>
 
+    <select id="getInventoryCapacityByInventoryId" resultType="int">
+        SELECT p.unit_capacity * i.inventory_quantity
+        FROM product p
+        INNER JOIN inventory i ON i.product_id = p.product_id
+        WHERE i.inventory_id = #{inventoryId}
+    </select>
+
+    <select id="getTotalInventoryById"
+            resultType="int">
+        SELECT SUM(i.inventory_quantity)
+        FROM inventory i
+        INNER JOIN sector s ON s.sector_id = i.inventory_id
+        INNER JOIN warehouse w ON s.warehouse_id = w.warehouse_id
+        GROUP BY w.warehouse_id, i.product_id
+        HAVING w.warehouse_id = #{warehouseId} AND i.product_id = #{productId}
+    </select>
+
+    <select id="getInventoryQuantityById"
+            resultType="int">
+        SELECT inventory_quantity
+        FROM inventory
+        WHERE inventory_id = #{inventoryId}
+    </select>
+
     <!-- 선택된 재고의 실사 재고량을 수정 -->
     <update id="updateRealInventory"
             parameterType="int">
@@ -84,4 +108,20 @@
         UPDATE inventory SET inventory_quantity = #{realQuantity}
         WHERE inventory_id = #{inventoryId}
     </update>
+
+    <update id="updateSector">
+        UPDATE inventory SET sector_id = #{sectorId}
+        WHERE inventory_id = #{inventoryId}
+    </update>
+
+    <delete id="deleteInventories"
+            parameterType="list">
+        DELETE FROM inventory
+        WHERE inventory_id IN
+        <foreach item="inventoryId"
+                 collection="list"
+                 open="(" separator="," close=")">
+            #{inventoryId}
+        </foreach>
+    </delete>
 </mapper>

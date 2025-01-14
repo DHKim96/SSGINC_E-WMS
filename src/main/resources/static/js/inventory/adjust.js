@@ -68,6 +68,67 @@ function adjustQuantity() {
             location.reload();
         }
     }).catch(error => {
-        alert("수정실패! " + error);
+        alert(error);
     });
+}
+
+function updateSector() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    let idList = new Array();
+    let sectorList = new Array();
+
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            const inventoryId = parseInt(checkbox.getAttribute("data-id"));
+            const sectorName = document.getElementById("sectorName" + inventoryId).value;
+
+            if (!sectorName) {
+                alert("저장공간을 입력받지 못한 대상이 존재합니다.");
+                return;
+            }
+            idList.push(inventoryId);
+            sectorList.push(sectorName);
+        }
+    });
+
+    axios.put("/inventory/updateSector", {
+        idList: idList,
+        sectorList: sectorList
+    }).then(response => {
+        if (response.data > 0) {
+            location.reload();
+        }
+    }).catch(error => {
+        alert(error);
+    });
+}
+
+function deleteInventory() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    let idList = new Array();
+
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            const inventoryId = parseInt(checkbox.getAttribute("data-id"));
+            idList.push(inventoryId);
+        }
+    });
+
+    if (idList.length === 0) {
+        alert("삭제할 재고가 없습니다.");
+        return;
+    }
+
+    console.log(idList);
+    axios.delete("/inventory/deleteInventory", {
+        data: {
+            idList: idList
+        }
+    }).then(response => {
+        if (response.data > 0) {
+            location.reload();
+        }
+    }).catch(error => {
+        alert(error);
+    })
 }

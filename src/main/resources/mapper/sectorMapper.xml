@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.ewms.sector.mapper.SectorMapper">
+
+    <!-- sector 정보를 창고번호와 공간이름으로 검색 -->
+    <select id="findSectorByWareHouseIdAndSectorName"
+            resultType="sectorVO">
+        SELECT * FROM sector
+        WHERE warehouse_id = #{warehouseId} AND sector_name = #{sectorName}
+    </select>
+
+    <!-- sector 아이디에 따른 허용용량 검색 -->
+    <select id="getAllowCapacityBySectorId"
+            resultType="int">
+        SELECT allow_capacity
+        FROM sector
+        WHERE sector_id = #{sectorId}
+    </select>
+
+    <select id="getStoreCapacityBySectorId" resultType="int">
+        SELECT SUM(p.unit_capacity * i.inventory_quantity)
+        FROM product p
+        INNER JOIN inventory i ON i.product_id = p.product_id
+        GROUP BY i.sector_id
+        HAVING i.sector_id = #{sectorId}
+    </select>
+</mapper>

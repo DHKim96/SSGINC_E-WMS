@@ -1,12 +1,21 @@
 package com.ssginc.ewms.inventory.service;
 
+import com.ssginc.ewms.exception.ValueCustomException;
 import com.ssginc.ewms.inventory.mapper.InventoryMapper;
 import com.ssginc.ewms.inventory.vo.InventoryAdjustVO;
 import com.ssginc.ewms.inventory.vo.InventoryStateVO;
+import com.ssginc.ewms.product.mapper.ProductMapper;
+import com.ssginc.ewms.product.vo.ProductVO;
+import com.ssginc.ewms.sector.mapper.SectorMapper;
+import com.ssginc.ewms.sector.vo.SectorVO;
+import com.ssginc.ewms.util.ErrorCode;
+import com.ssginc.ewms.warehouse.mapper.WarehouseMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,8 +25,12 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InventoryService {
     private final InventoryMapper inventoryMapper;
+    private final SectorMapper sectorMapper;
+    private final WarehouseMapper warehouseMapper;
+    private final ProductMapper productMapper;
 
     /**
      * 현재 창고에 저장된 모든 재고현황을 보여주는 메소드
@@ -92,5 +105,93 @@ public class InventoryService {
             }
         }
         return count;
+    }
+
+    /**
+     * 선택된 재고들의 sector를 이동하는 service layer 메소드
+     * @param inventoryIdList    변경되어야 할 재고 번호 리스트
+     * @param sectorNameList     변경되어야 할 sector 값 리스트
+     * @return                   update가 실행된 row의 합
+     */
+    @Transactional
+    public int updateSector(List<Integer> inventoryIdList, List<String> sectorNameList) {
+        int count = 0;
+
+        // sector 탐색을 위해 창고 정보 불러오기
+        List<Integer> warehouseIdList = getWarehouseId(inventoryIdList);
+
+        // 존재하는 sector 인지 확인
+        List<Integer> sectorIdList = new ArrayList<>();
+        for (int i = 0; i < sectorNameList.size(); i++) {
+            SectorVO sectorVO = sectorMapper.findSectorByWareHouseIdAndSectorName(warehouseIdList.get(i),
+                    sectorNameList.get(i));
+            if (sectorVO == null) {
+                throw new ValueCustomException(ErrorCode.SECTOR_NOT_EXIST);
+            }
+            sectorIdList.add(sectorVO.getSectorId());
+        }
+        // 이동 가능 여부 확인
+        for (int i = 0; i < sectorIdList.size(); i++) {
+            int inventoryId = inventoryIdList.get(i);
+            int sectorId = sectorIdList.get(i);
+
+            // sector 허용용량과 현재 적재용량. 이동하여야 할 재고용량을 비교하여 이동 가능한지 확인
+            int allowCapacity = sectorMapper.getAllowCapacityBySectorId(sectorId);
+            int storeCapacity = 0;
+            Integer tmpResult = sectorMapper.getStoreCapacityBySectorId(sectorId);
+            if (tmpResult != null) {
+                storeCapacity = tmpResult;
+            }
+            int inventoryCapacity = inventoryMapper.getInventoryCapacityByInventoryId(inventoryId);
+
+            if (allowCapacity - storeCapacity < inventoryCapacity) {
+                throw new ValueCustomException(ErrorCode.EXCEED_CAPACITY_ERROR);
+            }
+        }
+
+        for (int i = 0; i < inventoryIdList.size(); i++) {
+            int result = inventoryMapper.updateSector(inventoryIdList.get(i), sectorIdList.get(i));
+            if (result > 0) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * 선택된 재고를 폐기 수행하는 함수
+     * @param inventoryIdList    삭제되어야 할 재고번호 리스트
+     * @return                   delete가 수행된 row 수
+     */
+    @Transactional
+    public int deleteInventories(List<Integer> inventoryIdList) {
+        List<Integer> warehouseIdList = getWarehouseId(inventoryIdList);
+
+        for (int i = 0; i < inventoryIdList.size(); i++) {
+            ProductVO productVO = productMapper.getProductByInventoryId(inventoryIdList.get(i));
+            log.info(String.valueOf(productVO));
+
+            int safetyQuantity = productVO.getSafetyQuantity();
+            int totalQuantity = inventoryMapper.getTotalInventoryById(productVO.getProductId(), warehouseIdList.get(i));
+            int inventoryQuantity = inventoryMapper.getInventoryQuantityById(inventoryIdList.get(i));
+
+            log.info(safetyQuantity + " " + totalQuantity + " " + inventoryQuantity);
+
+            if (safetyQuantity > totalQuantity - inventoryQuantity) {
+                throw new ValueCustomException(ErrorCode.LACK_SAFETY_QUANTITY);
+            }
+        }
+
+        return inventoryMapper.deleteInventories(inventoryIdList);
+    }
+
+    private List<Integer> getWarehouseId(List<Integer> inventoryIdList) {
+        List<Integer> warehouseIdList = new ArrayList<>();
+
+        for (int i = 0; i < inventoryIdList.size(); i++) {
+            warehouseIdList.add(warehouseMapper.getWarehouseIdByInventoryId(inventoryIdList.get(i)));
+        }
+
+        return warehouseIdList;
     }
 }
