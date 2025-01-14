@@ -61,7 +61,7 @@
         JOIN shipper s ON i.shipper_id = s.shipper_id
         JOIN product p ON i.product_id = p.product_id
         JOIN supplier sup ON p.supplier_id = sup.supplier_id
-        WHERE 1=1
+        WHERE i.income_status = 0
         <if test="incomeExpectedDate != null">
             AND i.income_expected_date = #{incomeExpectedDate}
         </if>
@@ -274,7 +274,7 @@
     <select id="getInspectionCapacity"
             resultType="com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO" parameterType="int">
         SELECT i.income_id,
-               i.income_expected_quantity * p.unit_capacity AS allocatedCapacity,
+               i.actual_quantity * p.unit_capacity AS allocatedCapacity,
                p.product_id
         FROM income i
                  JOIN product p ON i.product_id = p.product_id
