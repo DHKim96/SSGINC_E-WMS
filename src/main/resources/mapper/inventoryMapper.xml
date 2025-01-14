@@ -57,8 +57,8 @@
             parameterType="int"
             resultType="inventoryAdjustVO">
         SELECT i.inventory_id, s.sector_name, i.product_id,
-               p.product_name, p.income_price,
-               p.outgoing_price, i.inventory_quantity,
+               p.product_name, p.income_unit_price,
+               p.outgoing_unit_price, i.inventory_quantity,
                i.real_inventory_quantity, i.expiration_date
         FROM inventory i
                  JOIN sector s ON i.sector_id = s.sector_id
