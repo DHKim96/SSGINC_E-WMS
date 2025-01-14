@@ -8,22 +8,15 @@
 <body>
 <div layout:fragment="content">
     <div class="col-md-12">
-        <h3>적치 관리</h3>
+        <h3 style="padding:30px">적치 관리</h3>
         <hr>
         <div class="col-md-12" style="width: 1624px; height: 45px; padding: 10px">
             <div class="search-section d-flex justify-content-center" style="padding: 20px;">
                 <div class="d-flex align-items-center gap-4">
 
                     <div class="d-flex align-items-center" style="width: 549px; height: 61px; gap: 10px">
-                        <label style="width: 108px; height: 41px; margin-bottom: 0; font-weight: 500; border: 1px solid #ced4da; display: flex; align-items: center; justify-content: center; text-align: center;">상품코드</label>
-                        <input type="text"
-                               class="form-control"
-                               placeholder="상품코드를 입력하세요"
-                               style="width: 190px; height: 40px; border: 1px solid #ced4da;">
-                        <button class="btn btn-warning ms-2 text-nowrap" style="height: 40px; width: 75px;">검색</button>
-                        <button class="btn btn-warning ms-2 text-nowrap" style="height: 40px; width: 100px;">초기화
-                        </button>
-                        <button class="btn btn-warning ms-2 text-nowrap" style="height: 40px; width: 170px;"
+
+                        <button class="btn btn-warning ms-2 text-nowrap text-white" style="height: 40px; width: 170px;"
                                 data-bs-toggle="modal" data-bs-target="#inspectionModal">적치위치등록
                         </button>
                     </div>
@@ -36,7 +29,7 @@
 
 
     <!-- 메인 테이블 -->
-    <div class="mt-4" style="width: 1615px; height: 647px; padding: 30px">
+    <div class="mt-4" style="width: 1615px; height: 647px; padding: 30px; overflow-y: auto;">
         <table class="table table-bordered text-center align-middle">
             <thead>
             <tr class="bg-warning text-white">
