@@ -53,8 +53,41 @@ public class OutgoingController {
 
     @GetMapping("/picking")
     public String picking(Model model) {
-        List<OutgoingVO> outgoingList = outgoingService.getOutgoingBySearch(null, null, null, null);
+        List<OutgoingVO> outgoingList = outgoingService.getOutgoingWithInventory(null, null, null, null);
         model.addAttribute("outgoingList", outgoingList);
         return "outgoing/picking";
+    }
+
+    @GetMapping("/searchByPickingDate")
+    public ResponseEntity<List<OutgoingVO>> searchByPickingDate(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate,
+            @RequestParam("productName") String productName,
+            @RequestParam("productStatus") String productStatus) {
+        try {
+            List<OutgoingVO> outgoingList = outgoingService.getOutgoingWithInventory(startDate, endDate, productName, productStatus);
+            return ResponseEntity.ok(outgoingList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/approvePicking")
+    public ResponseEntity<String> approvePicking(@RequestParam("outgoingId") int outgoingId) {
+        try {
+            outgoingService.updateOutgoingStatusAndQuantity(outgoingId, 2); // 상태를 출고 완료로 업데이트
+            return ResponseEntity.ok("출고 상태와 재고가 성공적으로 업데이트되었습니다.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("출고 상태 또는 재고 업데이트 실패");
+        }
+    }
+
+    @GetMapping("/complete")
+    public String complete(Model model) {
+        List<OutgoingVO> outgoingList = outgoingService.getOutgoingWithInventory(null, null, null, null);
+        model.addAttribute("outgoingList", outgoingList);
+        return "outgoing/complete";
     }
 }
