@@ -139,10 +139,6 @@ public class IncomeController {
         System.out.println(">>>>>>>>>검수관리 입고예정 리스트 받았으>>>>>>>>>>");
         model.addAttribute("ExpectedNormalIncomeList", ExpectedNormalIncomeList);
 
-        List<IncomeShipperProductSuppierVO> UrgentIncomeProducts = incomeService.getUrgentIncomeProducts();
-        System.out.println("=========================================검수관리 화면요청 받았으 kjo07번시작");
-        System.out.println("========================================긴급리스트"+UrgentIncomeProducts);
-        model.addAttribute("UrgentIncomeProducts", UrgentIncomeProducts);
 
         List<IncomeShipperProductSuppierVO> underReviewList = incomeService.getUnderReviewList();
         System.out.println("=========================================검수관리 화면요청 받았으 kjo09번시작");
@@ -150,6 +146,22 @@ public class IncomeController {
         model.addAttribute("UnderReviewList", underReviewList);
 
         return "income/inspectionmanagement";
+
+    }
+
+    @PostMapping("/updateUrgentIncomeProducts")
+    @ResponseBody
+    public boolean updateUrgentIncomeProducts() {
+        try {
+            log.info("kjo07시작");
+            return incomeService.updateUrgentIncomeProducts();
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return false;
+        }
 
     }
 

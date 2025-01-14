@@ -22,7 +22,7 @@ public interface IncomeMapper {
 
     List<IncomeShipperProductSuppierVO> getExpectedNormalIncomeList();//kjo-06
 
-    List<IncomeShipperProductSuppierVO> getUrgentIncomeProducts(); //kjo-07
+    int updateUrgentIncomeProducts(); //kjo-07
 
     int updateActualQuantityAndStatus(IncomeShipperProductSuppierVO incomeShipperProductSuppierVO);//kjo-08
 
