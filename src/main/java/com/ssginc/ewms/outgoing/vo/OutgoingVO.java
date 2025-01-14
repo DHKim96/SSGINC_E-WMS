@@ -19,4 +19,5 @@ public class OutgoingVO {
     private int sectorId;
     private int totalPrice;
     private int unitPrice;
+    private int inventoryQuantity;
 }
