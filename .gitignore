@@ -340,3 +340,6 @@ gradle-app.setting
 
 #properties
 application.properties
+
+#sql
+ewms.sql

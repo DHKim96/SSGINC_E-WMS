@@ -62,8 +62,13 @@ public enum ErrorCode {
     EMAIL_NOT_CORRECTED(500, "ME06", "입력하신 이메일이 가입 시 입력하신 이메일과 일치하지 않습니다"),
   
     INVALID_MEMBER_FORMAT(500, "ME07", "유저의 정보 형식이 올바르지 않습니다." ),
-    PHONE_NOT_CORRECTED(500, "ME400", "가입한 전화번호와 일치하지 않습니다.");
-  
+    PHONE_NOT_CORRECTED(500, "ME400", "가입한 전화번호와 일치하지 않습니다."),
+    
+    INVALID_TYPE_FORMAT(500, "D400", "입력하신 날짜 타입이 적절하지 않습니다."),
+    DATA_NOT_FOUNDED(500,"D401", "결과 데이터가 존재하지 않습니다."),
+    IO_FAILED(500, "D402", "입출력 중 예외가 발생했습니다."),
+    URI_REQUEST_FAILED(500, "A500", "URI 요청 중 예외가 발생했습니다.");
+
     private final int status;
     private final String code;
     private final String msg;
