@@ -1,0 +1,89 @@
+/* 전체 레이아웃 */
+body {
+    font-family: Pretendard;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* 헤더 */
+.header {
+    background-color: #FFD700;
+    color: black;
+    padding: 10px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* 사이드바 */
+.sidebar {
+    background-color: #333;
+    color: white;
+    width: 200px;
+    padding: 10px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 15px;
+}
+
+.sidebar ul li:hover {
+    text-decoration: underline;
+}
+
+/* 메인 콘텐츠 */
+.content {
+    flex-grow: 1;
+    background-color: #f9f9f9;
+    padding: 20px;
+}
+
+/* 필터 섹션 */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filters label {
+    margin-right: 5px;
+}
+
+.filters input, .filters button {
+    padding: 5px;
+}
+
+/* 테이블 스타일 */
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.inventory-table th, .inventory-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.inventory-table th {
+    background-color: #FFD700;
+}
+
+/* 액션 버튼 */
+.actions button {
+    background-color: #FFD700;
+    border: none;
+    padding: 10px 15px;
+}
+.actions button:hover {
+    background-color: #FFC107;
+}
