@@ -48,6 +48,16 @@ public class IncomeController {
     @PostMapping("register")
     public String registerIncome(IncomeFormVO incomeRequest) {
         int result = incomeService.insertIncomeRequest(incomeRequest);
+
+        if (result == 1) {
+            try {
+                poiService.makeIncomeFile(incomeRequest);
+                smtpService.sendRequest(0, "kdc9619@naver.com", "attach/income.docx", "income.docx");
+            } catch (IOException | MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         return "redirect:/inventory/inventory/1";
     }
 
