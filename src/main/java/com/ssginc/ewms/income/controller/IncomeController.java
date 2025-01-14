@@ -196,19 +196,23 @@ public class IncomeController {
 
     @PostMapping("/sectorCapacity")
     @ResponseBody
-    public ResponseEntity<List<IncomeProductSectorWarehouseInventoryVO>> getSectorCapacity(@RequestBody Map<String, Integer> request) {
+    public ResponseEntity<List<IncomeProductSectorWarehouseInventoryVO>> getSectorCapacity(
+            @RequestBody Map<String, Object> request) {
         try {
-            System.out.println("==========================================Kjo-16시작");
-            int sectorId = request.get("sectorId");
-            System.out.println("내가 가져온 창고에 해당하는 섹터 아이디==========="+sectorId);
+            // 체크박스/드롭다운 등에서 온 warehouseId, sectorId를 가져온다고 가정
+            log.info("kjo-16시작");
+            int sectorId = (int) request.get("sectorId");
+            log.info("내가받아온 섹터아이디{}",sectorId);
             List<IncomeProductSectorWarehouseInventoryVO> capacity = incomeService.getSectorAvailableCapacity(sectorId);
-            log.info("적재 가능 용량 = {}",capacity);
+            log.info("내가받아온 용량계산{}",capacity);
+            log.info("kjo-16성공");
             return ResponseEntity.ok(capacity);
         } catch (Exception e) {
-            log.error("적재중 에러 발생={}",e.getMessage());
+            log.error("적재가능용량 조회 중 에러 발생: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 
     @PostMapping("/InspectionCapacity")
     @ResponseBody

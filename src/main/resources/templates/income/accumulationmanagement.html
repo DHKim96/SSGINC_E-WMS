@@ -37,7 +37,7 @@
 
     <!-- 메인 테이블 -->
     <div class="mt-4" style="width: 1615px; height: 647px; padding: 30px">
-        <table class="table table-bordered text-center align-middle" >
+        <table class="table table-bordered text-center align-middle">
             <thead>
             <tr class="bg-warning text-white">
                 <th style="width: 40px; height: 40px">#</th>
@@ -79,7 +79,6 @@
     </div>
 
 
-
     <!--    모달-->
     <div class="modal fade" id="inspectionModal" tabindex="-1" aria-labelledby="inspectionModalLabel"
          aria-hidden="true">
@@ -103,16 +102,11 @@
                         <div class="d-flex gap-3">
                             <div class="col-6">
                                 <label class="form-label">창고ID:</label>
-                                <select class="form-select" id="warehouseSelect">
-                                    <option value="" selected disabled>창고ID 선택</option>
-                                </select>
+                                <input type="text" class="form-control" id="warehouseSelect" readonly>
                             </div>
                             <div class="col-6">
                                 <label class="form-label">섹터ID:</label>
-                                <select class="form-select" id="sectorSelect">
-                                    <option value="" selected disabled>섹터ID 선택</option>
-
-                                </select>
+                                <input type="text" class="form-control" id="sectorSelect" readonly>
                             </div>
                         </div>
                     </div>
@@ -164,49 +158,123 @@
                         const row = this.closest('tr');
                         selectedProduct = {
                             productId: row.querySelector('td:nth-child(3)').textContent.trim(),
-                            productName: row.querySelector('td:nth-child(4)').textContent.trim()
+                            productName: row.querySelector('td:nth-child(4)').textContent.trim(),
+                            warehouseId: row.querySelector('td:nth-child(6)').textContent.trim(),
+                            sectorId: row.querySelector('td:nth-child(7)').textContent.trim()
                         };
                     } else {
                         selectedProduct = null;
+                        availableCapacityInput.value = '';
                     }
                 });
             });
 
             storageButton.addEventListener('click', function (e) {
                 if (!selectedProduct) {
-                    e.preventDefault();
+                    e.preventDefault(); // 기본 동작 중지
+                    e.stopPropagation(); // 이벤트 전파 중지
                     alert('상품을 선택해주세요.');
                     return;
+
+                }
+                else {
+                    const modal = document.getElementById('inspectionModal');
+                    const productIdInput = modal.querySelector('.row .col-6:nth-child(1) input');
+                    const productNameInput = modal.querySelector('.row .col-6:nth-child(2) input');
+                    const warehouseIdInput = modal.querySelector('#warehouseSelect');
+                    const sectorIdInput = modal.querySelector('#sectorSelect');
+
+                    productIdInput.value = selectedProduct.productId;
+                    productNameInput.value = selectedProduct.productName;
+                    warehouseIdInput.value = selectedProduct.warehouseId;
+                    sectorIdInput.value = selectedProduct.sectorId;
+
+                    // readonly 속성 추가
+                    productIdInput.setAttribute('readonly', true);
+                    productNameInput.setAttribute('readonly', true);
+                    warehouseIdInput.setAttribute('readonly', true);
+                    sectorIdInput.setAttribute('readonly', true);
+
+                    // 비동기적으로 데이터를 가져오고 상태를 업데이트
+                    Promise.all([
+                        getInspectionCapacity(selectedProduct.productId),
+                        getSectorCapacity(selectedProduct.warehouseId, selectedProduct.sectorId)
+                    ]).then(() => {
+                        updateStorageStatus();
+                    });
                 }
 
-                const modal = document.getElementById('inspectionModal');
-                const productIdInput = modal.querySelector('.row .col-6:nth-child(1) input');
-                const productNameInput = modal.querySelector('.row .col-6:nth-child(2) input');
 
-                productIdInput.value = selectedProduct.productId;
-                productNameInput.value = selectedProduct.productName;
-
-                // readonly 속성 추가
-                productIdInput.setAttribute('readonly', true);
-                productNameInput.setAttribute('readonly', true);
-
-                getInspectionCapacity(selectedProduct.productId);
-
-                function getInspectionCapacity(productId) {
-                    axios.post('/income/InspectionCapacity', {productId: productId})
-                        .then(response => {
-                            if (response.data && response.data.length > 0) {
-                                document.getElementById('InspectionCapacity').value = response.data[0].allocatedCapacity || '';
-                            } else {
-                                document.getElementById('InspectionCapacity').value = '';
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Failed to fetch inspection capacity:', error);
-                            document.getElementById('InspectionCapacity').value = '';
-                        });
-                }
             });
+
+            function getInspectionCapacity(productId) {
+                axios.post('/income/InspectionCapacity', {productId: productId})
+                    .then(response => {
+                        if (response.data && response.data.length > 0) {
+                            document.getElementById('InspectionCapacity').value = response.data[0].allocatedCapacity || '';
+                        } else {
+                            document.getElementById('InspectionCapacity').value = '';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Failed to fetch inspection capacity:', error);
+                        document.getElementById('InspectionCapacity').value = '';
+                    });
+            }
+
+            function getInspectionCapacity(productId) {
+                return axios.post('/income/InspectionCapacity', {productId: productId})
+                    .then(response => {
+                        if (response.data && response.data.length > 0) {
+                            document.getElementById('InspectionCapacity').value = response.data[0].allocatedCapacity || '';
+                        } else {
+                            document.getElementById('InspectionCapacity').value = '';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Failed to fetch inspection capacity:', error);
+                        document.getElementById('InspectionCapacity').value = '';
+                    });
+            }
+
+            function getSectorCapacity(warehouseId, sectorId) {
+                return axios.post('/income/sectorCapacity', {
+                    warehouseId: warehouseId,
+                    sectorId: parseInt(sectorId)
+                })
+                    .then(response => {
+                        if (response.data && response.data.length > 0) {
+                            const capacity = response.data[0].availableCapacity;
+                            document.getElementById('SectorAvailableCapacity').value = capacity > 0 ? capacity : 0;
+                        } else {
+                            document.getElementById('SectorAvailableCapacity').value = '';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('적재가능용량 조회 실패:', error);
+                        document.getElementById('SectorAvailableCapacity').value = '';
+                    });
+            }
+
+            function updateStorageStatus() {
+                const availableCapacityInput = document.getElementById('SectorAvailableCapacity');
+                const inspectionCapacityInput = document.getElementById('InspectionCapacity');
+                const statusDiv = document.querySelector('.col-12 .border');
+
+                const availableCapacity = parseInt(availableCapacityInput.value) || 0;
+                const inspectionCapacity = parseInt(inspectionCapacityInput.value) || 0;
+
+                if (availableCapacity === 0 || inspectionCapacity > availableCapacity) {
+                    statusDiv.className = 'border p-2 text-center text-danger';
+                    statusDiv.textContent = '적재 불가능';
+                } else if (inspectionCapacity > 0 && availableCapacity > 0) {
+                    statusDiv.className = 'border p-2 text-center text-success';
+                    statusDiv.textContent = '적재 가능';
+                } else {
+                    statusDiv.textContent = '적재 상태';
+                    statusDiv.className = 'border p-2 text-center';
+                }
+            }
         });
 
 
@@ -281,29 +349,8 @@
                 });
             });
 
-            sectorSelect.addEventListener('change', function () {
-                const selectedSectorId = this.value;
 
-                if (selectedSectorId) {
-                    axios.post('/income/sectorCapacity', {
-                        sectorId: selectedSectorId
-                    })
-                        .then(response => {
-                            if (response.data && response.data.length > 0) {
-                                const capacity = response.data[0].availableCapacity;
-                                availableCapacityInput.value = capacity > 0 ? capacity : 0;
-                            } else {
-                                availableCapacityInput.value = '';
-                            }
-                        })
-                        .catch(error => {
-                            console.error('적재가능용량 조회 실패:', error);
-                            availableCapacityInput.value = '';
-                        });
-                } else {
-                    availableCapacityInput.value = '';
-                }
-            });
+
         });
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -367,8 +414,8 @@
             });
 
             // InspectionCapacity 값 변경 감지를 위한 MutationObserver 설정
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
+            const observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
                     if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
                         updateStorageStatus();
                     }
@@ -384,7 +431,7 @@
             const checkButton = document.getElementById('check');
             const statusDiv = document.querySelector('.col-12 .border');
 
-            checkButton.addEventListener('click', function() {
+            checkButton.addEventListener('click', function () {
                 // 적재 가능 상태일 때만 처리
                 if (statusDiv.textContent === '적재 가능') {
                     // 선택된 체크박스의 incomeId 가져오기
@@ -420,10 +467,8 @@
                     bootstrapModal.hide();
                 }
             });
+
         });
-
-
-
 
 
     </script>
