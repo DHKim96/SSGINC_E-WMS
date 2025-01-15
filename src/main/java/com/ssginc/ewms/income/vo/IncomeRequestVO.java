@@ -16,6 +16,7 @@ public class IncomeRequestVO {
     private int shipperId;
     private int sectorId;
     private int incomeType;
+    private int incomePrice;
     private int incomeStatus;
     private int incomeExpectedQuantity;
     private LocalDate incomeExpectedDate;

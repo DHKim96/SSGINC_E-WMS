@@ -6,6 +6,7 @@ import com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO;
 import com.ssginc.ewms.income.vo.IncomeRequestVO;
 import com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO;
 import com.ssginc.ewms.product.mapper.ProductMapper;
+import com.ssginc.ewms.product.vo.ProductVO;
 import com.ssginc.ewms.sector.mapper.SectorMapper;
 import com.ssginc.ewms.sector.vo.SectorVO;
 import com.ssginc.ewms.shipper.mapper.ShipperMapper;
@@ -130,6 +131,7 @@ public class IncomeService {
     public int insertIncomeRequest(IncomeFormVO incomeRequest) {
         IncomeRequestVO incomeRequestVO = new IncomeRequestVO();
 
+        ProductVO productVO = productMapper.getProductByName(incomeRequest.getProductName());
         int productId = productMapper.getProductIdByName(incomeRequest.getProductName());
         ShipperVO shipperVO = shipperMapper.getShipperByName(incomeRequest.getShipperName());
         SectorVO sectorVO = sectorMapper.findSectorByName(incomeRequest.getSectorName());
@@ -149,6 +151,7 @@ public class IncomeService {
             incomeRequestVO.setIncomeType(1);
             incomeRequestVO.setIncomeStatus(1);
         }
+        incomeRequestVO.setIncomePrice(productVO.getIncomeUnitPrice() * incomeRequest.getIncomeQuantity());
         incomeRequestVO.setIncomeExpectedQuantity(incomeRequest.getIncomeQuantity());
         incomeRequestVO.setIncomeExpectedDate(LocalDate.parse(incomeRequest.getIncomeExpectedDate()));
         incomeRequestVO.setSectorId(sectorVO.getSectorId());
