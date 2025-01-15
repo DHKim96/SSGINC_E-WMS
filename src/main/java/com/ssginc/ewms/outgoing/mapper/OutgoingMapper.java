@@ -1,5 +1,7 @@
 package com.ssginc.ewms.outgoing.mapper;
 
+import com.ssginc.ewms.outgoing.vo.OutgoingFormVO;
+import com.ssginc.ewms.outgoing.vo.OutgoingRequestVO;
 import com.ssginc.ewms.outgoing.vo.OutgoingVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -31,4 +33,7 @@ public interface OutgoingMapper {
     Integer getOutgoingQuantity(@Param("outgoingId") int outgoingId);
     void updateOutgoingDate(@Param("outgoingId") int outgoingId, @Param("outgoingDate") String outgoingDate);
 
+    OutgoingFormVO getOutgoingFormByProductId(int inventoryId);
+
+    int insertOutgoingRequest(OutgoingRequestVO outgoingRequestVO);
 }

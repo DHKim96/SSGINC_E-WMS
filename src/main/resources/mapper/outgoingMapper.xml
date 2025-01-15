@@ -104,4 +104,21 @@
         </if>
         ORDER BY o.outgoing_id;
     </select>
+
+    <insert id="insertOutgoingRequest"
+            parameterType="outgoingRequestVO">
+        INSERT INTO outgoing(product_id, shipper_id, outgoing_status, outgoing_type,
+                             outgoing_quantity, outgoing_price, branch_id, sector_id)
+        VALUES (#{productId}, #{shipperId}, #{outgoingStatus}, #{outgoingType},
+                #{outgoingQuantity}, #{outgoingPrice}, #{branchId}, #{sectorId})
+    </insert>
+    <select id="getOutgoingFormByProductId"
+            parameterType="int"
+            resultType="outgoingFormVO">
+        SELECT p.product_name, s.sector_name
+        FROM product p
+                 INNER JOIN inventory i ON p.product_id = i.product_id
+                 INNER JOIN sector s ON s.sector_id = i.sector_id
+        WHERE i.inventory_id = #{inventoryId}
+    </select>
 </mapper>
