@@ -17,7 +17,7 @@
                  JOIN product p ON i.product_id = p.product_id
                  JOIN category c ON p.category_id = c.category_id
                  JOIN supplier su ON p.supplier_id = su.supplier_id
-        WHERE s.warehouse_id = #{warehouseId} AND p.discontinued_status = 0
+        WHERE p.discontinued_status = 0
     </select>
 
     <!--  입력한 키워드에 따라 재고현황을 검색하는 쿼리  -->
@@ -34,7 +34,7 @@
         JOIN product p ON i.product_id = p.product_id
         JOIN category c ON p.category_id = c.category_id
         JOIN supplier su ON p.supplier_id = su.supplier_id
-        WHERE s.warehouse_id = 1 AND p.discontinued_status = 0
+        WHERE p.discontinued_status = 0
         <if test="sectorName != null and sectorName != ''">
             AND s.sector_name LIKE CONCAT('%', #{sectorName}, '%')
         </if>
