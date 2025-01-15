@@ -1,8 +1,20 @@
 package com.ssginc.ewms.outgoing.service;
 
+import com.ssginc.ewms.branch.mapper.BranchMapper;
+import com.ssginc.ewms.branch.vo.BranchVO;
+import com.ssginc.ewms.exception.ValueCustomException;
 import com.ssginc.ewms.outgoing.mapper.OutgoingMapper;
+import com.ssginc.ewms.outgoing.vo.OutgoingFormVO;
+import com.ssginc.ewms.outgoing.vo.OutgoingRequestVO;
 import com.ssginc.ewms.outgoing.vo.OutgoingVO;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ssginc.ewms.product.mapper.ProductMapper;
+import com.ssginc.ewms.product.vo.ProductVO;
+import com.ssginc.ewms.sector.mapper.SectorMapper;
+import com.ssginc.ewms.sector.vo.SectorVO;
+import com.ssginc.ewms.shipper.mapper.ShipperMapper;
+import com.ssginc.ewms.shipper.vo.ShipperVO;
+import com.ssginc.ewms.util.ErrorCode;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,14 +23,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class OutgoingService {
+    private final ProductMapper productMapper;
+    private final ShipperMapper shipperMapper;
+    private final BranchMapper branchMapper;
+    private final SectorMapper sectorMapper;
 
-    @Autowired
     private final OutgoingMapper outgoingMapper;
 
-    public OutgoingService(OutgoingMapper outgoingMapper) {
-        this.outgoingMapper = outgoingMapper;
-    }
 
     public List<OutgoingVO> getOutgoingBySearch(String startDate, String endDate, String productName, String productStatus) {
         return outgoingMapper.getOutgoingList(startDate, endDate, productName, productStatus);
@@ -57,5 +70,47 @@ public class OutgoingService {
         String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         outgoingMapper.updateOutgoingDate(outgoingId, currentDateTime); // 상태도 함께 업데이트
     }
+    public OutgoingFormVO getOutgoingFormByInventoryId(int inventoryId) {
+        return outgoingMapper.getOutgoingFormByProductId(inventoryId);
+    }
 
+    public int insertOutgoingRequest(OutgoingFormVO outgoingForm) {
+        OutgoingRequestVO outgoingRequestVO = new OutgoingRequestVO();
+
+        ProductVO productVO = productMapper.getProductByName(outgoingForm.getProductName());
+        ShipperVO shipperVO = shipperMapper.getShipperByName(outgoingForm.getShipperName());
+        BranchVO branchVO = branchMapper.getBranchByName(outgoingForm.getBranchName());
+        SectorVO sectorVO = sectorMapper.findSectorByName(outgoingForm.getSectorName());
+
+        System.out.println(productVO);
+        System.out.println(shipperVO);
+        System.out.println(branchVO);
+        System.out.println(sectorVO);
+
+        if (productVO == null || branchVO == null || sectorVO == null || shipperVO == null) {
+            throw new ValueCustomException(ErrorCode.NULL_POINT_ERROR);
+        }
+
+
+        outgoingRequestVO.setProductId(productVO.getProductId());
+        outgoingRequestVO.setShipperId(shipperVO.getShipperId());
+        if (outgoingForm.getOutgoingType().equals("normalOutgoing")) {
+            outgoingRequestVO.setOutgoingType(0);
+            outgoingRequestVO.setOutgoingStatus(0);
+        } else if (outgoingForm.getOutgoingType().equals("emergencyOutgoing")) {
+            outgoingRequestVO.setOutgoingType(1);
+            outgoingRequestVO.setOutgoingStatus(1);
+        }
+        outgoingRequestVO.setOutgoingQuantity(outgoingForm.getOutgoingQuantity());
+        outgoingRequestVO.setOutgoingPrice(productVO.getOutgoingUnitPrice() * outgoingForm.getOutgoingQuantity());
+        outgoingRequestVO.setBranchId(branchVO.getBranchId());
+        outgoingRequestVO.setSectorId(sectorVO.getSectorId());
+
+        System.out.println(outgoingRequestVO);
+        return outgoingMapper.insertOutgoingRequest(outgoingRequestVO);
+    }
+
+    public OutgoingFormVO getOutgoingFormByProductId(int productId) {
+        return outgoingMapper.getOutgoingFormByProductId(productId);
+    }
 }
