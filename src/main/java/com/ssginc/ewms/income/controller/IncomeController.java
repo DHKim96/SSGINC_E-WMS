@@ -63,7 +63,7 @@ public class IncomeController {
 
     @GetMapping("incomemanagement")
     public String Incomemanagement(Model model) {
-        System.out.println("=========================================입고관리 화면 요청 kjo05번 시작");
+        System.out.println("=========================================입고관리 화면 요청 kjo4번 시작");
         List<IncomeShipperProductSuppierVO> expectedIncomeList = incomeService.getExpectedIncomeList();
         System.out.println(expectedIncomeList);
         System.out.println(">>>>>>>>>입고예정 리스트 받았으>>>>>>>>>>");
@@ -113,7 +113,7 @@ public class IncomeController {
     @ResponseBody
     public ResponseEntity<Boolean> cancel(@RequestBody Map<String, String> request) {
         try {
-            System.out.println("===================================================kjo04시작");
+            System.out.println("===================================================kjo03시작");
             String[] idArray = request.get("incomeId").split(",");
             List<Integer> incomeIds = new ArrayList<>();
 
@@ -133,19 +133,15 @@ public class IncomeController {
 
     @GetMapping("inspectionmanagement")
     public String Inspectionmanagement(Model model) {
-        System.out.println("=========================================검수관리 화면요청 받았으 kjo06번시작");
+        System.out.println("=========================================검수관리 화면요청 받았으 kjo05번시작");
         List<IncomeShipperProductSuppierVO> ExpectedNormalIncomeList = incomeService.getExpectedNormalIncomeList();
         System.out.println(ExpectedNormalIncomeList);
         System.out.println(">>>>>>>>>검수관리 입고예정 리스트 받았으>>>>>>>>>>");
         model.addAttribute("ExpectedNormalIncomeList", ExpectedNormalIncomeList);
 
-        List<IncomeShipperProductSuppierVO> UrgentIncomeProducts = incomeService.getUrgentIncomeProducts();
-        System.out.println("=========================================검수관리 화면요청 받았으 kjo07번시작");
-        System.out.println("========================================긴급리스트"+UrgentIncomeProducts);
-        model.addAttribute("UrgentIncomeProducts", UrgentIncomeProducts);
 
         List<IncomeShipperProductSuppierVO> underReviewList = incomeService.getUnderReviewList();
-        System.out.println("=========================================검수관리 화면요청 받았으 kjo09번시작");
+        System.out.println("=========================================검수관리 화면요청 받았으 kjo08번시작");
         System.out.println("========================================입고중 리스트"+underReviewList);
         model.addAttribute("UnderReviewList", underReviewList);
 
@@ -153,11 +149,27 @@ public class IncomeController {
 
     }
 
+    @PostMapping("/updateUrgentIncomeProducts")
+    @ResponseBody
+    public boolean updateUrgentIncomeProducts() {
+        try {
+            log.info("kjo06시작");
+            return incomeService.updateUrgentIncomeProducts();
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return false;
+        }
+
+    }
+
     @PostMapping("/updateUnderReview")
     @ResponseBody
     public ResponseEntity<Boolean> updateUnderReview(@RequestBody List<Integer> incomeIds) {
         try {
-            log.info("kjo-10번 시작>>>>>>>>>>>>>");
+            log.info("kjo-09번 시작>>>>>>>>>>>>>");
             System.out.println("검수 진행 요청 보기: " + incomeIds);
             log.info("검수 진행 요청 보기:{} " , incomeIds);
             // Service 단으로 넘어가서 updateUnderReview 수행
@@ -187,7 +199,7 @@ public class IncomeController {
 
     @GetMapping("accumulationmanagement")
     public String Accumulationmanagement(Model model) {
-        System.out.println("=========================================적치관리 화면 요청 Kjo-13시작");
+        System.out.println("=========================================적치관리 화면 요청 Kjo-10시작");
         List<IncomeProductSectorWarehouseInventoryVO> storageInProgressList = incomeService.getStorageInProgressList();
         System.out.println("========================================적치관리 리스트 리스트"+storageInProgressList);
         model.addAttribute("StorageInProgressList", storageInProgressList);
@@ -199,7 +211,7 @@ public class IncomeController {
     @ResponseBody
     public ResponseEntity<List<Integer>> getWarehouseIds() {
         try {
-            System.out.println("==========================================Kjo-18시작");
+            System.out.println("==========================================Kjo-14시작");
             List<Integer> warehouseIds = incomeService.selectWarehouseId(); // kj0-18
             System.out.println("내가 가져온 창고 아이디==========="+warehouseIds);
             return ResponseEntity.ok(warehouseIds);
@@ -213,7 +225,7 @@ public class IncomeController {
     @ResponseBody
     public ResponseEntity<List<IncomeProductSectorWarehouseInventoryVO>> getSectorIds() {
         try {
-            System.out.println("==========================================Kjo-15시작");
+            System.out.println("==========================================Kjo-11시작");
             List<IncomeProductSectorWarehouseInventoryVO> sectorIds = incomeService.getWarehouseSectorList(); // kj0-18
             System.out.println("내가 가져온 창고에 해당하는 섹터 아이디==========="+sectorIds);
             return ResponseEntity.ok(sectorIds);
@@ -229,7 +241,7 @@ public class IncomeController {
             @RequestBody Map<String, Object> request) {
         try {
             // 체크박스/드롭다운 등에서 온 warehouseId, sectorId를 가져온다고 가정
-            log.info("kjo-16시작");
+            log.info("kjo-12시작");
             int sectorId = (int) request.get("sectorId");
             log.info("내가받아온 섹터아이디{}",sectorId);
             List<IncomeProductSectorWarehouseInventoryVO> capacity = incomeService.getSectorAvailableCapacity(sectorId);
@@ -247,7 +259,7 @@ public class IncomeController {
     public ResponseEntity<List<IncomeProductSectorWarehouseInventoryVO>> getInspectionCapacity(
             @RequestBody Map<String, Integer> request) {
         try {
-            System.out.println("kjo-17시작>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            System.out.println("kjo-13시작>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             // 클라이언트로부터 넘어온 JSON의 "productId" 값을 가져옴
             int productId = request.get("productId");
             System.out.println("넘어온 productID>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+productId);
@@ -268,7 +280,7 @@ public class IncomeController {
     @ResponseBody
     public ResponseEntity<Boolean> updateIncomeStatus(@RequestBody Map<String, Integer> request) {
         try {
-            System.out.println("kjo-19시작>>>>>>>>>>>>>>>>>>>");
+            System.out.println("kjo-15시작>>>>>>>>>>>>>>>>>>>");
             int productId = request.get("productId");
             int result = incomeService.updateIncomeStatusComplete(productId);
             log.info("현재 업데이트상태>>>>>>>>>{}",result);

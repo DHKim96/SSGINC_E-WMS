@@ -14,7 +14,7 @@
         UPDATE income
         SET income_status = 4
         WHERE income_status = 0
-        AND income_id IN
+        AND income_ID IN
         <foreach collection="list" item="incomeId" open="(" separator="," close=")">
             #{incomeId}
         </foreach>
@@ -22,7 +22,7 @@
 
     <update id="updateActualQuantityAndStatus" parameterType="IncomeShipperProductSuppierVO">
         UPDATE income
-        SET actual_quantity = #{actualQuantity},
+        SET income_actual_quantity = #{actualQuantity},
             income_status   = 2
         WHERE product_id     = #{productId}
           AND income_status  = 1
@@ -33,7 +33,7 @@
         UPDATE income i
         SET i.income_status = 1
         WHERE i.income_status = 0
-        AND i.income_id IN
+        AND i.income_ID IN
         <foreach collection="list" item="incomeId" open="(" separator="," close=")">
             #{incomeId}
         </foreach>
@@ -46,12 +46,19 @@
             SET i.income_status = 3
         WHERE i.product_id = #{productId}
     </update>
+    <update id="updateUrgentIncomeProducts">
+        UPDATE income i
+            JOIN product p ON i.product_id = p.product_id
+            SET i.income_status = 1
+        WHERE i.income_status = 0
+          AND i.income_type = 1
+    </update>
 
 
     <select id="fourFilterSelect" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO"
             parameterType="IncomeShipperProductSuppierVO">
         SELECT
-        i.income_id AS incomeId,
+        i.income_ID AS incomeId,
         s.shipper_name AS shipperName,
         sup.supplier_name AS supplierName,
         CASE i.income_status
@@ -79,9 +86,9 @@
             AND s.shipper_name LIKE CONCAT('%', #{shipperName}, '%')
         </if>
         <if test="incomeId > 0">
-            AND i.income_id = #{incomeId}
+            AND i.income_ID = #{incomeId}
         </if>
-        ORDER BY i.income_id DESC
+        ORDER BY i.income_ID DESC
     </select>
 
 
@@ -93,24 +100,24 @@
         FROM income i
                  JOIN product p ON i.product_id = p.product_id
         WHERE i.income_status = 0
-          AND i.income_id = #{incomeId}
+          AND i.income_ID = #{incomeId}
         ORDER BY p.product_name
     </select>
 
     <select id="selectIncomePrices" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO"
             parameterType="List">
         SELECT
-        income_id AS incomeId,
+        income_ID AS incomeId,
         income_price AS incomePrice
         FROM income
-        WHERE income_id IN
+        WHERE income_ID IN
         <foreach collection="list" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
     </select>
 
     <select id="getExpectedIncomeList" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO">
-        SELECT i.income_id                                                    AS incomeId,
+        SELECT i.income_ID                                                    AS incomeId,
                s.shipper_name                                                 AS shipperName,
                sup.supplier_name                                              AS supplierName,
                i.income_status                                                AS incomeStatus,
@@ -128,7 +135,7 @@
 
     <select id="getExpectedNormalIncomeList"
             resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO">
-        SELECT i.income_id                AS incomeId,
+        SELECT i.income_ID                AS incomeId,
                i.income_expected_quantity AS incomeExpectedQuantity,
                i.income_type              AS incomeType,
                i.income_status            AS incomeStatus
@@ -137,21 +144,16 @@
           AND i.income_type = 0
     </select>
 
-    <select id="getUrgentIncomeProducts" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO">
-        SELECT p.product_name AS productName
-        FROM income i
-                 JOIN
-             product p ON i.product_id = p.product_id
-        WHERE i.income_status = 0
-          AND i.income_type = 1
-    </select>
+
+
+
 
     <select id="getUnderReviewList" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO">
         SELECT p.product_id               AS productId,
                p.product_name             AS productName,
                i.income_type              AS incomeType,
                i.income_expected_quantity AS incomeExpectedQuantity,
-               i.actual_quantity          AS actualQuantity,
+               i.income_actual_quantity          AS actualQuantity,
                i.income_status            AS incomeStatus
         FROM income i
                  JOIN product p ON i.product_id = p.product_id
@@ -199,7 +201,7 @@
     </select>
     <select id="underReviewFilter" resultType="com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO"
             parameterType="int">
-        SELECT i.income_id                AS incomeId,
+        SELECT i.income_ID                AS incomeId,
                i.income_expected_quantity AS expectedQuantity,
                CASE
                    WHEN i.income_type = 0 THEN '일반'
@@ -226,7 +228,7 @@
                p.product_name             AS productName,
                i.income_type              AS incomeType,
                i.income_expected_quantity AS incomeExpectedQuantity,
-               i.actual_quantity          AS actualQuantity,
+               i.income_actual_quantity          AS actualQuantity,
                i.income_status            AS incomeStatus,
                s.sector_id                AS sectorId,
                s.allow_capacity           AS allowCapacity,
@@ -244,7 +246,7 @@
             resultType="com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO" parameterType="int">
         SELECT p.product_id      AS productId,
                p.product_name    AS productName,
-               i.actual_quantity AS actualQuantity,
+               i.income_actual_quantity AS actualQuantity,
                s.warehouse_id    AS warehouseId,
                i.sector_id       AS sectorId,
                p.product_unit    AS productUnit,
@@ -281,7 +283,7 @@
     <select id="getInspectionCapacity"
             resultType="com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO" parameterType="int">
         SELECT i.income_id,
-               i.actual_quantity * p.unit_capacity AS allocatedCapacity,
+               i.income_actual_quantity * p.unit_capacity AS allocatedCapacity,
                p.product_id
         FROM income i
                  JOIN product p ON i.product_id = p.product_id

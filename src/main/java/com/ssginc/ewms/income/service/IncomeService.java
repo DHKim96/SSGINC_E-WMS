@@ -67,9 +67,11 @@ public class IncomeService {
         return incomeMapper.getExpectedNormalIncomeList();
     }//kjo-06
 
-    public List<IncomeShipperProductSuppierVO> getUrgentIncomeProducts(){
-        return incomeMapper.getUrgentIncomeProducts();
-    } //kjo-07
+    public boolean updateUrgentIncomeProducts() {
+        // 업데이트된 레코드 수를 반환받아 0보다 크면 업데이트 성공
+        int updatedRows = incomeMapper.updateUrgentIncomeProducts();
+        return updatedRows > 0;
+    }
 
     public int updateActualQuantityAndStatus(IncomeShipperProductSuppierVO incomeShipperProductSuppierVO){
         return incomeMapper.updateActualQuantityAndStatus(incomeShipperProductSuppierVO);
