@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.ewms.dashboard.mapper.DashboardMapper">
+
+    <!-- 기간별 입고량 조회 -->
+    <select id="selectIncomeListByType" resultType="com.ssginc.ewms.dashboard.dto.IncomeResponseDto">
+        SELECT
+        <choose>
+            <when test="type == 'daily'">
+                DATE_FORMAT(income_date, '%Y-%m-%d') AS income_date
+            </when>
+            <when test="type == 'monthly'">
+                DATE_FORMAT(income_date, '%Y-%m') AS income_date
+            </when>
+            <when test="type == 'yearly'">
+                DATE_FORMAT(income_date, '%Y') AS income_date
+            </when>
+        </choose>,
+        SUM(income_actual_quantity) AS income_quantity
+        FROM
+        income
+        WHERE
+        income_actual_quantity IS NOT NULL
+        GROUP BY
+        <choose>
+            <when test="type == 'daily'">
+                DATE_FORMAT(income_date, '%Y-%m-%d')
+            </when>
+            <when test="type == 'monthly'">
+                DATE_FORMAT(income_date, '%Y-%m')
+            </when>
+            <when test="type == 'yearly'">
+                DATE_FORMAT(income_date, '%Y')
+            </when>
+        </choose>
+        ORDER BY
+        income_date
+        LIMIT 10
+    </select>
+
+
+    <resultMap id="outgoingResultMap" type="com.ssginc.ewms.dashboard.dto.OutgoingResponseDto">
+        <result column="outgoing_date" property="outgoingDate"/>
+        <result column="outgoing_quantity" property="outgoingQuantity"/>
+    </resultMap>
+
+    <!-- 기간별 출고량 조회 -->
+    <select id="selectOutgoingListByType" resultMap="outgoingResultMap">
+        SELECT
+        <choose>
+            <when test="type == 'daily'">
+                DATE_FORMAT(outgoing_date, '%Y-%m-%d') AS outgoing_date
+            </when>
+            <when test="type == 'monthly'">
+                DATE_FORMAT(outgoing_date, '%Y-%m') AS outgoing_date
+            </when>
+            <when test="type == 'yearly'">
+                DATE_FORMAT(outgoing_date, '%Y') AS outgoing_date
+            </when>
+        </choose>,
+        SUM(outgoing_quantity) AS outgoing_quantity
+        FROM
+        outgoing
+        WHERE
+        outgoing_quantity IS NOT NULL
+        AND outgoing_date IS NOT NULL
+        GROUP BY
+        <choose>
+            <when test="type == 'daily'">
+                DATE_FORMAT(outgoing_date, '%Y-%m-%d')
+            </when>
+            <when test="type == 'monthly'">
+                DATE_FORMAT(outgoing_date, '%Y-%m')
+            </when>
+            <when test="type == 'yearly'">
+                DATE_FORMAT(outgoing_date, '%Y')
+            </when>
+        </choose>
+        ORDER BY
+        outgoing_date
+        LIMIT 10
+    </select>
+
+
+    <select id="selectTopOutgoingBranchesByDate" resultType="com.ssginc.ewms.dashboard.dto.OutgoingResponseDto">
+        SELECT
+            b.branch_name AS branch_name,
+            SUM(o.outgoing_quantity) AS outgoing_quantity
+        FROM
+            outgoing o
+                INNER JOIN
+            branch b ON o.branch_id = b.branch_id
+        WHERE
+            outgoing_quantity IS NOT NULL
+          AND outgoing_date IS NOT NULL
+          AND (
+            (DATE_FORMAT(outgoing_date, '%Y') = #{year} AND #{month} IS NULL AND #{day} IS NULL)
+                OR (DATE_FORMAT(outgoing_date, '%Y-%m') = CONCAT(#{year}, '-', #{month}) AND #{day} IS NULL)
+                OR (DATE_FORMAT(outgoing_date, '%Y-%m-%d') = CONCAT(#{year}, '-', #{month}, '-', #{day}))
+            )
+        GROUP BY
+            b.branch_name
+        ORDER BY
+            b.branch_name
+            LIMIT 5;
+    </select>
+
+
+    <select id="selectSectorListByWarehouseId" resultType="com.ssginc.ewms.dashboard.dto.SectorResponseDto">
+        SELECT
+        s.sector_id,
+        s.sector_name,
+        s.allow_capacity,
+        COALESCE(SUM(i.real_inventory_quantity), 0) AS used_capacity,
+        ROUND(COALESCE(SUM(i.real_inventory_quantity), 0) / s.allow_capacity * 100) AS usage_rate_percentage
+        FROM
+        sector s
+        LEFT JOIN
+        inventory i ON s.sector_id = i.sector_id
+        JOIN
+        warehouse w ON s.warehouse_id = w.warehouse_id
+        WHERE w.warehouse_id = #{warehouseId}
+        GROUP BY
+        s.sector_id, s.sector_name, w.warehouse_name, s.allow_capacity
+        ORDER BY
+        s.sector_id;
+    </select>
+
+</mapper>

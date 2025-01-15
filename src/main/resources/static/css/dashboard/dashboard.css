@@ -1,0 +1,324 @@
+        /* 공통 스타일 */
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        h3 {
+            margin: 0;
+        }
+        
+        p {
+            margin: 0;
+        }
+
+        label {
+            font-size : 15px;
+            font-weight: 300;
+        }
+
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 8px;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            width: 20%;
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-wrapper {
+            justify-content: space-between; gap: 10px;
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .card p {
+            font-size: 16px;
+            font-weight: 300;
+            color: #172B4C;
+        }
+
+
+        /* 차트, 섹션 사용률, 날씨 */
+
+        .dashboard-top {
+            display: flex;
+            flex-direction: row;
+            background: #fff;
+            border-radius: 8px;
+            justify-content: space-around;
+        }
+
+        /* 차트 컨테이너 */
+        .chart-container {
+            position: relative;
+            width: 55%;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border: solid 1px #DEE2E6;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 300px;
+        }
+
+        #line-chart {
+            max-width: 100% !important;
+            height: 400px !important;
+        }
+        
+        .controls {
+            margin-top: 10px;
+            justify-content: space-between;
+        }
+        
+        .controls select {
+            background-color: #D4ECFF;
+            width: 75px;
+            padding: 5px;
+            font-size: 12px;
+            border: solid 1px #DEE2E6;
+            border-radius: 4px;
+        }
+
+        /* 섹션 사용률 */
+        
+        .sections-container {
+            width: 25%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: solid 1px #DEE2E6;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: auto;
+            height: 500px;
+        }
+
+        .sections-container > h3{
+            padding-bottom: 22px;
+        }
+        
+        .sections-container ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .sections-container li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #2F579A;
+            font-size: 14px;
+            font-weight: 300;
+            padding: 15px 0;
+            border-top: solid 1px #DEE2E6;
+        }
+
+        .sections-container span {
+            color: #000;
+        }
+
+        .sections-container div {
+            border-radius: 8px;
+        }
+
+        .bar {
+            width: 40%;
+            background: #e0e0e0;
+            height: 8px;
+            position: relative;
+        }
+        
+        .bar div {
+            background: #5b9bd5;
+            height: 100%;
+            position: absolute;
+        }
+        
+        
+        /* 날씨 카드 */
+        .weather-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 15%;
+            background: #fff;
+            padding: 20px;
+            border: solid 1px #DEE2E6;
+            border-radius: 8px;
+            height: fit-content;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .weather-card .temp {
+            font-size: 60px;
+            font-weight: bold;
+        }
+        
+        .weather-card .buttons{
+            font-size: 14px;
+            display: flex;
+            flex-direction: row;
+            gap: 10px
+        }
+
+        .buttons div {
+            border: none;
+            border-radius: 5px;
+            background-color: #daedff;
+            text-align: center;
+            padding: 10px
+        }
+
+        .buttons p {
+            font-weight: bold;
+            color: #34A0FF;
+        }
+
+
+        .dashboard-bottom {
+            justify-content: space-around;
+        }
+        
+        /* 테이블 스타일 */
+        .shipping-table {
+            width: fit-content;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #DEE2E6;
+            font-size: 14px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            height: 400px;
+            overflow: auto;
+        }
+        
+        table {
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+        
+        table td {
+            border-top: 1px solid #DEE2E6;
+            padding: 10px;
+            text-align: justify;
+        }
+        
+        .status {
+            color: #fff;
+            background: #FFC107;
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+
+        /* 번호 */
+        tr td:nth-child(1) {
+            color: #2F579A;
+            width: 70px;
+        }
+        /* 일자 */
+        tr td:nth-child(2) {
+            color: #6C757D;
+            width: 100px;
+        }
+        /* 출고지점 */
+        tr td:nth-child(3) {
+            width: 150px;
+        }
+        /* 상태 */
+        tr td:nth-child(4) {
+            width: 100px;
+        }
+        /* 출고액 */
+        tr td:nth-child(5) {
+            width: 80px;
+        }
+        /* 예상 시간 */
+        tr td:nth-child(6) {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 150px;
+        }
+
+        .bar-shipping {
+            width: 50%;
+        }
+
+
+        /* 반응형 스타일 */
+        @media (max-width: 768px) {
+            .cards-container {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .chart-wrapper {
+                height: 200px;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 10px;
+                font-size: 20px;
+            }
+        }
+
+        .flex {
+            display: flex;
+        }
+        
+        .flex-col {
+            flex-direction: column;
+        }
+        
+        .flex-row {
+            flex-direction: row;
+        }
+        
+        .align-center {
+            align-items: center;
+        }
+        
+        .justify-center {
+            justify-content: center;
+        }
