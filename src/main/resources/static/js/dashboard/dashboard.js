@@ -42,16 +42,18 @@ async function fetchChartData(sort, type) {
         const response = await axios.get(`/dashboard/chart/${sort}/${type}`);
         // hideLoadingSpinner();
 
+        console.log(response);
+
         if (response.data.status !== 200) {
             throw new Error(response.data.message || '데이터 요청 실패');
         }
 
         return {
-            labels: response.data.data.map((item) => item.date),
+            labels: response.data.data.map((item) => item.incomeDate || item.outgoingDate),
             datasets: [
                 {
                     label: sort === 'income' ? '입고량' : '출고량',
-                    data: response.data.data.map((item) => parseInt(item.cumulativeSum || 0, 10)),
+                    data: response.data.data.map((item) => parseInt(item.incomeQuantity || item.outgoingQuantity || 0, 10)),
                     borderColor: 'rgba(74, 144, 226, 1)',
                     backgroundColor: 'rgba(74, 144, 226, 0.2)',
                     fill: true,

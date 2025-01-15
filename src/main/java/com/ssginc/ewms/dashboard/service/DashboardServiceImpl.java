@@ -2,15 +2,15 @@ package com.ssginc.ewms.dashboard.service;
 
 import com.ssginc.ewms.dashboard.dto.IncomeResponseDto;
 import com.ssginc.ewms.dashboard.dto.OutgoingResponseDto;
+import com.ssginc.ewms.dashboard.dto.SectorResponseDto;
 import com.ssginc.ewms.dashboard.mapper.DashboardMapper;
 import com.ssginc.ewms.exception.DashboardException;
-import com.ssginc.ewms.exception.InvalidFormatException;
+import com.ssginc.ewms.member.vo.MemberVO;
 import com.ssginc.ewms.util.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -105,6 +105,11 @@ public class DashboardServiceImpl implements DashboardService {
         }
 
         return result;
+    }
+
+    @Override
+    public List<SectorResponseDto> selectSectorListByWarehouseId(MemberVO loginUser) {
+        return dashboardMapper.selectSectorListByWarehouseId(loginUser.getWarehouseId());
     }
 
     private boolean verifyType(String type) {

@@ -107,4 +107,24 @@
     </select>
 
 
+    <select id="selectSectorListByWarehouseId" resultType="com.ssginc.ewms.dashboard.dto.SectorResponseDto">
+        SELECT
+        s.sector_id,
+        s.sector_name,
+        s.allow_capacity,
+        COALESCE(SUM(i.real_inventory_quantity), 0) AS used_capacity,
+        ROUND(COALESCE(SUM(i.real_inventory_quantity), 0) / s.allow_capacity * 100) AS usage_rate_percentage
+        FROM
+        sector s
+        LEFT JOIN
+        inventory i ON s.sector_id = i.sector_id
+        JOIN
+        warehouse w ON s.warehouse_id = w.warehouse_id
+        WHERE w.warehouse_id = #{warehouseId}
+        GROUP BY
+        s.sector_id, s.sector_name, w.warehouse_name, s.allow_capacity
+        ORDER BY
+        s.sector_id;
+    </select>
+
 </mapper>

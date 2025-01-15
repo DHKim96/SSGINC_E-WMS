@@ -2,6 +2,8 @@ package com.ssginc.ewms.dashboard.service;
 
 import com.ssginc.ewms.dashboard.dto.IncomeResponseDto;
 import com.ssginc.ewms.dashboard.dto.OutgoingResponseDto;
+import com.ssginc.ewms.dashboard.dto.SectorResponseDto;
+import com.ssginc.ewms.member.vo.MemberVO;
 
 import java.util.List;
 
@@ -33,4 +35,10 @@ public interface DashboardService {
      * @return 최다 출고 지점 및 출고량 담은 dto
      */
     List<OutgoingResponseDto> selectTopOutgoingBranchesByDate(String year, String month, String day);
+
+    /**
+     * 로그인 유저의 소속 창고 번호를 토대로 해당 창고의 섹션별 사용률을 조회합니다.
+     * @return 섹션별 사용률
+     */
+    List<SectorResponseDto> selectSectorListByWarehouseId(MemberVO loginUser);
 }

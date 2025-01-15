@@ -99,9 +99,9 @@
                         <div>
                             <label for="short-by-select">ShortBy</label>
                             <select id="short-by-select">
+                                <option name="short-by-select" value="daily">일자별</option>
                                 <option name="short-by-select" value="monthly">월별</option>
                                 <option name="short-by-select" value="yearly">연간</option>
-                                <option name="short-by-select" value="daily">일자별</option>
                             </select>
                         </div>
                     </div>
@@ -111,41 +111,29 @@
             <div class="sections-container flex flex-col">
                 <h3>Section 사용률</h3>
                 <ul>
-                    <li>Section 001 <span class="used">Used</span>
+                    <li th:each="sector : ${session.sectors}">
+                        <span th:text="'Section ' + ${sector.sectorName}"></span>
+                        <span class="used">Used</span>
+                        <!-- 사용률 바 -->
                         <div class="bar">
-                            <div style="width: 20%;"></div>
+                            <!-- 0% ~ 50% -->
+                            <div th:if="${sector.usageRatePercentage} <= 50"
+                                 th:style="|width: ${sector.usageRatePercentage}%; background-color: #FFC107;|">
+                            </div>
+                            <!-- 51% ~ 75% -->
+                            <div th:if="${sector.usageRatePercentage} > 50 and ${sector.usageRatePercentage} <= 75"
+                                 th:style="|width: ${sector.usageRatePercentage}%; background-color: #FF9800;|">
+                            </div>
+                            <!-- 76% ~ 100% -->
+                            <div th:if="${sector.usageRatePercentage} > 75 and ${sector.usageRatePercentage} <= 100"
+                                 th:style="|width: ${sector.usageRatePercentage}%; background-color: #F44336;|">
+                            </div>
+                            <!-- 101% 이상 -->
+                            <div th:if="${sector.usageRatePercentage} > 100"
+                                 th:style="|width: 100%; background-color: #D32F2F;|">
+                            </div>
                         </div>
-                        <span>20%</span>
-                    </li>
-                    <li>Section 002 <span class="used">Used</span>
-                        <div class="bar">
-                            <div style="width: 28%;"></div>
-                        </div>
-                        <span>28%</span>
-                    </li>
-                    <li>Section 003 <span class="used">Used</span>
-                        <div class="bar">
-                            <div style="width: 80%;"></div>
-                        </div>
-                        <span>80%</span>
-                    </li>
-                    <li>Section 004 <span class="used">Used</span>
-                        <div class="bar">
-                            <div style="width: 50%;"></div>
-                        </div>
-                        <span>50%</span>
-                    </li>
-                    <li>Section 005 <span class="used">Used</span>
-                        <div class="bar">
-                            <div style="width: 58%;"></div>
-                        </div>
-                        <span>58%</span>
-                    </li>
-                    <li>Section 006 <span class="used">Used</span>
-                        <div class="bar">
-                            <div style="width: 36%;"></div>
-                        </div>
-                        <span>36%</span>
+                        <span th:text="${sector.usageRatePercentage > 100 ? '100%' : sector.usageRatePercentage + '%'}"></span>
                     </li>
                 </ul>
             </div>
@@ -187,23 +175,145 @@
                     <tr>
                         <td>1234</td>
                         <td>05-12-2021</td>
-                        <td>Donec</td>
+                        <td>강남점</td>
                         <td><span class="status shipping">Shipping</span></td>
-                        <td>$954</td>
+                        <td>&#8361;1,230,000</td>
+                        <td>
+                            <div class="bar bar-shipping">
+                                <div style="width: 60%;"></div>
+                            </div>
+                            <span>1H</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1234</td>
+                        <td>05-12-2021</td>
+                        <td>경기광주점</td>
+                        <td><span class="status shipping">Shipping</span></td>
+                        <td>&#8361;1,356,000</td>
+                        <td>
+                            <div class="bar bar-shipping">
+                                <div style="width: 20%;"></div>
+                            </div>
+                            <span>2H10m</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1234</td>
+                        <td>05-12-2021</td>
+                        <td>광교점</td>
+                        <td><span class="status shipping">Shipping</span></td>
+                        <td>&#8361;2,534,000</td>
+                        <td>
+                            <div class="bar bar-shipping">
+                                <div style="width: 40%;"></div>
+                            </div>
+                            <span>1H</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1234</td>
+                        <td>05-12-2021</td>
+                        <td>김포한강점</td>
+                        <td><span class="status shipping">Shipping</span></td>
+                        <td>&#8361;670,000</td>
                         <td>
                             <div class="bar bar-shipping">
                                 <div style="width: 50%;"></div>
+                            </div>
+                            <span>2H</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1234</td>
+                        <td>05-12-2021</td>
+                        <td>다산점</td>
+                        <td><span class="status shipping">Shipping</span></td>
+                        <td>&#8361;1,521,000</td>
+                        <td>
+                            <div class="bar bar-shipping">
+                                <div style="width: 80%;"></div>
+                            </div>
+                            <span>1H20m</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1234</td>
+                        <td>05-12-2021</td>
+                        <td>부천점</td>
+                        <td><span class="status shipping">Shipping</span></td>
+                        <td>&#8361;1,115,000</td>
+                        <td>
+                            <div class="bar bar-shipping">
+                                <div style="width: 90%;"></div>
                             </div>
                             <span>3H</span>
                         </td>
                     </tr>
                     <tr>
-                        <td>3215</td>
-                        <td>05-13-2021</td>
-                        <td>Consectetur</td>
+                        <td>1234</td>
+                        <td>05-12-2021</td>
+                        <td>안산고잔점</td>
                         <td><span class="status shipping">Shipping</span></td>
-                        <td>$512</td>
-                        <td></td>
+                        <td>&#8361;1,086,000</td>
+                        <td>
+                            <div class="bar bar-shipping">
+                                <div style="width: 30%;"></div>
+                            </div>
+                            <span>1H20m</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1234</td>
+                        <td>05-12-2021</td>
+                        <td>양주점</td>
+                        <td><span class="status shipping">Shipping</span></td>
+                        <td>&#8361;1,789,000</td>
+                        <td>
+                            <div class="bar bar-shipping">
+                                <div style="width: 20%;"></div>
+                            </div>
+                            <span>3H</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1234</td>
+                        <td>05-12-2021</td>
+                        <td>하남점</td>
+                        <td><span class="status shipping">Shipping</span></td>
+                        <td>&#8361;1,123,000</td>
+                        <td>
+                            <div class="bar bar-shipping">
+                                <div style="width: 80%;"></div>
+                            </div>
+                            <span>2H</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1234</td>
+                        <td>05-12-2021</td>
+                        <td>파주점</td>
+                        <td><span class="status shipping">Shipping</span></td>
+                        <td>&#8361;1,791,000</td>
+                        <td>
+                            <div class="bar bar-shipping">
+                                <div style="width: 90%;"></div>
+                            </div>
+                            <span>30m</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1234</td>
+                        <td>05-12-2021</td>
+                        <td>화정점</td>
+                        <td><span class="status shipping">Shipping</span></td>
+                        <td>&#8361;1,631,000</td>
+                        <td>
+                            <div class="bar bar-shipping">
+                                <div style="width: 70%;"></div>
+                            </div>
+                            <span>1H</span>
+                        </td>
                     </tr>
                     <!-- Add more rows as needed -->
                     </tbody>

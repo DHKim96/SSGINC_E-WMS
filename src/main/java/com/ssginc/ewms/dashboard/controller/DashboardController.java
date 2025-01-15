@@ -2,8 +2,11 @@ package com.ssginc.ewms.dashboard.controller;
 
 import com.ssginc.ewms.dashboard.dto.IncomeResponseDto;
 import com.ssginc.ewms.dashboard.dto.OutgoingResponseDto;
+import com.ssginc.ewms.dashboard.dto.SectorResponseDto;
 import com.ssginc.ewms.dashboard.service.DashboardService;
 import com.ssginc.ewms.member.dto.ResponseDto;
+import com.ssginc.ewms.member.vo.MemberVO;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,7 +26,14 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("")
-    public String dashboard() {
+    public String dashboard(HttpSession session) {
+
+        List<SectorResponseDto> sectors = dashboardService.selectSectorListByWarehouseId((MemberVO)session.getAttribute("loginUser"));
+
+        log.info("selectSectorListByWarehouseId 결과 = {}", sectors);
+
+        session.setAttribute("sectors", sectors);
+
         return "dashboard/dashboard";
     }
 

@@ -2,6 +2,7 @@ package com.ssginc.ewms.dashboard.mapper;
 
 import com.ssginc.ewms.dashboard.dto.IncomeResponseDto;
 import com.ssginc.ewms.dashboard.dto.OutgoingResponseDto;
+import com.ssginc.ewms.dashboard.dto.SectorResponseDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,4 +18,6 @@ public interface DashboardMapper {
     List<OutgoingResponseDto> selectOutgoingListByType(@Param("type")String type);
 
     List<OutgoingResponseDto> selectTopOutgoingBranchesByDate(Map<String, String> year);
+
+    List<SectorResponseDto> selectSectorListByWarehouseId(int warehouseId);
 }

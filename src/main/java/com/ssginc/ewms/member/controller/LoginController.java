@@ -52,6 +52,14 @@ public class LoginController {
 
         // 로그인 성공 처리
         session.setAttribute("loginUser", loginUser);
+
         return "redirect:/dashboard"; // 성공 시 대시보드로 이동
+    }
+
+    @GetMapping("logout")
+    public String logout(HttpSession session) {
+        session.removeAttribute("loginUser");
+        session.invalidate();
+        return "redirect:/";
     }
 }

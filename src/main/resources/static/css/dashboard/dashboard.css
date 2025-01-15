@@ -130,7 +130,8 @@
             border-radius: 8px;
             border: solid 1px #DEE2E6;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            height: fit-content;
+            overflow: auto;
+            height: 500px;
         }
 
         .sections-container > h3{
@@ -216,7 +217,7 @@
 
 
         .dashboard-bottom {
-            justify-content: space-between;
+            justify-content: space-around;
         }
         
         /* 테이블 스타일 */
@@ -228,6 +229,8 @@
             border: 1px solid #DEE2E6;
             font-size: 14px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            height: 400px;
+            overflow: auto;
         }
         
         table {
