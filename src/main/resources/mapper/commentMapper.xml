@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssginc.ewms.comment.dao.CommentMapper">
+    <!--
+        이 매퍼 파일은 MyBatis를 사용하여 CommentMapper 인터페이스의 SQL 쿼리를 정의합니다.
+        namespace는 Java 인터페이스와 연결되며, 메서드와 SQL 쿼리를 매핑합니다.
+    -->
+
+    <!-- 댓글 삽입 -->
+    <insert id="insertComment" parameterType="commentVO">
+        <!--
+            새 댓글을 comment 테이블에 삽입합니다.
+            삽입되는 데이터는 게시글 ID, 댓글 작성 날짜, 댓글 내용, 작성자 번호입니다.
+            #{boardId}, #{commentDate}, #{comment}, #{memberNo}는 매퍼 인터페이스에서 전달된
+            CommentVO 객체의 필드를 참조합니다.
+        -->
+        INSERT INTO comment (board_id, comment_date, comment, member_no)
+        VALUES (#{boardId}, #{commentDate}, #{comment}, #{memberNo})
+    </insert>
+
+    <!-- 댓글 수정 -->
+    <update id="updateComment" parameterType="commentVO">
+        <!--
+            특정 댓글의 내용을 수정합니다.
+            수정하려는 댓글은 댓글 ID(comment_id)를 기준으로 찾습니다.
+            수정할 데이터는 댓글 내용(comment)입니다.
+        -->
+        UPDATE comment
+        SET comment = #{comment}
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <!-- 댓글 삭제 -->
+    <delete id="deleteComment" parameterType="int">
+        <!--
+            특정 댓글을 삭제합니다.
+            삭제 조건은 댓글 ID(comment_id)입니다.
+        -->
+        DELETE FROM comment
+        WHERE comment_id = #{commentId}
+    </delete>
+
+    <!-- 특정 게시글의 댓글 조회 -->
+    <select id="getCommentByBbsId" parameterType="int" resultType="commentVO">
+        <!--
+            특정 게시글 ID(board_id)를 기준으로 댓글 목록을 조회합니다.
+            반환되는 데이터는 comment 테이블의 모든 필드입니다.
+        -->
+        SELECT *
+        FROM comment
+        WHERE board_id = #{boardId}
+    </select>
+</mapper>
