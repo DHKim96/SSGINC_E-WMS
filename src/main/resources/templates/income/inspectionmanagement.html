@@ -21,7 +21,6 @@
                              style="width: 549px; height: 61px; gap: 70px">
 
 
-
                             <button class="btn btn-warning text-white" id="inspectionBtn"
                                     style="height: 40px; width: 100px;">검수하기
                             </button>
@@ -65,7 +64,7 @@
                                     [[${incomeShipperProductSuppierVO.incomeExpectedQuantity}]]
                                 </td>
                                 <td
-                                    th:text="${incomeShipperProductSuppierVO.incomeType == 0 ? '일반' : '긴급'}"></td>
+                                        th:text="${incomeShipperProductSuppierVO.incomeType == 0 ? '일반' : '긴급'}"></td>
                                 <td th:text="${
                     incomeShipperProductSuppierVO.incomeStatus == 0 ? '입고예정' :
                     (incomeShipperProductSuppierVO.incomeStatus == 1 ? '검수중' :
@@ -104,7 +103,7 @@
 
             <!-- 테이블 섹션 -->
             <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                <table class="table table-bordered text-center align-middle m-0" >
+                <table class="table table-bordered text-center align-middle m-0">
                     <thead>
                     <tr class="bg-warning text-white">
                         <th>#</th>
@@ -120,26 +119,26 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="incomeShipperProductSuppierVO, iterStat : ${UnderReviewList}">
-                            <td style="width: 40px; padding: 0;" th:text="${iterStat.count}"></td>
-                            <td style="width: 40px; height: 40px; padding: 0;">
-                                <input type="checkbox" th:id="'checkbox2-' + ${iterStat.index}"/>
-                            </td>
-                            <td style="width: 160px; padding: 0;">[[${incomeShipperProductSuppierVO.productId}]]</td>
-                            <td style="width: 250px; padding: 0;">[[${incomeShipperProductSuppierVO.productName}]]</td>
-                            <td style="width: 250px; padding: 0;"
-                                th:text="${incomeShipperProductSuppierVO.incomeType == 0 ? '일반' : '긴급'}"></td>
-                            <td style="width: 200px; padding: 0;">[[${incomeShipperProductSuppierVO.actualQuantity}]]
-                            </td>
-                            <td style="width: 230px; padding: 0;">
-                                [[${incomeShipperProductSuppierVO.incomeExpectedQuantity}]]
-                            </td>
-                            <td style="width: 445px; padding: 0;" th:text="${
+                    <tr th:each="incomeShipperProductSuppierVO, iterStat : ${UnderReviewList}">
+                        <td style="width: 40px; padding: 0;" th:text="${iterStat.count}"></td>
+                        <td style="width: 40px; height: 40px; padding: 0;">
+                            <input type="checkbox" th:id="'checkbox2-' + ${iterStat.index}"/>
+                        </td>
+                        <td style="width: 160px; padding: 0;">[[${incomeShipperProductSuppierVO.productId}]]</td>
+                        <td style="width: 250px; padding: 0;">[[${incomeShipperProductSuppierVO.productName}]]</td>
+                        <td style="width: 250px; padding: 0;"
+                            th:text="${incomeShipperProductSuppierVO.incomeType == 0 ? '일반' : '긴급'}"></td>
+                        <td style="width: 200px; padding: 0;">[[${incomeShipperProductSuppierVO.actualQuantity}]]
+                        </td>
+                        <td style="width: 230px; padding: 0;">
+                            [[${incomeShipperProductSuppierVO.incomeExpectedQuantity}]]
+                        </td>
+                        <td style="width: 445px; padding: 0;" th:text="${
                     incomeShipperProductSuppierVO.incomeStatus == 0 ? '입고예정' :
                     (incomeShipperProductSuppierVO.incomeStatus == 1 ? '검수중' :
                     (incomeShipperProductSuppierVO.incomeStatus == 2 ? '적치중' :
                     (incomeShipperProductSuppierVO.incomeStatus == 3 ? '입고완료' : '입고취소')))}"></td>
-                        </tr>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -193,133 +192,130 @@
             </div>
         </div>
     </div>
-</div>
 
+    <th:block layout:fragment="script">
+        <script>
+            document.getElementById("inspectionBtn").addEventListener("click", function () {
+                // 체크된 체크박스들을 모두 가져오기
+                const checkedBoxes = document.querySelectorAll("input[id^='checkbox1-']:checked");
+                const incomeIds = [];
 
+                // 체크된 항목들의 incomeId 수집
+                checkedBoxes.forEach(box => {
+                    const row = box.closest('tr');
+                    const incomeId = parseInt(row.querySelector('td:nth-child(3)').textContent);
+                    incomeIds.push(incomeId);
+                });
 
-</body>
-<th:block layout:fragment="script">
-    <script>
-        document.getElementById("inspectionBtn").addEventListener("click", function () {
-            // 체크된 체크박스들을 모두 가져오기
-            const checkedBoxes = document.querySelectorAll("input[id^='checkbox1-']:checked");
-            const incomeIds = [];
+                // 선택된 항목이 있는지 확인
+                if (incomeIds.length === 0) {
+                    alert("검수할 항목을 선택해주세요.");
+                    return;
+                }
 
-            // 체크된 항목들의 incomeId 수집
-            checkedBoxes.forEach(box => {
-                const row = box.closest('tr');
-                const incomeId = parseInt(row.querySelector('td:nth-child(3)').textContent);
-                incomeIds.push(incomeId);
-            });
-
-            // 선택된 항목이 있는지 확인
-            if (incomeIds.length === 0) {
-                alert("검수할 항목을 선택해주세요.");
-                return;
-            }
-
-            // 서버로 데이터 전송
-            fetch("/income/updateUnderReview", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(incomeIds)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data) {
-                        alert("검수 상태로 업데이트되었습니다!");
-                        location.reload();
-                    } else {
-                        alert("검수 업데이트에 실패했습니다.");
-                    }
+                // 서버로 데이터 전송
+                fetch("/income/updateUnderReview", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(incomeIds)
                 })
-                .catch(error => {
-                    console.error("에러 발생:", error);
-                    alert("검수 업데이트 중 에러가 발생했습니다.");
-                });
-        });
-
-        document.addEventListener('click', function(e) {
-            if (e.target.id.startsWith('checkbox2-')) {
-                const checkboxes = document.querySelectorAll('input[id^="checkbox2-"]');
-
-                // 다른 체크박스 해제
-                checkboxes.forEach(checkbox => {
-                    if (checkbox !== e.target) {
-                        checkbox.checked = false;
-                    }
-                });
-
-                if (e.target.checked) {
-                    // 선택된 행의 정보 가져오기
-                    const row = e.target.closest('tr');
-                    const productId = row.querySelector('td:nth-child(3)').textContent;
-                    const productName = row.querySelector('td:nth-child(4)').textContent;
-                    const expectedQuantity = row.querySelector('td:nth-child(7)').textContent;
-
-                    // 모달의 요소에 정보 설정
-                    document.getElementById('productCode').textContent = productId;
-                    document.getElementById('productName').textContent = productName;
-                    document.getElementById('incomeExpectedQuantity').textContent = expectedQuantity;
-                }
-            }
-        });
-
-        document.getElementById("confirmActualQuantityBtn").addEventListener("click", function () {
-            // 모달에 표시된 상품 정보와 사용자가 입력한 실수량을 가져옵니다.
-            const productId = document.getElementById("productCode").textContent.trim();
-            const actualQuantity = document.getElementById("actualQuantityInput").value.trim();
-
-            // 간단한 유효성 검사
-            if (!productId || !actualQuantity) {
-                alert("상품 정보나 실수량을 정확히 입력해주세요.");
-                return;
-            }
-
-            // axios를 이용해 POST 요청 (비동기)
-            axios.post('/income/updateActualQuantityAndStatus', {
-                productId: productId,
-                actualQuantity: actualQuantity
-            }).then(function (response) {
-                if (response.data) {
-                    alert("실제 입고 수량이 성공적으로 업데이트되었습니다.");
-                    // 필요에 따라 페이지 새로고침 or 모달 닫기
-                    location.reload();
-                } else {
-                    alert("업데이트에 실패했습니다.");
-                }
-            }).catch(function (error) {
-                console.error("에러 발생:", error);
-                alert("서버와의 통신 중 에러가 발생했습니다.");
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data) {
+                            alert("검수 상태로 업데이트되었습니다!");
+                            location.reload();
+                        } else {
+                            alert("검수 업데이트에 실패했습니다.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("에러 발생:", error);
+                        alert("검수 업데이트 중 에러가 발생했습니다.");
+                    });
             });
-        });
 
-        document.getElementById("UrgentIncomeProductsInspectionBtn").addEventListener("click", function() {
-            // 별도의 체크 항목이 없다면 바로 POST 요청
-            fetch("/income/updateUrgentIncomeProducts", {
-                method: "POST"
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data) {
-                        alert("긴급상품 검수 상태로 업데이트되었습니다!");
+            document.addEventListener('click', function (e) {
+                if (e.target.id.startsWith('checkbox2-')) {
+                    const checkboxes = document.querySelectorAll('input[id^="checkbox2-"]');
+
+                    // 다른 체크박스 해제
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox !== e.target) {
+                            checkbox.checked = false;
+                        }
+                    });
+
+                    if (e.target.checked) {
+                        // 선택된 행의 정보 가져오기
+                        const row = e.target.closest('tr');
+                        const productId = row.querySelector('td:nth-child(3)').textContent;
+                        const productName = row.querySelector('td:nth-child(4)').textContent;
+                        const expectedQuantity = row.querySelector('td:nth-child(7)').textContent;
+
+                        // 모달의 요소에 정보 설정
+                        document.getElementById('productCode').textContent = productId;
+                        document.getElementById('productName').textContent = productName;
+                        document.getElementById('incomeExpectedQuantity').textContent = expectedQuantity;
+                    }
+                }
+            });
+
+            document.getElementById("confirmActualQuantityBtn").addEventListener("click", function () {
+                // 모달에 표시된 상품 정보와 사용자가 입력한 실수량을 가져옵니다.
+                const productId = document.getElementById("productCode").textContent.trim();
+                const actualQuantity = document.getElementById("actualQuantityInput").value.trim();
+
+                // 간단한 유효성 검사
+                if (!productId || !actualQuantity) {
+                    alert("상품 정보나 실수량을 정확히 입력해주세요.");
+                    return;
+                }
+
+                // axios를 이용해 POST 요청 (비동기)
+                axios.post('/income/updateActualQuantityAndStatus', {
+                    productId: productId,
+                    actualQuantity: actualQuantity
+                }).then(function (response) {
+                    if (response.data) {
+                        alert("실제 입고 수량이 성공적으로 업데이트되었습니다.");
+                        // 필요에 따라 페이지 새로고침 or 모달 닫기
                         location.reload();
                     } else {
                         alert("업데이트에 실패했습니다.");
                     }
-                })
-                .catch(error => {
+                }).catch(function (error) {
                     console.error("에러 발생:", error);
-                    alert("업데이트 중 에러가 발생했습니다.");
+                    alert("서버와의 통신 중 에러가 발생했습니다.");
                 });
-        });
+            });
+
+            document.getElementById("UrgentIncomeProductsInspectionBtn").addEventListener("click", function () {
+                // 별도의 체크 항목이 없다면 바로 POST 요청
+                fetch("/income/updateUrgentIncomeProducts", {
+                    method: "POST"
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data) {
+                            alert("긴급상품 검수 상태로 업데이트되었습니다!");
+                            location.reload();
+                        } else {
+                            alert("업데이트에 실패했습니다.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("에러 발생:", error);
+                        alert("업데이트 중 에러가 발생했습니다.");
+                    });
+            });
 
 
+        </script>
+    </th:block>
+</div>
 
 
-
-    </script>
-</th:block>
+</body>
 </html>

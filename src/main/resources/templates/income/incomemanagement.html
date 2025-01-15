@@ -42,7 +42,8 @@
                                class="form-control"
                                placeholder="입고예정번호 입력"
                                style="width: 190px; height: 40px; border: 1px solid #ced4da;">
-                        <button class="btn btn-warning text-white" style="height: 40px; width: 75px; margin-left: 10px; " id="search">검색
+                        <button class="btn btn-warning text-white"
+                                style="height: 40px; width: 75px; margin-left: 10px; " id="search">검색
                         </button>
 
                     </div>
@@ -119,24 +120,22 @@
     </div>
 
 
-</div>
-</body>
-<th:block layout:fragment="script">
-    <script>
-        function handleCheckboxChange(checkbox) {
-            const cancelButton = document.getElementById('cancelRequestBtn');
-            const incomeId = checkbox.getAttribute('data-income-id');
-            const detailsTable = document.querySelector('#detailsTable');
-            const tbody = detailsTable.querySelector('tbody') ||
-                detailsTable.insertAdjacentElement('beforeend', document.createElement('tbody'));
+    <th:block layout:fragment="script">
+        <script>
+            function handleCheckboxChange(checkbox) {
+                const cancelButton = document.getElementById('cancelRequestBtn');
+                const incomeId = checkbox.getAttribute('data-income-id');
+                const detailsTable = document.querySelector('#detailsTable');
+                const tbody = detailsTable.querySelector('tbody') ||
+                    detailsTable.insertAdjacentElement('beforeend', document.createElement('tbody'));
 
 
-            if (checkbox.checked) {
-                fetch(`/income/details/${incomeId}`)
-                    .then(response => response.json())
-                    .then(details => {
-                        details.forEach((detail, index) => {
-                            const row = `
+                if (checkbox.checked) {
+                    fetch(`/income/details/${incomeId}`)
+                        .then(response => response.json())
+                        .then(details => {
+                            details.forEach((detail, index) => {
+                                const row = `
                         <tr data-income-id="${incomeId}">
                             <td style="width: 40px; height: 40px">${tbody.children.length + 1}</td>
                             <td style="width: 40px; height: 40px">
@@ -147,119 +146,118 @@
                             <td style="width: 350px; height: 40px">${detail.incomeExpectedQuantity}</td>
                             <td style="width: 350px; height: 40px">${detail.productUnit}</td>
                             <td style="width: 385px; height: 40px">${
-                                detail.incomeStatus === 0 ? '입고예정' :
-                                    detail.incomeStatus === 1 ? '검수중' :
-                                        detail.incomeStatus === 2 ? '적치중' :
-                                            detail.incomeStatus === 3 ? '입고완료' : '입고취소'
-                            }</td>
+                                    detail.incomeStatus === 0 ? '입고예정' :
+                                        detail.incomeStatus === 1 ? '검수중' :
+                                            detail.incomeStatus === 2 ? '적치중' :
+                                                detail.incomeStatus === 3 ? '입고완료' : '입고취소'
+                                }</td>
                         </tr>
                     `;
-                            tbody.insertAdjacentHTML('beforeend', row);
+                                tbody.insertAdjacentHTML('beforeend', row);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            checkbox.checked = false;
                         });
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        checkbox.checked = false;
-                    });
-            } else {
-                const rowsToRemove = tbody.querySelectorAll(`tr[data-income-id="${incomeId}"]`);
-                rowsToRemove.forEach(row => row.remove());
-
-                const remainingRows = tbody.querySelectorAll('tr');
-                remainingRows.forEach((row, index) => {
-                    row.querySelector('td').textContent = index + 1;
-                });
-            }
-        }
-
-        // 상세정보 체크박스 이벤트 핸들러 추가
-        function handleDetailCheckboxChange(checkbox) {
-            const incomeId = checkbox.getAttribute('data-income-id');
-            const cancelButton = document.getElementById('cancelRequestBtn');
-
-            if (checkbox.checked) {
-                const selectedIds = new Set(cancelButton.getAttribute('data-income-ids')?.split(',') || []);
-                selectedIds.add(incomeId);
-                cancelButton.setAttribute('data-income-ids', Array.from(selectedIds).join(','));
-
-            } else {
-                const selectedIds = new Set(cancelButton.getAttribute('data-income-ids')?.split(',') || []);
-                selectedIds.delete(incomeId);
-                if (selectedIds.size > 0) {
-                    cancelButton.setAttribute('data-income-ids', Array.from(selectedIds).join(','));
                 } else {
-                    cancelButton.removeAttribute('data-income-ids');
+                    const rowsToRemove = tbody.querySelectorAll(`tr[data-income-id="${incomeId}"]`);
+                    rowsToRemove.forEach(row => row.remove());
+
+                    const remainingRows = tbody.querySelectorAll('tr');
+                    remainingRows.forEach((row, index) => {
+                        row.querySelector('td').textContent = index + 1;
+                    });
                 }
             }
-        }
 
-        // document.getElementById('cancelRequestBtn').addEventListener('click', function() {
-        //     const selectedIds = this.getAttribute('data-income-ids')?.split(',') || [];
-        //     if (selectedIds.length > 0) {
-        //         console.log('취소 요청할 입고번호 목록:', selectedIds);
-        //     } else {
-        //         console.log('선택된 입고번호가 없습니다');
-        //     }
-        // });
-        function cancelStatus() {
-            const incomeId = document.getElementById('cancelRequestBtn').getAttribute('data-income-ids');
-            if (!incomeId) {
-                alert('취소할 항목을 선택해주세요');
-                return;
+            // 상세정보 체크박스 이벤트 핸들러 추가
+            function handleDetailCheckboxChange(checkbox) {
+                const incomeId = checkbox.getAttribute('data-income-id');
+                const cancelButton = document.getElementById('cancelRequestBtn');
+
+                if (checkbox.checked) {
+                    const selectedIds = new Set(cancelButton.getAttribute('data-income-ids')?.split(',') || []);
+                    selectedIds.add(incomeId);
+                    cancelButton.setAttribute('data-income-ids', Array.from(selectedIds).join(','));
+
+                } else {
+                    const selectedIds = new Set(cancelButton.getAttribute('data-income-ids')?.split(',') || []);
+                    selectedIds.delete(incomeId);
+                    if (selectedIds.size > 0) {
+                        cancelButton.setAttribute('data-income-ids', Array.from(selectedIds).join(','));
+                    } else {
+                        cancelButton.removeAttribute('data-income-ids');
+                    }
+                }
             }
 
-            console.log('취소 요청할 입고번호 목록:', incomeId);
+            // document.getElementById('cancelRequestBtn').addEventListener('click', function() {
+            //     const selectedIds = this.getAttribute('data-income-ids')?.split(',') || [];
+            //     if (selectedIds.length > 0) {
+            //         console.log('취소 요청할 입고번호 목록:', selectedIds);
+            //     } else {
+            //         console.log('선택된 입고번호가 없습니다');
+            //     }
+            // });
+            function cancelStatus() {
+                const incomeId = document.getElementById('cancelRequestBtn').getAttribute('data-income-ids');
+                if (!incomeId) {
+                    alert('취소할 항목을 선택해주세요');
+                    return;
+                }
 
-            axios.post('/income/cancle', {
-                incomeId: incomeId
-            })
-                .then(function (response) {
-                    if (response.data) {
-                        alert('취소 처리가 완료되었습니다');
-                        location.reload();
-                    } else {
-                        alert('취소 처리에 실패했습니다');
-                    }
+                console.log('취소 요청할 입고번호 목록:', incomeId);
+
+                axios.post('/income/cancle', {
+                    incomeId: incomeId
                 })
-                .catch(function (error) {
-                    console.error('Error:', error);
-                    alert('취소 처리 중 오류가 발생했습니다');
-                });
-        }
+                    .then(function (response) {
+                        if (response.data) {
+                            alert('취소 처리가 완료되었습니다');
+                            location.reload();
+                        } else {
+                            alert('취소 처리에 실패했습니다');
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Error:', error);
+                        alert('취소 처리 중 오류가 발생했습니다');
+                    });
+            }
 
-        document.getElementById('search').addEventListener('click', function () {
-            const incomeExpectedDate = document.querySelector('input[type="date"]').value;
-            const supplierName = document.querySelector('input[placeholder="공급자를 입력하세요"]').value;
-            const shipperName = document.getElementById('shipperNameInput').value;
-            const incomeId = document.querySelector('input[placeholder="입고예정번호 입력"]').value;
+            document.getElementById('search').addEventListener('click', function () {
+                const incomeExpectedDate = document.querySelector('input[type="date"]').value;
+                const supplierName = document.querySelector('input[placeholder="공급자를 입력하세요"]').value;
+                const shipperName = document.getElementById('shipperNameInput').value;
+                const incomeId = document.querySelector('input[placeholder="입고예정번호 입력"]').value;
 
 
+                // 날짜 형식을 ISO 8601로 변환
+                const formattedDate = incomeExpectedDate ? `${incomeExpectedDate}T00:00:00` : null;
 
-            // 날짜 형식을 ISO 8601로 변환
-            const formattedDate = incomeExpectedDate ? `${incomeExpectedDate}T00:00:00` : null;
+                const requestData = {
+                    incomeExpectedDate: formattedDate,
+                    supplierName: supplierName || null,
+                    shipperName: shipperName || null,
+                    incomeId: incomeId || null
+                };
+                console.log('요청 데이터:', requestData);
 
-            const requestData = {
-                incomeExpectedDate: formattedDate,
-                supplierName: supplierName || null,
-                shipperName: shipperName || null,
-                incomeId: incomeId || null
-            };
-            console.log('요청 데이터:', requestData);
+                fetch('/income/filter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const tableBody = document.querySelector('#mainTable tbody');
+                        tableBody.innerHTML = '';
 
-            fetch('/income/filter', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.querySelector('#mainTable tbody');
-                    tableBody.innerHTML = '';
-
-                    data.forEach((item, index) => {
-                        const row = `
+                        data.forEach((item, index) => {
+                            const row = `
                     <tr>
                         <td>${index + 1}</td>
                         <td><input type="checkbox" class="income-checkbox" data-income-id="${item.incomeId}" /></td>
@@ -271,15 +269,15 @@
                         <td>${item.incomePrice}</td>
                         <td>${item.productName}</td>
                     </tr>`;
-                        tableBody.insertAdjacentHTML('beforeend', row);
-                    });
-                })
-                .catch(error => console.error('Error:', error));
-        });
+                            tableBody.insertAdjacentHTML('beforeend', row);
+                        });
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
 
 
-
-
-    </script>
-</th:block>
+        </script>
+    </th:block>
+</div>
+</body>
 </html>
