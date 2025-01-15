@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <!-- Thymeleaf 템플릿 레이아웃을 위한 네임스페이스 선언 -->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>-->
+    <!-- axios 라이브러리: 주석 처리됨. 서버와의 데이터 통신에 사용 -->
+</head>
+<main layout:fragment="content">
+    <!-- 'content'라는 이름의 프래그먼트를 레이아웃에서 렌더링 -->
+
+    <div class="container form-container mt-5">
+        <!-- 글쓰기 폼을 표시하는 컨테이너 -->
+        <h3 class="mb-3" style="font-weight: bold;">글쓰기</h3>
+        <hr>
+        <form action="/board/update2" method="post">
+            <!-- 폼 제출 시 POST 방식으로 '/board/update2'로 데이터 전송 -->
+            <input name="boardId" th:value="${boardVO.boardId}" type="hidden">
+            <!-- 제목 입력 필드 -->
+            <div class="row mb-3 align-items-center mt-5">
+                <label for="title" class="col-sm-2 col-form-label text-center">제목</label>
+                <!-- 제목 입력란에 대한 레이블 -->
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="title" name="title" th:value="${boardVO.title}">
+                    <!-- 사용자가 제목을 입력하는 텍스트 필드 -->
+                </div>
+            </div>
+
+            <!-- 카테고리 선택 필드 -->
+            <div class="row mb-3 align-items-center mt-5">
+                <label for="boardType" class="col-sm-2 col-form-label text-center">카테고리</label>
+                <!-- 카테고리 선택란에 대한 레이블 -->
+                <div class="col-sm-10">
+                    <select class="form-select" id="boardType" name="boardType">
+                        <!-- 사용자가 카테고리를 선택할 수 있는 드롭다운 메뉴 -->
+                        <option selected>카테고리</option>
+                        <option value="notice">notice</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 내용 입력 필드 -->
+            <div class="row mb-3 mt-5">
+                <label for="content" class="col-sm-2 col-form-label text-center">내용</label>
+                <!-- 내용 입력란에 대한 레이블 -->
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="content" name="content" rows="15" >[[${boardVO.content}]]</textarea>
+                    <!-- 사용자가 내용을 입력할 수 있는 텍스트 에어리어 -->
+                </div>
+            </div>
+
+            <!-- 글쓰기 버튼 -->
+            <div class="container mt-4">
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="/board/board" class="btn text-white" style="background-color: #343a40">목록보기</a>
+                    <button type="submit" class="btn text-white" style="background-color: #ffc107">수정하기</button>
+                    <a th:href="@{/board/delete(boardId=${boardVO.boardId})}" class="btn btn-outline" style="color: #ffc107; border-color: #ffc107">삭제하기</a>
+                    <!-- 폼을 제출하는 버튼 -->
+                </div>
+            </div>
+        </form>
+    </div>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<!-- Bootstrap JS 라이브러리 -->
+
+<script src="/js/scripts.js"></script>
+<!-- 사용자 정의 JavaScript 파일 -->
+</html>
