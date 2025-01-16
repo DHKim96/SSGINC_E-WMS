@@ -1,7 +1,8 @@
-package com.ssginc.ewms.util;
+package com.ssginc.ewms.util.validator;
 
 import com.ssginc.ewms.exception.InvalidFormatException;
 import com.ssginc.ewms.member.dto.MemberInsertRequest;
+import com.ssginc.ewms.util.ErrorCode;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;

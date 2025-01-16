@@ -1,4 +1,4 @@
-package com.ssginc.ewms.util;
+package com.ssginc.ewms.util.validator;
 
 public interface Validator<T> {
 

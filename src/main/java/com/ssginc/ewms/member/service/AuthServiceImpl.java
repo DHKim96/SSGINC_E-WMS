@@ -7,7 +7,7 @@ import com.ssginc.ewms.exception.SendFailedException;
 import com.ssginc.ewms.member.mapper.MemberMapper;
 import com.ssginc.ewms.member.vo.MemberVO;
 import com.ssginc.ewms.util.ErrorCode;
-import com.ssginc.ewms.util.MemberValidator;
+import com.ssginc.ewms.util.validator.MemberValidator;
 import com.ssginc.ewms.util.RandomGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

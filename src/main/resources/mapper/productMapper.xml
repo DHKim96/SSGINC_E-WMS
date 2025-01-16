@@ -6,7 +6,7 @@
     <select id="getProductByInventoryId"
             parameterType="int"
             resultType="productVO">
-        SELECT p.product_id, product_name, income_price, outgoing_price, safety_quantity,
+        SELECT p.product_id, product_name, income_unit_price, outgoing_unit_price, safety_quantity,
                supplier_id, discontinued_status, product_unit, unit_capacity, category_id
         FROM product p
         INNER JOIN inventory i ON p.product_id = i.product_id

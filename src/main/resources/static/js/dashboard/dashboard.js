@@ -153,8 +153,8 @@ function initializeOutgoingChart(data) {
 async function loadInitialOutgoingChart() {
     const now = new Date();
     const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // 현재 월
-    const initialData = await fetchTopOutgoingBranches(year, month, null);
+    // const month = String(now.getMonth() + 1).padStart(2, '0'); // 현재 월
+    const initialData = await fetchTopOutgoingBranches(year, null, null);
     if (initialData) {
         initializeOutgoingChart(initialData);
     }

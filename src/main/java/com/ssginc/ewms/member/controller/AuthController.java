@@ -37,6 +37,7 @@ public class AuthController {
      */
     @PostMapping("email")
     public ResponseEntity<ResponseDto<Map<String, String>>> verifyEmail(@RequestBody Map<String, String> payload) {
+        log.info("이메일 전송 컨트롤러 실행");
         String res = authService.verifyEmail(payload.get("email"));
         return ResponseEntity.ok(
                 new ResponseDto<>(HttpStatus.OK.value(), "이메일로 인증번호가 전송되었습니다.", Map.of("email", res))
