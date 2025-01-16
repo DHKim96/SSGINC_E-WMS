@@ -55,7 +55,7 @@
         JOIN branch b ON b.branch_id = o.branch_id -- branch와 연결
         WHERE 1=1
         <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
-            AND o.outgoing_date BETWEEN #{startDate} AND #{endDate}
+            AND o.outgoing_request_date BETWEEN #{startDate} AND #{endDate}
         </if>
         <if test="productName != null and productName != ''">
             AND (
@@ -90,7 +90,7 @@
         JOIN branch b ON b.branch_id = o.branch_id
         WHERE 1=1
         <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
-            AND o.outgoing_date BETWEEN #{startDate} AND #{endDate}
+            AND o.outgoing_request_date BETWEEN #{startDate} AND #{endDate}
         </if>
         <if test="productName != null and productName != ''">
             AND (

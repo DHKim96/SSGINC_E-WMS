@@ -1,11 +1,10 @@
 package com.ssginc.ewms.income.controller;
 
-import com.ssginc.ewms.handler.GlobalExceptionHandler;
 import com.ssginc.ewms.income.service.IncomeService;
 import com.ssginc.ewms.income.vo.IncomeFormVO;
 import com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO;
 import com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO;
-import com.ssginc.ewms.poi.PoiService;
+import com.ssginc.ewms.poi.PoiServiceImpl;
 import com.ssginc.ewms.shipper.service.ShipperService;
 import com.ssginc.ewms.shipper.vo.ShipperVO;
 import com.ssginc.ewms.smtp.service.SmtpService;
@@ -29,7 +28,7 @@ import java.util.Map;
 public class IncomeController {
     private final IncomeService incomeService;
     private final ShipperService shipperService;
-    private final PoiService poiService;
+    private final PoiServiceImpl poiService;
     private final SmtpService smtpService;
 
     @GetMapping("register/{inventoryId}")
@@ -52,7 +51,7 @@ public class IncomeController {
         if (result == 1) {
             try {
                 poiService.makeIncomeFile(incomeRequest);
-                smtpService.sendRequest(0, incomeRequest.getSupplierEmail(), "attach/income.docx", "income.docx");
+                smtpService.sendRequest(0, "kdc9619@naver.com", "attach/income.docx", "income.docx");
             } catch (IOException | MessagingException e) {
                 throw new RuntimeException(e);
             }

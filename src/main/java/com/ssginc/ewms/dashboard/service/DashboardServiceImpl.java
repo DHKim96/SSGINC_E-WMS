@@ -90,7 +90,8 @@ public class DashboardServiceImpl implements DashboardService {
 
         // 매개변수 구성
         Map<String, String> params = new HashMap<>();
-        params.put("year", year);
+//        params.put("year", year);
+        params.put("year", "2024");
         if (month != null && !month.isEmpty()) {
             params.put("month", month);
         }

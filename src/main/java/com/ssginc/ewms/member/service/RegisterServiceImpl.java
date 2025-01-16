@@ -2,7 +2,7 @@ package com.ssginc.ewms.member.service;
 
 import com.ssginc.ewms.member.dto.MemberInsertRequest;
 import com.ssginc.ewms.member.mapper.MemberMapper;
-import com.ssginc.ewms.util.MemberValidator;
+import com.ssginc.ewms.util.validator.MemberValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.exceptions.PersistenceException;

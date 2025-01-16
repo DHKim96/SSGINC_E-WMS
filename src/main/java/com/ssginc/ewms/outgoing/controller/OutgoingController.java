@@ -2,10 +2,10 @@ package com.ssginc.ewms.outgoing.controller;
 
 import com.ssginc.ewms.branch.service.BranchService;
 import com.ssginc.ewms.branch.vo.BranchVO;
-import com.ssginc.ewms.outgoing.service.OutgoingService;
+import com.ssginc.ewms.outgoing.service.OutgoingServiceImpl;
 import com.ssginc.ewms.outgoing.vo.OutgoingFormVO;
 import com.ssginc.ewms.outgoing.vo.OutgoingVO;
-import com.ssginc.ewms.poi.PoiService;
+import com.ssginc.ewms.poi.PoiServiceImpl;
 import com.ssginc.ewms.shipper.service.ShipperService;
 import com.ssginc.ewms.shipper.vo.ShipperVO;
 import com.ssginc.ewms.smtp.service.SmtpService;
@@ -24,12 +24,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("outgoing")
 public class OutgoingController {
-    private final PoiService poiService;
+    private final PoiServiceImpl poiService;
     private final SmtpService smtpService;
     private final ShipperService shipperService;
     private final BranchService branchService;
 
-    private final OutgoingService outgoingService;
+    private final OutgoingServiceImpl outgoingService;
 
     @GetMapping("/outgoing")
     public String outgoing(Model model) {

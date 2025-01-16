@@ -16,7 +16,7 @@
         <hr>
         <form action="/board/create2" method="post">
             <!-- 폼 제출 시 POST 방식으로 '/board/create2'로 데이터 전송 -->
-            <input type="hidden" name="memberNo" th:value="${loginUser.memberNo}">
+            <input type="hidden" name="memberNo" th:value="${session.loginUser.memberNo}">
             <!-- 제목 입력 필드 -->
             <div class="row mb-3 align-items-center mt-5">
                 <label for="title" class="col-sm-2 col-form-label text-center">제목</label>

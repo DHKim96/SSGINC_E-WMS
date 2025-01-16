@@ -1,161 +1,84 @@
 package com.ssginc.ewms.income.service;
 
-import com.ssginc.ewms.income.mapper.IncomeMapper;
 import com.ssginc.ewms.income.vo.IncomeFormVO;
 import com.ssginc.ewms.income.vo.IncomeProductSectorWarehouseInventoryVO;
-import com.ssginc.ewms.income.vo.IncomeRequestVO;
 import com.ssginc.ewms.income.vo.IncomeShipperProductSuppierVO;
-import com.ssginc.ewms.product.mapper.ProductMapper;
-import com.ssginc.ewms.product.vo.ProductVO;
-import com.ssginc.ewms.sector.mapper.SectorMapper;
-import com.ssginc.ewms.sector.vo.SectorVO;
-import com.ssginc.ewms.shipper.mapper.ShipperMapper;
-import com.ssginc.ewms.shipper.vo.ShipperVO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class IncomeService {
-
-    private String convertIncomeStatus(int status) {//입고 상태는 int값이여서 stringd으로 변환 해주는거임
+public interface IncomeService {
+    default String convertIncomeStatus(int status) {//입고 상태는 int값이여서 stringd으로 변환 해주는거임
         switch (status) {
-            case 0: return "입고예정";
-            case 1: return "검수중";
-            case 2: return "적치중";
-            case 3: return "입고완료";
-            case 4: return "입고취소";
-            default: return "알 수 없음";
+            case 0:
+                return "입고예정";
+            case 1:
+                return "검수중";
+            case 2:
+                return "적치중";
+            case 3:
+                return "입고완료";
+            case 4:
+                return "입고취소";
+            default:
+                return "알 수 없음";
         }
     }
 
-    private final IncomeMapper incomeMapper;
-    private final ProductMapper productMapper;
-    private final ShipperMapper shipperMapper;
-    private final SectorMapper sectorMapper;
+    List<IncomeShipperProductSuppierVO> fourFilterSelect(IncomeShipperProductSuppierVO incomeShipperProductSuppierVO)//kjo-01
+    ;
 
+    List<IncomeShipperProductSuppierVO> detailsSelect(int incomeId)//kjo-02
+    ;
 
-    public List<IncomeShipperProductSuppierVO> fourFilterSelect(IncomeShipperProductSuppierVO incomeShipperProductSuppierVO){
-        return incomeMapper.fourFilterSelect(incomeShipperProductSuppierVO);
-    }//kjo-01
+    List<IncomeShipperProductSuppierVO> selectIncomePrices(List<Integer> incomeIds)//kjo-03
+    ;
 
+    int updateCancleStatus(List<Integer> incomeIds)//kjo-04
+    ;
 
-    public List<IncomeShipperProductSuppierVO> detailsSelect(int incomeId){
-        return incomeMapper.detailsSelect(incomeId);
-    }//kjo-02
+    List<IncomeShipperProductSuppierVO> getExpectedIncomeList();
 
-    public List<IncomeShipperProductSuppierVO> selectIncomePrices(List<Integer> incomeIds){
-        return incomeMapper.selectIncomePrices(incomeIds);
-    }//kjo-03
+    List<IncomeShipperProductSuppierVO> getExpectedNormalIncomeList()//kjo-06
+    ;
 
-    public int updateCancleStatus(List<Integer> incomeIds){
-        return incomeMapper.updateCancleStatus(incomeIds);
-    }//kjo-04
+    boolean updateUrgentIncomeProducts();
 
-    public List<IncomeShipperProductSuppierVO> getExpectedIncomeList() {
-        List<IncomeShipperProductSuppierVO> list = incomeMapper.getExpectedIncomeList();
-        for (int i = 0; i <list.toArray().length ; i++) {
-            String statusText = convertIncomeStatus(list.get(i).getIncomeStatus());
-            list.get(i).setStatusText(statusText);
-        }
-        return list;
-    }
+    int updateActualQuantityAndStatus(IncomeShipperProductSuppierVO incomeShipperProductSuppierVO)//kjo-08
+    ;
 
-    public List<IncomeShipperProductSuppierVO> getExpectedNormalIncomeList(){
-        return incomeMapper.getExpectedNormalIncomeList();
-    }//kjo-06
+    List<IncomeShipperProductSuppierVO> getUnderReviewList()//kjo-09
+    ;
 
-    public boolean updateUrgentIncomeProducts() {
-        // 업데이트된 레코드 수를 반환받아 0보다 크면 업데이트 성공
-        int updatedRows = incomeMapper.updateUrgentIncomeProducts();
-        return updatedRows > 0;
-    }
+    int updateUnderReview(List<Integer> incomeIds)//kjo-10
+    ;
 
-    public int updateActualQuantityAndStatus(IncomeShipperProductSuppierVO incomeShipperProductSuppierVO){
-        return incomeMapper.updateActualQuantityAndStatus(incomeShipperProductSuppierVO);
-    }//kjo-08
+    List<IncomeShipperProductSuppierVO> actualFilter(int productId)//kjo-11
+    ;
 
-    public List<IncomeShipperProductSuppierVO> getUnderReviewList(){
-        return incomeMapper.getUnderReviewList();
-    }//kjo-09
+    List<IncomeShipperProductSuppierVO> underReviewFilter(int productId)//kjo-12
+    ;
 
-    public int updateUnderReview(List<Integer> incomeIds){
-        return incomeMapper.updateUnderReview(incomeIds);
-    }//kjo-10
+    List<IncomeProductSectorWarehouseInventoryVO> getStorageInProgressList() //kjo-13
+    ;
 
-    public List<IncomeShipperProductSuppierVO> actualFilter(int productId){
-        return incomeMapper.actualFilter(productId);
-    }//kjo-11
+    List<IncomeProductSectorWarehouseInventoryVO> getStorageStatusByProductIdFIlter(int productId)//kjo-14
+    ;
 
-    public List<IncomeShipperProductSuppierVO> underReviewFilter(int productId){
-        return incomeMapper.underReviewFilter(productId);
-    }//kjo-12
+    List<IncomeProductSectorWarehouseInventoryVO> getWarehouseSectorList()//kj0-15
+    ;
 
-    public List<IncomeProductSectorWarehouseInventoryVO> getStorageInProgressList(){
-        return incomeMapper.getStorageInProgressList();
-    } //kjo-13
+    List<IncomeProductSectorWarehouseInventoryVO> getSectorAvailableCapacity(int sectorId)//kjo-16
+    ;
 
-    public List<IncomeProductSectorWarehouseInventoryVO> getStorageStatusByProductIdFIlter(int productId){
-        return incomeMapper.getStorageStatusByProductIdFIlter(productId);
-    }//kjo-14
+    List<IncomeProductSectorWarehouseInventoryVO> getInspectionCapacity(int productId)//kjo-17
+    ;
 
-    public List<IncomeProductSectorWarehouseInventoryVO> getWarehouseSectorList(){
-        return incomeMapper.getWarehouseSectorList();
-    }//kj0-15
+    int updateIncomeStatusComplete(Integer incomeId)//kjo-18
+    ;
 
-    public List<IncomeProductSectorWarehouseInventoryVO> getSectorAvailableCapacity(int sectorId){
-        return incomeMapper.getSectorAvailableCapacity(sectorId);
-    }//kjo-16
+    List<Integer> selectWarehouseId();
 
-    public List<IncomeProductSectorWarehouseInventoryVO> getInspectionCapacity(int productId){
-        return incomeMapper.getInspectionCapacity(productId);
-    }//kjo-17
+    IncomeFormVO getIncomeFormByProductId(int inventoryId);
 
-    public int updateIncomeStatusComplete(Integer incomeId){
-        return incomeMapper.updateIncomeStatusComplete(incomeId);
-    }//kjo-18
-
-
-    public List<Integer> selectWarehouseId() {
-        return incomeMapper.selectWarehouseId();
-    }
-
-    public IncomeFormVO getIncomeFormByProductId(int inventoryId) {
-        IncomeFormVO incomeFormVO = incomeMapper.getIncomeFormByInventoryId(inventoryId);
-        return incomeFormVO;
-    }
-
-    public int insertIncomeRequest(IncomeFormVO incomeRequest) {
-        IncomeRequestVO incomeRequestVO = new IncomeRequestVO();
-
-        ProductVO productVO = productMapper.getProductByName(incomeRequest.getProductName());
-        int productId = productMapper.getProductIdByName(incomeRequest.getProductName());
-        ShipperVO shipperVO = shipperMapper.getShipperByName(incomeRequest.getShipperName());
-        SectorVO sectorVO = sectorMapper.findSectorByName(incomeRequest.getSectorName());
-
-        if (shipperVO == null || sectorVO == null) {
-            throw new NullPointerException();
-        }
-
-        incomeRequestVO.setProductId(productId);
-        incomeRequestVO.setShipperId(shipperVO.getShipperId());
-
-        if (incomeRequest.getIncomeType().equals("normalIncome")) {
-            incomeRequestVO.setIncomeType(0);
-            incomeRequestVO.setIncomeStatus(0);
-
-        } else if (incomeRequest.getIncomeType().equals("emergencyIncome")) {
-            incomeRequestVO.setIncomeType(1);
-            incomeRequestVO.setIncomeStatus(1);
-        }
-        incomeRequestVO.setIncomePrice(productVO.getIncomeUnitPrice() * incomeRequest.getIncomeQuantity());
-        incomeRequestVO.setIncomeExpectedQuantity(incomeRequest.getIncomeQuantity());
-        incomeRequestVO.setIncomeExpectedDate(LocalDate.parse(incomeRequest.getIncomeExpectedDate()));
-        incomeRequestVO.setSectorId(sectorVO.getSectorId());
-
-        return incomeMapper.insertIncomeRequest(incomeRequestVO);
-    }
+    int insertIncomeRequest(IncomeFormVO incomeRequest);
 }

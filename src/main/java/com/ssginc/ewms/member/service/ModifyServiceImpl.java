@@ -4,12 +4,11 @@ import com.ssginc.ewms.exception.MemberNotFoundException;
 import com.ssginc.ewms.member.dto.MemberUpdateRequest;
 import com.ssginc.ewms.member.mapper.MemberMapper;
 import com.ssginc.ewms.util.ErrorCode;
-import com.ssginc.ewms.util.MemberValidator;
+import com.ssginc.ewms.util.validator.MemberValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service

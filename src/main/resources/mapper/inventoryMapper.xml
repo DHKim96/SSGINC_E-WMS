@@ -82,7 +82,7 @@
             resultType="int">
         SELECT SUM(i.inventory_quantity)
         FROM inventory i
-        INNER JOIN sector s ON s.sector_id = i.inventory_id
+        INNER JOIN sector s ON s.sector_id = i.sector_id
         INNER JOIN warehouse w ON s.warehouse_id = w.warehouse_id
         GROUP BY w.warehouse_id, i.product_id
         HAVING w.warehouse_id = #{warehouseId} AND i.product_id = #{productId}

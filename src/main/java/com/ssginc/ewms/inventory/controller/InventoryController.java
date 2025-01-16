@@ -3,7 +3,7 @@ package com.ssginc.ewms.inventory.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssginc.ewms.inventory.service.InventoryService;
+import com.ssginc.ewms.inventory.service.InventoryServiceImpl;
 import com.ssginc.ewms.inventory.vo.InventoryAdjustVO;
 import com.ssginc.ewms.inventory.vo.InventoryStateVO;
 import com.ssginc.ewms.member.mapper.MemberMapper;
@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InventoryController {
 
-    private final InventoryService inventoryService;
+    private final InventoryServiceImpl inventoryService;
     private final MemberMapper memberMapper;
 
     /**
@@ -37,7 +37,7 @@ public class InventoryController {
      */
     @GetMapping("inventory/{warehouseId}")
     public String inventory(@PathVariable int warehouseId, Model model) {
-        List<InventoryStateVO> list = inventoryService.getProductInventory(warehouseId);
+        List<InventoryStateVO> list = inventoryService.getProductInventory(warehouseId).subList(0, 10);
         System.out.println(list);
         model.addAttribute("inventories", list);
         return "inventory/inventory";
@@ -77,7 +77,7 @@ public class InventoryController {
      */
     @GetMapping("adjust/{warehouseId}")
     public String adjust(@PathVariable int warehouseId, Model model) {
-        List<InventoryAdjustVO> list = inventoryService.getProductAdjustInventory(warehouseId);
+        List<InventoryAdjustVO> list = inventoryService.getProductAdjustInventory(warehouseId).subList(0, 10);
         model.addAttribute("inventories", list);
         return "inventory/adjust";
     }
