@@ -2,145 +2,143 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
-
-    <!-- Thymeleaf 템플릿 레이아웃을 위한 네임스페이스 선언 -->
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>-->
-    <!-- axios 라이브러리: 주석 처리됨. 서버와의 데이터 통신에 사용 -->
+<!-- Thymeleaf 템플릿 엔진과 레이아웃 설정을 위한 네임스페이스 선언 -->
 
 <main layout:fragment="content">
+    <!-- 레이아웃 템플릿에서 'content'라는 이름의 프래그먼트를 렌더링 -->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <!-- Bootstrap JS 라이브러리 -->
+    <!-- Bootstrap JS 라이브러리: 페이지에서 부트스트랩의 동적 기능 사용을 위해 포함 -->
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Axios 라이브러리: 서버와의 HTTP 통신을 위해 사용 -->
 
     <script src="/js/scripts.js"></script>
-    <script>
+    <!-- 사용자 정의 JavaScript 파일 -->
 
+    <script>
+        // 댓글 작성 함수
         function postComment() {
-            const loginId = 49;
-            const commentContent = document.getElementById("commentContent").value;
+            const loginId = 49; // 로그인된 사용자 ID (현재 고정값)
+            const commentContent = document.getElementById("commentContent").value; // 입력된 댓글 내용 가져오기
             console.log("loginId >> " + loginId + ", " + "commentContent >> " + commentContent);
+
+            // 댓글 내용이 없을 경우 알림 표시
             if (commentContent.length == 0) {
                 alert("댓글을 입력해주세요.");
                 return;
             }
+
+            // 댓글 내용이 있을 경우 서버에 POST 요청 보내기
             if (commentContent) {
                 axios.post("/comment/create2", {
-                    memberNo: loginId,
-                    comment: commentContent,
-                    boardId: `[[${boardVO.boardId}]]`
+                    memberNo: loginId, // 로그인된 사용자 ID
+                    comment: commentContent, // 입력된 댓글 내용
+                    boardId: `[[${boardVO.boardId}]]` // 게시글 ID (Thymeleaf 변수 삽입)
                 })
                     .then(response => {
+                        // 댓글 저장 성공 시
                         if (response.data != 0) {
                             alert('댓글이 저장되었습니다.');
-                            document.getElementById("commentContent").value = "";
-
-                            // let commentCommentId = response.data;
-                            // const rowCommentId = 'comment' + commentCommentId;
-                            //
-                            // const addRow = document.createElement("li");
-                            // addRow.className = "list-group-item";
-                            // addRow.innerHTML = `
-                            //                     <div class="d-flex justify-content-between align-items-center">
-                            //                     <span><strong>${loginId}</strong></span>
-                            //                     <button data-commentid="${commentId}"
-                            //                             onclick="updateComment(this)"
-                            //                             class="btn">수정</button>
-                            //                     <button data-commentid="${commentId}"
-                            //                             onclick="deleteComment(this)"
-                            //                             class="btn btn-outline">수정</button>
-                            //                     </div>
-                            //                     <p id="${commentCommentId}" class="mt-2">${commentComment}</p>
-                            // `;
-                            // const commentList  = document.getElementById('commentList');
-                            // commentList.appendChild(addRow);
-                            location.reload();
-                            //특정 부분만 리로딩하려면 데이터를 서버로부터 받아와서
-                            //해당 부분만 리로딩해야함.
+                            document.getElementById("commentContent").value = ""; // 댓글 입력란 비우기
+                            location.reload(); // 페이지 리로딩하여 댓글 목록 갱신
                         } else {
                             alert('댓글 추가에 실패했습니다.');
                         }
                     }).catch(error => {
+                    // 댓글 추가 오류 시
                     console.error('댓글 추가 오류:', error);
                     alert('댓글 추가에 실패했습니다.');
+                });
+            }
+        }
 
-                }); //axios
-            } //if
-        } //postComment
-
+        // 댓글 삭제 함수
         function deleteComment(button) {
-            const commentCommentId = button.dataset.commentCommentId;
+            const commentCommentId = button.dataset.commentCommentId; // 삭제할 댓글 ID 가져오기
             alert("commentCommentId " + commentCommentId);
 
-            if(commentCommentId) {
+            // 댓글 ID가 있을 경우 삭제 요청
+            if (commentCommentId) {
                 axios.delete("/comment/delete/" + commentCommentId)
                     .then(response => {
+                        // 댓글 삭제 성공 시
                         if (response.data) {
                             alert('댓글이 삭제되었습니다.');
-                            alert("삭제할 id= " + ('comment' + commentCommentId));
-
                             const commentElement = document.getElementById('comment' + commentCommentId);
-                            commentElement.remove();
+                            commentElement.remove(); // 댓글 삭제 후 DOM에서 해당 댓글 제거
                         } else {
                             alert('댓글 삭제에 실패했습니다.');
                         }
                     }).catch(error => {
+                    // 댓글 삭제 오류 시
                     console.error('댓글 삭제 오류:', error);
                     alert('댓글 삭제에 실패했습니다.');
-                }); //axios
-            } //if
-        } //delete
+                });
+            }
+        }
 
+        // 댓글 수정 함수
         function updateComment(button) {
-            const updatedComment = prompt('수정할 내용을 입력하세요:');
-            const commentCommentId = button.dataset.commentcommentid;
+            const updatedComment = prompt('수정할 내용을 입력하세요:'); // 수정할 내용 입력 받기
+            const commentCommentId = button.dataset.commentcommentid; // 수정할 댓글 ID 가져오기
 
-            if(updatedComment) {
+            if (updatedComment) {
+                // 댓글 수정 요청
                 axios.put('/comment/update', {
-                    commentId: commentId,
-                    commentComment: updatedComment
+                    commentId: commentId, // 수정할 댓글 ID
+                    commentComment: updatedComment // 수정된 댓글 내용
                 }).then(response => {
-                    if(response.data) {
+                    // 댓글 수정 성공 시
+                    if (response.data) {
                         alert('댓글이 수정되었습니다.');
-                        alert('comment' + commentCommentId);
-
                         const commentElement = document.getElementById('comment' + commentCommentId);
-                        document.getElementById('p' + commentCommentId).textContent = updatedComment;
+                        document.getElementById('p' + commentCommentId).textContent = updatedComment; // 수정된 댓글 내용 반영
                     } else {
                         alert('댓글 수정에 실패했습니다.');
                     }
                 }).catch(error => {
+                    // 댓글 수정 오류 시
                     console.error('댓글 수정 오류:', error);
                     alert('댓글 수정에 실패했습니다.');
-                }); //axios
-            } //if
-        } //update
-
+                });
+            }
+        }
     </script>
+
     <div class="container form-container mt-5">
         <h3 class="mb-3" style="font-weight: bold;">[[${session.memberNo}]]게시글</h3>
+        <!-- 로그인된 사용자의 게시글 표시 -->
         <hr>
-        <!-- Content -->
+        <!-- 게시글 내용 -->
         <div class="content">
             <p class="text-muted" th:text="${boardVO.boardType}">카테고리</p>
+            <!-- 게시글 카테고리 -->
             <h3 th:text="${boardVO.title}" style="font-weight: bold">게시글 제목</h3>
-            <p class="text-muted"  th:text="${#temporals.format(boardVO.boardDate, 'yyyy-MM-dd')}">작성 날짜</p>
+            <!-- 게시글 제목 -->
+            <p class="text-muted" th:text="${#temporals.format(boardVO.boardDate, 'yyyy-MM-dd')}">작성 날짜</p>
+            <!-- 게시글 작성 날짜 -->
 
             <hr>
             <p class="mb-5 mt-5" th:text="${boardVO.content}">게시글 내용</p>
+            <!-- 게시글 내용 -->
 
             <div class="mt-4 mb-5 d-flex justify-content-end gap-3">
+                <!-- 게시글 수정, 삭제, 목록보기 버튼 -->
                 <a href="/board/board" class="btn text-white" style="background-color: #343a40">목록보기</a>
                 <a th:href="@{/board/update(boardId=${boardVO.boardId})}" class="btn text-white" style="background-color: #ffc107">수정하기</a>
                 <a th:href="@{/board/delete(boardId=${boardVO.boardId})}" class="btn btn-outline" style="color: #ffc107; border-color: #ffc107">삭제하기</a>
             </div>
             <hr>
+
             <!-- 댓글 작성 -->
             <div class="container my-4">
                 <div class="comment-section mt-5">
                     <h5 class="mb-3" style="font-weight: bold;">댓글 작성</h5>
                     <textarea class="form-control mb-3" rows="4" id="commentContent" placeholder="댓글을 입력하세요."></textarea>
+                    <!-- 댓글 입력 필드 -->
                     <div class="mt-4 d-flex justify-content-end gap-3">
-<!--                        <a href="/board/update" class="btn text-white" style="background-color: #ffc107">댓글 등록</a>-->
+                        <!-- 댓글 등록 버튼 -->
                         <button type="button"
                                 id="submitComment"
                                 onclick="postComment()"
@@ -148,15 +146,22 @@
                                 style="background-color: #ffc107">댓글 등록</button>
                     </div>
                 </div>
+
                 <div class="comment-section mt-5" id="commentList">
                     <h5 class="mb-3" style="font-weight: bold;">댓글 목록</h5>
+                    <!-- 댓글 목록 -->
                     <div class="comment-item mt-4" th:each="commentVO : ${list}" th:id="'comment' + ${commentVO.commentId}">
+                        <!-- 각 댓글을 순회하며 출력 -->
                         <strong th:text="${commentVO.memberNo}">닉네임</strong>
+                        <!-- 댓글 작성자 -->
                         <small class="text-muted">작성 날짜</small>
+                        <!-- 댓글 작성 날짜 -->
                         <p th:id="'p' + ${commentVO.commentId}" class="mt-3 mb-0" th:text="${commentVO.comment}">댓글 내용</p>
+                        <!-- 댓글 내용 -->
 
                         <div class="mt-2 d-flex justify-content-end"
                              th:if="${session.memberNo != null and commentVO.memberNo != null and session.memberNo == commentVO.memberNo}">
+                            <!-- 로그인된 사용자와 댓글 작성자가 같을 경우 수정 및 삭제 버튼 표시 -->
                             <button
                                     th:data-commentMemberNo="${commentVO.commentId}"
                                     onclick="updateComment(this)"
@@ -169,15 +174,6 @@
                                     style="border-color: #ffc107; color: #ffc107;">삭제</button>
                         </div>
                     </div>
-<!--                    <div class="comment-item mt-4">-->
-<!--                        <strong>ice</strong>-->
-<!--                        <small class="text-muted">작성 날짜: 2025.01.08</small>-->
-<!--                        <p class="mt-3 mb-0">새로운 프로세스 적용을 위해 필요한 교육 자료를 받을 수 있을까요?</p>-->
-<!--                        <div class="mt-2 d-flex justify-content-end">-->
-<!--                            <button class="btn btn-sm btn-custom me-2" style="background-color: #ffc107; color: #ffffff;">수정</button>-->
-<!--                            <button class="btn btn-sm btn-outline" style="border-color: #ffc107; color: #ffc107;">삭제</button>-->
-<!--                        </div>-->
-<!--                    </div>-->
                 </div>
             </div>
         </div>

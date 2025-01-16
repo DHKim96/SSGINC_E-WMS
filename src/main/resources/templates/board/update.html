@@ -14,9 +14,12 @@
         <!-- 글쓰기 폼을 표시하는 컨테이너 -->
         <h3 class="mb-3" style="font-weight: bold;">글쓰기</h3>
         <hr>
+
+        <!-- 폼 시작: '/board/update2'로 데이터를 POST 방식으로 전송 -->
         <form action="/board/update2" method="post">
-            <!-- 폼 제출 시 POST 방식으로 '/board/update2'로 데이터 전송 -->
+            <!-- 'boardId'는 숨겨진 필드로, 수정할 게시글의 ID를 서버에 전달 -->
             <input name="boardId" th:value="${boardVO.boardId}" type="hidden">
+
             <!-- 제목 입력 필드 -->
             <div class="row mb-3 align-items-center mt-5">
                 <label for="title" class="col-sm-2 col-form-label text-center">제목</label>
@@ -53,19 +56,23 @@
             <!-- 글쓰기 버튼 -->
             <div class="container mt-4">
                 <div class="d-flex justify-content-center gap-3">
+                    <!-- 목록 보기 버튼: 게시글 목록으로 이동 -->
                     <a href="/board/board" class="btn text-white" style="background-color: #343a40">목록보기</a>
+                    <!-- 수정하기 버튼: 폼을 제출하여 게시글을 수정 -->
                     <button type="submit" class="btn text-white" style="background-color: #ffc107">수정하기</button>
+                    <!-- 삭제하기 버튼: 게시글 삭제를 위한 링크 -->
                     <a th:href="@{/board/delete(boardId=${boardVO.boardId})}" class="btn btn-outline" style="color: #ffc107; border-color: #ffc107">삭제하기</a>
-                    <!-- 폼을 제출하는 버튼 -->
                 </div>
             </div>
         </form>
     </div>
 
 </main>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-<!-- Bootstrap JS 라이브러리 -->
 
-<script src="/js/scripts.js"></script>
+<!-- Bootstrap JS 라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
 <!-- 사용자 정의 JavaScript 파일 -->
+<script src="/js/scripts.js"></script>
+
 </html>
