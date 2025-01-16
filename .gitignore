@@ -342,4 +342,3 @@ gradle-app.setting
 src/main/resources/application.properties
 
 #sql
-ewms.sql
