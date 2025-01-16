@@ -35,7 +35,7 @@ public class BoardServiceImpl implements BoardService {
 
     /*
      * 모든 게시글 조회 메서드
-     * BoardMapper의 `selectBoardAll` 메서드를 호출하여 모든 게시글 정보를 반환합니다.
+     * BoardMapper의 `getAllBoards` 메서드를 호출하여 모든 게시글 정보를 반환합니다.
      * @return 게시글 목록(List<BoardVO>)
      */
     @Override
@@ -45,7 +45,7 @@ public class BoardServiceImpl implements BoardService {
 
     /*
      * 게시글 번호로 특정 게시글 조회 메서드
-     * BoardMapper의 `selectBoardByNo` 메서드를 호출하여 해당 게시글 정보를 반환합니다.
+     * BoardMapper의 `getBoardById` 메서드를 호출하여 해당 게시글 정보를 반환합니다.
      * @param boardNo 게시글 번호
      * @return 해당 게시글 정보(BoardVO)
      */
