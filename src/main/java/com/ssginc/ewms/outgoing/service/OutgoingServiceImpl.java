@@ -1,9 +1,15 @@
 package com.ssginc.ewms.outgoing.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssginc.ewms.branch.mapper.BranchMapper;
 import com.ssginc.ewms.branch.vo.BranchVO;
+import com.ssginc.ewms.exception.ApiKakaoNaviException;
 import com.ssginc.ewms.exception.OutgoingFailedException;
 import com.ssginc.ewms.exception.ValueCustomException;
+import com.ssginc.ewms.outgoing.dto.DestinationResponseDto;
 import com.ssginc.ewms.outgoing.dto.TransportationRequestDto;
 import com.ssginc.ewms.outgoing.mapper.OutgoingMapper;
 import com.ssginc.ewms.outgoing.vo.OutgoingFormVO;
@@ -17,13 +23,25 @@ import com.ssginc.ewms.shipper.mapper.ShipperMapper;
 import com.ssginc.ewms.shipper.vo.ShipperVO;
 import com.ssginc.ewms.util.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OutgoingServiceImpl implements OutgoingService {
@@ -34,6 +52,8 @@ public class OutgoingServiceImpl implements OutgoingService {
 
     private final OutgoingMapper outgoingMapper;
 
+    @Value("${kakao.mobility.restApi.key}")
+    private String kakaoRestApiKey;
 
     @Override
     public List<OutgoingVO> getOutgoingBySearch(String startDate, String endDate, String productName, String productStatus) {
@@ -87,7 +107,8 @@ public class OutgoingServiceImpl implements OutgoingService {
         OutgoingRequestVO outgoingRequestVO = new OutgoingRequestVO();
 
         ProductVO productVO = productMapper.getProductByName(outgoingForm.getProductName());
-        ShipperVO shipperVO = shipperMapper.getShipperByName(outgoingForm.getShipperName());
+//        ShipperVO shipperVO = shipperMapper.getShipperByName(outgoingForm.getShipperName());
+        ShipperVO shipperVO = shipperMapper.getShipperByName("대한통운");
         BranchVO branchVO = branchMapper.getBranchByName(outgoingForm.getBranchName());
         SectorVO sectorVO = sectorMapper.findSectorByName(outgoingForm.getSectorName());
 
@@ -123,24 +144,62 @@ public class OutgoingServiceImpl implements OutgoingService {
             throw new OutgoingFailedException(ErrorCode.OUTGOING_INSERT_FAILED);
         }
 
+        DestinationResponseDto location = outgoingMapper.selectLocationInfo(outgoingId);
+
+        TransportationRequestDto transportationRequestDto = new TransportationRequestDto();
+
+        int arrivalTime = getArrivalTime(location);
+
+        arrivalTime += (arrivalTime / 3600) * 10; // 1시간 당 휴식 시간 10분 보장
+
+        LocalDateTime now = LocalDateTime.now();
+
+        transportationRequestDto.setOutgoingId(outgoingId);
+        transportationRequestDto.setTransportationStart(String.valueOf(now));
+        transportationRequestDto.setTransportationEnd(String.valueOf( now.plusSeconds(arrivalTime)));
+
+       return outgoingMapper.insertTransportation(transportationRequestDto);
+    }
+
+    private int getArrivalTime(DestinationResponseDto location) {
+        int result = 0;
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "KakaoAK " + kakaoRestApiKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        String uriString = UriComponentsBuilder.fromHttpUrl("https://apis-navi.kakaomobility.com/v1/directions")
+                .queryParam("origin", location.getWarehouseLongitude() + "," + location.getWarehouseLatitude())
+                .queryParam("destination", location.getBranchLongitude() + "," + location.getBranchLatitude())
+                .queryParam("summary", true)
+                .toUriString();
+
+        try {
+            log.info("Request URL: {}", uriString);
+            ResponseEntity<String> response = restTemplate.exchange(uriString, HttpMethod.GET, entity, String.class);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response.getBody());
+            log.info("rootNode = {}", rootNode.path("routes").path(0).path("summary").path("duration"));
+
+            result = rootNode.path("routes").path(0).path("summary").path("duration").asInt();
+
+        } catch (RestClientException e) {
+            throw new ApiKakaoNaviException();
+        } catch (JsonMappingException e) {
+            throw new ApiKakaoNaviException();
+        } catch (JsonProcessingException e) {
+            throw new ApiKakaoNaviException();
+        }
 
 
-
-        return outgoingMapper.insertTransportation();
+        return result;
     }
 
     @Override
     public OutgoingFormVO getOutgoingFormByProductId(int productId) {
         return outgoingMapper.getOutgoingFormByProductId(productId);
-    }
-
-    private TransportationRequestDto getArrivalTime(int outgoingId) {
-        TransportationRequestDto trsDto = new TransportationRequestDto();
-
-        trsDto.setOutgoingId(outgoingId);
-
-
-
-        return
     }
 }

@@ -112,6 +112,13 @@
         VALUES (#{productId}, #{shipperId}, #{outgoingStatus}, #{outgoingType},
                 #{outgoingQuantity}, #{outgoingPrice}, #{branchId}, #{sectorId})
     </insert>
+
+    <insert id="insertTransportation">
+        INSERT INTO transporataion(outgoing_id, transporation_start, transportation_end)
+        VALUES (#{outgoingId}, #{transportationStart}, #{transportationEnd})
+    </insert>
+
+
     <select id="getOutgoingFormByProductId"
             parameterType="int"
             resultType="outgoingFormVO">
@@ -120,5 +127,14 @@
                  INNER JOIN inventory i ON p.product_id = i.product_id
                  INNER JOIN sector s ON s.sector_id = i.sector_id
         WHERE i.inventory_id = #{inventoryId}
+    </select>
+
+    <select id="selectLocationInfo" resultType="com.ssginc.ewms.outgoing.dto.DestinationResponseDto">
+        select warehouse_latitude, warehouse_longitude, branch_latitude, branch_longitude
+        from outgoing o
+                 join sector s on (o.sector_id = s.sector_id)
+                 join warehouse w on (s.warehouse_id = w.warehouse_id)
+                 join branch b on (o.branch_id = b.branch_id)
+        where outgoing_id = #{outgoingId};
     </select>
 </mapper>
