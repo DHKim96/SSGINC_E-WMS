@@ -72,7 +72,9 @@ public enum ErrorCode {
     INVALID_TYPE_FORMAT(500, "D400", "입력하신 날짜 타입이 적절하지 않습니다."),
     DATA_NOT_FOUNDED(500,"D401", "결과 데이터가 존재하지 않습니다."),
     IO_FAILED(500, "D402", "입출력 중 예외가 발생했습니다."),
-    URI_REQUEST_FAILED(500, "A500", "URI 요청 중 예외가 발생했습니다.");
+    URI_REQUEST_FAILED(500, "A500", "URI 요청 중 예외가 발생했습니다."),
+
+    OUTGOING_INSERT_FAILED(500, "O400", "출고 데이터 저장 중 에러가 발생했습니다.");
 
     private final int status;
     private final String code;

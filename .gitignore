@@ -339,6 +339,6 @@ gradle-app.setting
 /build.gradle
 
 #properties
-src/main/resources/application.properties
+application.properties
 
 #sql

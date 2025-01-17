@@ -2,36 +2,28 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
-<!-- Thymeleaf 템플릿 엔진을 사용하고, 레이아웃 템플릿을 사용하여 페이지를 구성함 -->
-
 <head>
-    <!-- 페이지의 헤드 부분 -->
+    <!-- Thymeleaf 템플릿 레이아웃을 위한 네임스페이스 선언 -->
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>-->
-    <!-- axios 라이브러리: 서버와의 데이터 통신을 위해 사용되지만 주석 처리됨 -->
-
+    <!-- axios 라이브러리: 주석 처리됨. 서버와의 데이터 통신에 사용 -->
 </head>
-
 <main layout:fragment="content">
-    <!-- 'content'라는 이름의 프래그먼트를 레이아웃에서 렌더링하여 본문 내용을 포함 -->
+    <!-- 'content'라는 이름의 프래그먼트를 레이아웃에서 렌더링 -->
 
     <div class="container form-container mt-5">
-        <!-- 'form-container'라는 클래스를 가진 div로, 폼을 포함하는 컨테이너 -->
+        <!-- 글쓰기 폼을 표시하는 컨테이너 -->
         <h3 class="mb-3" style="font-weight: bold;">글쓰기</h3>
-        <!-- 글쓰기 제목을 강조 스타일로 표시 -->
         <hr>
         <form action="/board/create2" method="post">
-            <!-- 'POST' 방식으로 '/board/create2' URL로 데이터를 전송하는 폼 -->
-
+            <!-- 폼 제출 시 POST 방식으로 '/board/create2'로 데이터 전송 -->
             <input type="hidden" name="memberNo" th:value="${session.loginUser.memberNo}">
-            <!-- 'memberNo' 값은 세션에서 로그인한 사용자의 'memberNo'를 받아 숨겨진 필드로 전송 -->
-
             <!-- 제목 입력 필드 -->
             <div class="row mb-3 align-items-center mt-5">
                 <label for="title" class="col-sm-2 col-form-label text-center">제목</label>
                 <!-- 제목 입력란에 대한 레이블 -->
                 <div class="col-sm-10">
                     <input type="text" class="form-control" id="title" name="title" placeholder="제목을 입력하세요.">
-                    <!-- 사용자가 제목을 입력할 수 있는 텍스트 입력 필드 -->
+                    <!-- 사용자가 제목을 입력하는 텍스트 필드 -->
                 </div>
             </div>
 
@@ -54,7 +46,7 @@
                 <!-- 내용 입력란에 대한 레이블 -->
                 <div class="col-sm-10">
                     <textarea class="form-control" id="content" name="content" rows="15" placeholder="내용을 입력하세요."></textarea>
-                    <!-- 사용자가 내용을 입력할 수 있는 텍스트 에어리어 (여러 줄로 입력 가능) -->
+                    <!-- 사용자가 내용을 입력할 수 있는 텍스트 에어리어 -->
                 </div>
             </div>
 
@@ -62,16 +54,15 @@
             <div class="container mt-4">
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn text-white" style="background-color: #ffc107">글쓰기</button>
-                    <!-- '글쓰기' 버튼: 폼을 제출하는 버튼 -->
+                    <!-- 폼을 제출하는 버튼 -->
                 </div>
             </div>
         </form>
     </div>
 
 </main>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-<!-- Bootstrap JS 라이브러리, 부트스트랩의 JS 구성 요소 사용을 위해 포함 -->
+<!-- Bootstrap JS 라이브러리 -->
 
 <script src="/js/scripts.js"></script>
 <!-- 사용자 정의 JavaScript 파일 -->

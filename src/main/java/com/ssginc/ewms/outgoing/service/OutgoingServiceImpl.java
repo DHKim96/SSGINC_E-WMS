@@ -2,7 +2,9 @@ package com.ssginc.ewms.outgoing.service;
 
 import com.ssginc.ewms.branch.mapper.BranchMapper;
 import com.ssginc.ewms.branch.vo.BranchVO;
+import com.ssginc.ewms.exception.OutgoingFailedException;
 import com.ssginc.ewms.exception.ValueCustomException;
+import com.ssginc.ewms.outgoing.dto.TransportationRequestDto;
 import com.ssginc.ewms.outgoing.mapper.OutgoingMapper;
 import com.ssginc.ewms.outgoing.vo.OutgoingFormVO;
 import com.ssginc.ewms.outgoing.vo.OutgoingRequestVO;
@@ -33,19 +35,23 @@ public class OutgoingServiceImpl implements OutgoingService {
     private final OutgoingMapper outgoingMapper;
 
 
+    @Override
     public List<OutgoingVO> getOutgoingBySearch(String startDate, String endDate, String productName, String productStatus) {
         return outgoingMapper.getOutgoingList(startDate, endDate, productName, productStatus);
     }
 
+    @Override
     public void updateOutgoingStatus(int outgoingId, int status) {
         outgoingMapper.updateOutgoingStatus(outgoingId, status);
     }
     
+    @Override
     public List<OutgoingVO> getOutgoingWithInventory(String startDate, String endDate, String productName, String productStatus) {
         return outgoingMapper.getOutgoingWithInventory(startDate, endDate, productName, productStatus);
     }
 
     @Transactional
+    @Override
     public void updateOutgoingStatusAndQuantity(int outgoingId, int status) {
         // 재고 검증
         Integer inventoryQuantity = outgoingMapper.getInventoryQuantity(outgoingId);
@@ -70,10 +76,13 @@ public class OutgoingServiceImpl implements OutgoingService {
         String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         outgoingMapper.updateOutgoingDate(outgoingId, currentDateTime); // 상태도 함께 업데이트
     }
+    @Override
     public OutgoingFormVO getOutgoingFormByInventoryId(int inventoryId) {
         return outgoingMapper.getOutgoingFormByProductId(inventoryId);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public int insertOutgoingRequest(OutgoingFormVO outgoingForm) {
         OutgoingRequestVO outgoingRequestVO = new OutgoingRequestVO();
 
@@ -107,10 +116,31 @@ public class OutgoingServiceImpl implements OutgoingService {
         outgoingRequestVO.setSectorId(sectorVO.getSectorId());
 
         System.out.println(outgoingRequestVO);
-        return outgoingMapper.insertOutgoingRequest(outgoingRequestVO);
+
+        int outgoingId = outgoingMapper.insertOutgoingRequest(outgoingRequestVO);
+
+        if (outgoingId <= 0) {
+            throw new OutgoingFailedException(ErrorCode.OUTGOING_INSERT_FAILED);
+        }
+
+
+
+
+        return outgoingMapper.insertTransportation();
     }
 
+    @Override
     public OutgoingFormVO getOutgoingFormByProductId(int productId) {
         return outgoingMapper.getOutgoingFormByProductId(productId);
+    }
+
+    private TransportationRequestDto getArrivalTime(int outgoingId) {
+        TransportationRequestDto trsDto = new TransportationRequestDto();
+
+        trsDto.setOutgoingId(outgoingId);
+
+
+
+        return
     }
 }

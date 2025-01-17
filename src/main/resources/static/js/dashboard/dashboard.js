@@ -49,11 +49,12 @@ async function fetchChartData(sort, type) {
         }
 
         return {
-            labels: response.data.data.map((item) => item.incomeDate || item.outgoingDate),
+            type: type,
+            labels: response.data.data.map((item) => sort === 'income' ? item.incomeDate : item.outgoingDate),
             datasets: [
                 {
                     label: sort === 'income' ? '입고량' : '출고량',
-                    data: response.data.data.map((item) => parseInt(item.incomeQuantity || item.outgoingQuantity || 0, 10)),
+                    data: response.data.data.map((item) => sort === 'income' ? parseInt(item.incomeQuantity || 0, 10) : parseInt(item.outgoingQuantity || 0, 10)),
                     borderColor: 'rgba(74, 144, 226, 1)',
                     backgroundColor: 'rgba(74, 144, 226, 0.2)',
                     fill: true,
@@ -79,17 +80,18 @@ function initializeLineChart(data) {
         data: data,
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
                 x: { grid: { display: false } },
-                y: { grid: { color: 'rgba(0, 0, 0, 0.1)' }, ticks: { stepSize: 10 } },
+                y: { grid: { color: 'rgba(0, 0, 0, 0.1)' }, ticks: { stepSize: data.type === "daily" ? 50 : data.type === "monthly" ? 500 : 5000 }, beginAtZero: true },
             },
         },
     });
 }
 
 async function loadInitialChart() {
+
     const initialData = await fetchChartData('income', 'daily');
     if (initialData) {
         initializeLineChart(initialData);
@@ -207,6 +209,14 @@ function renderWeatherInfo(weatherData) {
     document.querySelector('#description').innerText = weatherDescription;
     document.querySelector('#humidity').innerText = humidity;
 }
+
+
+// ============================================================= 출고 배송 현황 ===========================================================================
+
+
+
+
+
 // ============================================================= 초기화 ===========================================================================
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -242,9 +252,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 입출고 분석 차트 갱신 이벤트 리스너
     document.getElementById('show-select').addEventListener('change', async () => {
-        await loadInitialChart();
+        let sort = document.querySelector('#show-select').value;
+        let type = document.querySelector('#short-by-select').value;
+        let data = await fetchChartData(sort, type);
+        initializeLineChart(data);
     });
     document.getElementById('short-by-select').addEventListener('change', async () => {
-        await loadInitialChart();
+        let sort = document.querySelector('#show-select').value;
+        let type = document.querySelector('#short-by-select').value;
+        let data = await fetchChartData(sort, type);
+        initializeLineChart(data);
     });
 });

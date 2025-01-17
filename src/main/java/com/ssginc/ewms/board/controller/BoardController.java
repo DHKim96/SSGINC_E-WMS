@@ -28,7 +28,6 @@ public class BoardController {
 
     private final BoardService boardService;
     private final CommentService commentService;
-
     /*
      * 게시판 전체 목록 요청 처리
      * "/board" URL로 들어오는 GET 요청을 처리합니다.
@@ -71,6 +70,7 @@ public class BoardController {
         System.out.println(boardVO);
         System.out.println("create2 화면 호출 >>>>>>>>>>>");
         boardVO.setContent(boardVO.getContent().replace("\n", "<br>"));
+        //boardVO.setMemberNo(1);
         try {
             int result = boardService.insertBoard(boardVO);
             if (result == 1) {
@@ -186,3 +186,4 @@ public class BoardController {
         }
     }
 }
+

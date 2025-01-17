@@ -106,7 +106,7 @@
     </select>
 
     <insert id="insertOutgoingRequest"
-            parameterType="outgoingRequestVO">
+            parameterType="outgoingRequestVO" useGeneratedKeys="true" keyColumn="outgoing_id">
         INSERT INTO outgoing(product_id, shipper_id, outgoing_status, outgoing_type,
                              outgoing_quantity, outgoing_price, branch_id, sector_id)
         VALUES (#{productId}, #{shipperId}, #{outgoingStatus}, #{outgoingType},

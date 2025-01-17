@@ -147,7 +147,7 @@
                 <div class="flex flex-col align-center" style="gap: 15px;">
                     <p id="description" style="font-size: 20px;"></p>
                     <div style="font-size: 14px;">
-                        <span style="color: #77777A;">강수확률</span>
+                        <span style="color: #77777A;">습도</span>
                         <span id="humidity" style="color: #000;"></span>%
                     </div>
                     <div class="buttons">
@@ -172,147 +172,17 @@
                 <h3>출고 배송 현황</h3>
                 <table>
                     <tbody>
-                    <tr>
-                        <td>1234</td>
-                        <td>05-12-2021</td>
-                        <td>강남점</td>
+                    <tr th:each="transportation : ${session.transportations}">
+                        <td th:text="${transportation.outgoingId}"></td>
+                        <td th:text="${transportation.transportationStart}"></td>
+                        <td th:text="${transportation.destination}"></td>
                         <td><span class="status shipping">Shipping</span></td>
-                        <td>&#8361;1,230,000</td>
+                        <td th:text="'&#8361;'${transportation.outgoingPrice}"></td>
                         <td>
                             <div class="bar bar-shipping">
-                                <div style="width: 60%;"></div>
+                                <div th:style="width: ${transportation.transportationEnd} / ${transportation.transportationStart};"></div>
                             </div>
-                            <span>1H</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>1234</td>
-                        <td>05-12-2021</td>
-                        <td>경기광주점</td>
-                        <td><span class="status shipping">Shipping</span></td>
-                        <td>&#8361;1,356,000</td>
-                        <td>
-                            <div class="bar bar-shipping">
-                                <div style="width: 20%;"></div>
-                            </div>
-                            <span>2H10m</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>1234</td>
-                        <td>05-12-2021</td>
-                        <td>광교점</td>
-                        <td><span class="status shipping">Shipping</span></td>
-                        <td>&#8361;2,534,000</td>
-                        <td>
-                            <div class="bar bar-shipping">
-                                <div style="width: 40%;"></div>
-                            </div>
-                            <span>1H</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>1234</td>
-                        <td>05-12-2021</td>
-                        <td>김포한강점</td>
-                        <td><span class="status shipping">Shipping</span></td>
-                        <td>&#8361;670,000</td>
-                        <td>
-                            <div class="bar bar-shipping">
-                                <div style="width: 50%;"></div>
-                            </div>
-                            <span>2H</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>1234</td>
-                        <td>05-12-2021</td>
-                        <td>다산점</td>
-                        <td><span class="status shipping">Shipping</span></td>
-                        <td>&#8361;1,521,000</td>
-                        <td>
-                            <div class="bar bar-shipping">
-                                <div style="width: 80%;"></div>
-                            </div>
-                            <span>1H20m</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>1234</td>
-                        <td>05-12-2021</td>
-                        <td>부천점</td>
-                        <td><span class="status shipping">Shipping</span></td>
-                        <td>&#8361;1,115,000</td>
-                        <td>
-                            <div class="bar bar-shipping">
-                                <div style="width: 90%;"></div>
-                            </div>
-                            <span>3H</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>1234</td>
-                        <td>05-12-2021</td>
-                        <td>안산고잔점</td>
-                        <td><span class="status shipping">Shipping</span></td>
-                        <td>&#8361;1,086,000</td>
-                        <td>
-                            <div class="bar bar-shipping">
-                                <div style="width: 30%;"></div>
-                            </div>
-                            <span>1H20m</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>1234</td>
-                        <td>05-12-2021</td>
-                        <td>양주점</td>
-                        <td><span class="status shipping">Shipping</span></td>
-                        <td>&#8361;1,789,000</td>
-                        <td>
-                            <div class="bar bar-shipping">
-                                <div style="width: 20%;"></div>
-                            </div>
-                            <span>3H</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>1234</td>
-                        <td>05-12-2021</td>
-                        <td>하남점</td>
-                        <td><span class="status shipping">Shipping</span></td>
-                        <td>&#8361;1,123,000</td>
-                        <td>
-                            <div class="bar bar-shipping">
-                                <div style="width: 80%;"></div>
-                            </div>
-                            <span>2H</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>1234</td>
-                        <td>05-12-2021</td>
-                        <td>파주점</td>
-                        <td><span class="status shipping">Shipping</span></td>
-                        <td>&#8361;1,791,000</td>
-                        <td>
-                            <div class="bar bar-shipping">
-                                <div style="width: 90%;"></div>
-                            </div>
-                            <span>30m</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>1234</td>
-                        <td>05-12-2021</td>
-                        <td>화정점</td>
-                        <td><span class="status shipping">Shipping</span></td>
-                        <td>&#8361;1,631,000</td>
-                        <td>
-                            <div class="bar bar-shipping">
-                                <div style="width: 70%;"></div>
-                            </div>
-                            <span>1H</span>
+                            <span th:text="${transportation.transportationEnd} - ${transportation.transportationStart}"></span>
                         </td>
                     </tr>
                     <!-- Add more rows as needed -->

@@ -5,38 +5,30 @@
 
     <!-- 기간별 입고량 조회 -->
     <select id="selectIncomeListByType" resultType="com.ssginc.ewms.dashboard.dto.IncomeResponseDto">
-        SELECT
-        <choose>
-            <when test="type == 'daily'">
-                DATE_FORMAT(income_date, '%Y-%m-%d') AS income_date
-            </when>
-            <when test="type == 'monthly'">
-                DATE_FORMAT(income_date, '%Y-%m') AS income_date
-            </when>
-            <when test="type == 'yearly'">
-                DATE_FORMAT(income_date, '%Y') AS income_date
-            </when>
-        </choose>,
-        SUM(income_actual_quantity) AS income_quantity
-        FROM
-        income
-        WHERE
-        income_actual_quantity IS NOT NULL
-        GROUP BY
-        <choose>
-            <when test="type == 'daily'">
-                DATE_FORMAT(income_date, '%Y-%m-%d')
-            </when>
-            <when test="type == 'monthly'">
-                DATE_FORMAT(income_date, '%Y-%m')
-            </when>
-            <when test="type == 'yearly'">
-                DATE_FORMAT(income_date, '%Y')
-            </when>
-        </choose>
-        ORDER BY
-        income_date
-        LIMIT 10
+
+        SELECT *
+        FROM (
+                SELECT
+                    CASE
+                        WHEN #{type} = 'daily' THEN DATE_FORMAT(income_date, '%Y-%m-%d')
+                        WHEN #{type} = 'monthly' THEN DATE_FORMAT(income_date, '%Y-%m')
+                        WHEN #{type} = 'yearly' THEN DATE_FORMAT(income_date, '%Y')
+                    END AS income_date,
+                SUM(income_actual_quantity) AS income_quantity
+                FROM income
+                WHERE income_date IS NOT NULL
+                AND income_actual_quantity IS NOT NULL
+                GROUP BY
+                    CASE
+                        WHEN #{type} = 'daily' THEN DATE_FORMAT(income_date, '%Y-%m-%d')
+                        WHEN #{type} = 'monthly' THEN DATE_FORMAT(income_date, '%Y-%m')
+                        WHEN #{type} = 'yearly' THEN DATE_FORMAT(income_date, '%Y')
+                    END
+                ORDER BY income_date DESC
+                LIMIT 10
+        ) AS ordered_result
+        ORDER BY income_date ASC
+
     </select>
 
 
@@ -47,39 +39,28 @@
 
     <!-- 기간별 출고량 조회 -->
     <select id="selectOutgoingListByType" resultMap="outgoingResultMap">
-        SELECT
-        <choose>
-            <when test="type == 'daily'">
-                DATE_FORMAT(outgoing_date, '%Y-%m-%d') AS outgoing_date
-            </when>
-            <when test="type == 'monthly'">
-                DATE_FORMAT(outgoing_date, '%Y-%m') AS outgoing_date
-            </when>
-            <when test="type == 'yearly'">
-                DATE_FORMAT(outgoing_date, '%Y') AS outgoing_date
-            </when>
-        </choose>,
-        SUM(outgoing_quantity) AS outgoing_quantity
-        FROM
-        outgoing
-        WHERE
-        outgoing_quantity IS NOT NULL
-        AND outgoing_date IS NOT NULL
-        GROUP BY
-        <choose>
-            <when test="type == 'daily'">
-                DATE_FORMAT(outgoing_date, '%Y-%m-%d')
-            </when>
-            <when test="type == 'monthly'">
-                DATE_FORMAT(outgoing_date, '%Y-%m')
-            </when>
-            <when test="type == 'yearly'">
-                DATE_FORMAT(outgoing_date, '%Y')
-            </when>
-        </choose>
-        ORDER BY
-        outgoing_date
-        LIMIT 10
+        SELECT *
+        FROM (
+                 SELECT
+                     CASE
+                         WHEN #{type} = 'daily' THEN DATE_FORMAT(outgoing_date, '%Y-%m-%d')
+                         WHEN #{type} = 'monthly' THEN DATE_FORMAT(outgoing_date, '%Y-%m')
+                         WHEN #{type} = 'yearly' THEN DATE_FORMAT(outgoing_date, '%Y')
+                         END AS outgoing_date,
+                     SUM(outgoing_quantity) AS outgoing_quantity
+                 FROM income
+                 WHERE outgoing_date IS NOT NULL
+                   AND outgoing_quantity IS NOT NULL
+                 GROUP BY
+                     CASE
+                         WHEN #{type} = 'daily' THEN DATE_FORMAT(outgoing_date, '%Y-%m-%d')
+                         WHEN #{type} = 'monthly' THEN DATE_FORMAT(outgoing_date, '%Y-%m')
+                         WHEN #{type} = 'yearly' THEN DATE_FORMAT(outgoing_date, '%Y')
+                    END
+                 ORDER BY outgoing_date DESC
+                     LIMIT 10
+             ) AS ordered_result
+        ORDER BY outgoing_date ASC
     </select>
 
 

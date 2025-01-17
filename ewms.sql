@@ -4,6 +4,8 @@
 -- ------------------------------------------------------
 -- Server version	8.0.40
 
+use ewms;
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -55,7 +57,10 @@ DROP TABLE IF EXISTS `branch`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `branch` (
   `branch_id` int NOT NULL AUTO_INCREMENT COMMENT '식별자',
-  `branch_name` varchar(225) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '월계점 (서울특별시 노원구 마들로3길 15),성서점 (대구광역시 달서구 이곡동로 24),연수점 (인천광역시 연수구 경원대로 184),분당점 (경기도 성남시 분당구 불정로 134),동인천점 (인천광역시 중구 인중로 134),칠성점 (대구광역시 북구 침산로 93),가든5점 (서울특별시 송파구 충민로 10),해운대점 (부산광역시 해운대구 좌동순환로 511),수색점 (서울특별시 은평구 수색로 217),용인점 (경기도 용인시 처인구 명지로 53)',
+  `branch_name` varchar(100) not null unique,
+  `branch_address` varchar(225) not null,
+  `branch_latitude` decimal(18, 10) not null comment '위도',
+  `branch_longitude` decimal(18, 10) not null comment '경도',
   PRIMARY KEY (`branch_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -66,7 +71,17 @@ CREATE TABLE `branch` (
 
 LOCK TABLES `branch` WRITE;
 /*!40000 ALTER TABLE `branch` DISABLE KEYS */;
-INSERT INTO `branch` VALUES (1,'이마트 강남점'),(2,'이마트 부산점'),(3,'이마트 대구점'),(4,'이마트 인천점'),(5,'이마트 광주점'),(6,'이마트 대전점'),(7,'이마트 울산점'),(8,'이마트 수원점'),(9,'이마트 성남점'),(10,'이마트 용인점');
+INSERT INTO `branch` VALUES 
+(1,'이마트 양재점', '서울특별시 서초구 매헌로 16', '37.463144', '127.036717'),
+(2,'이마트 역삼점', '서울특별시 강남구 역삼로 310', '37.499171', '127.048472'),
+(3,'이마트 자양점', '서울특별시 광진구 아차산로 272', '37.538425', '127.073062'),
+(4,'이마트 동인천점', '인천광역시 중구 인중로 134', '37.466494', '126.629110'),
+(5,'이마트 경기광주점', '경기도 광주시 광주대로 30','37.410060', '127.261226'),
+(6,'트레이더스 홀세일 클럽 고양점', '경기도 고양시 덕양구 고양대로 1955', '37.646621', '126.893160'),
+(7,'트레이더스 홀세일 클럽 군포점', '경기도 군포시 삼성로 74', '37.340084', '126.934545'),
+(8,'트레이더스 홀세일 클럽 부천점', '경기도 부천시 옥길로 1', '37.461413', '126.814094'),
+(9,'트레이더스 홀세일 클럽 김포점', '경기도 김포시 김포대로 715', '37.612512', '126.730753'),
+(10,'트레이더스 홀세일 클럽 수원점', '경기도 수원시 영통구 삼성로 2', '37.245996', '127.048638');
 /*!40000 ALTER TABLE `branch` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -229,6 +244,8 @@ CREATE TABLE `member` (
 
 LOCK TABLES `member` WRITE;
 /*!40000 ALTER TABLE `member` DISABLE KEYS */;
+
+INSERT INTO `member` values (1, 'admin', '$2a$10$PznLNUVNkg69fAdnj8V21u5HFxzxU5smM7WOPgTz2LaE4PWeoeSxC', '관리자', 'admin@ewms.com', '010-0000-0000', '00000', 'N/A', '2025-01-01', '2025-01-01 00:00:00', 1, 1, 1);
 INSERT INTO `member` VALUES (49,'admin1','Admin@1234','홍길동','admin1@naver.com','010-1234-5678','06000','서울특별시 강남구 테헤란로 123','1985-05-15','2024-03-10 10:20:30',1,1,1),(50,'admin2','Admin@5678','김철수','admin2@naver.com','010-2345-6789','03000','부산광역시 해운대구 센텀서로 456','1978-11-22','2024-06-18 14:35:50',1,1,2),(51,'admin3','Admin@9012','이영희','admin3@naver.com','010-3456-7890','29000','대구광역시 중구 동성로 789','1990-07-08','2024-09-25 09:15:45',1,1,3),(52,'admin4','Admin@3456','박민수','admin4@naver.com','010-4567-8901','22000','인천광역시 남동구 예술로 321','1982-02-28','2024-12-05 16:50:20',1,1,4),(53,'krt8599','$2a$10$Zei8YWsknDi62Y41QjZsG.Q6obXAK4.DmaxZeERcjGTHW8F7YTK9u','김진오','krt8599@naver.com','010-8662-7626','06327','서울_강남구_삼성로_11_','2000-08-29','2025-01-14 17:30:51',0,1,1);
 /*!40000 ALTER TABLE `member` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -401,8 +418,10 @@ DROP TABLE IF EXISTS `warehouse`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `warehouse` (
   `warehouse_id` int NOT NULL AUTO_INCREMENT COMMENT '식별자',
-  `warehouse_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '창고명(인천 송도 물류센터,평택 항만 창고,광주 첨단 물류 허브,부산 신항 메가허브,용인 물류파크,대구 물류단지,천안 중부 물류센터,김해 에어로 물류센터,군산 새만금물류단지,원주 중앙 물류센터',
-  `warehouse_location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '창고위치(인천광역시,경기도 평택시,광주광역시,부산광역시,경기도 용인시,대구 광역시,충청남도 천안시,경상남도 김해시,전라북도 군산시,강원도 원주시',
+  `warehouse_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '창고명(인천 송도 물류센터,평택 항만 창고,광주 첨단 물류 허브,부산 신항 메가허브,용인 물류파크,대구 물류단지,천안 중부 물류센터,김해 에어로 물류센터,군산 새만금물류단지,원주 중앙 물류센터',
+  `warehouse_location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '창고위치(인천광역시,경기도 평택시,광주광역시,부산광역시,경기도 용인시,대구 광역시,충청남도 천안시,경상남도 김해시,전라북도 군산시,강원도 원주시',
+  `warehouse_latitude` decimal(18, 10) NOT NULL COMMENT '위도',
+  `warehouse_longitude` decimal(18, 10) NOT NULL COMMENT '경도',
   PRIMARY KEY (`warehouse_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -413,10 +432,46 @@ CREATE TABLE `warehouse` (
 
 LOCK TABLES `warehouse` WRITE;
 /*!40000 ALTER TABLE `warehouse` DISABLE KEYS */;
-INSERT INTO `warehouse` VALUES (1,'서울창고','서울특별시 강남구 역삼동 123'),(2,'부산창고','부산광역시 해운대구 센텀동 456'),(3,'대구창고','대구광역시 중구 동성로 789'),(4,'인천창고','인천광역시 남동구 구월동 321'),(5,'광주창고','광주광역시 서구 상무동 654'),(6,'대전창고','대전광역시 유성구 도룡동 987'),(7,'울산창고','울산광역시 남구 삼산동 213'),(8,'수원창고','경기도 수원시 팔달구 인계동 546'),(9,'성남창고','경기도 성남시 분당구 정자동 879'),(10,'용인창고','경기도 용인시 수지구 죽전동 132');
+INSERT INTO `warehouse` VALUES 
+(1,'김포물류센터','경기도 고촌읍 아라육로 230번길 27', '37.599486', '126.783117'),
+(2,'시화물류센터','경기도 시흥시 협력로 280', '37.350399', '126.716800'),
+(3,'용인물류센터','경기도 용인시 기흥구 용구대로 2467', '37.306268', '127.105092'),
+(4,'대구물류센터','대구광역시 달서구 성서공단북로 104', '35.843607','128.484504'),
+(5,'광주물류센터','경기도 광주시 포은대로 640-8', '37.382092', '127.244416'),
+(6,'여주물류센터','경기도 여주시 웅골로 161', '37.266264', '127.625142'),
+(7,'이천물류센터','경기도 이천시 부발읍 경충대로 2330-73', '37.267322', '127.467687'),
+(8,'양산물류센터','경상남도 양산시 산막공단북2길 34-54', '35.371626','129.053442'),
+(9,'부산물류센터','경상남도 창원시 진해구 신항6로 30', '35.089475', '128.777598'),
+(10,'세종물류센터','세종특별자치시 연동면 연청로 745-86', '36.545024', '127.350540');
+
 /*!40000 ALTER TABLE `warehouse` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+DROP TABLE IF EXISTS `transportation`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+
+CREATE TABLE `transportation` (
+  `transportation_id` int NOT NULL AUTO_INCREMENT COMMENT '식별자',
+  `outgoing_id` int not null COMMENT '출고번호',
+  `transportation_start` datetime NOT NULL default current_timestamp COMMENT '출발시간',
+  `transportation_end` datetime NOT NULL COMMENT '도착예상시간',
+  PRIMARY KEY (`transportation_id`),
+  CONSTRAINT `transportation_fk_1` FOREIGN KEY (`outgoing_id`) REFERENCES `outgoing` (`outgoing_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `transportation` WRITE;
+/*!40000 ALTER TABLE `transportation` DISABLE KEYS */;
+INSERT INTO `transportation` VALUES 
+(1,1, '2025-01-17 11:00:00', '2025-01-17 12:00:00'),
+(2,2, '2025-01-17 11:00:00', '2025-01-17 12:00:00'),
+(3,3, '2025-01-17 11:00:00', '2025-01-17 15:00:00'),
+(4,4, '2025-01-17 11:00:00', '2025-01-17 14:00:00'),
+(5,5, '2025-01-17 11:00:00', '2025-01-17 17:00:00'),
+(6,6, '2025-01-17 11:00:00', '2025-01-17 20:00:00');
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
@@ -427,3 +482,6 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2025-01-15 11:38:44
+
+
+
