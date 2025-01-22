@@ -74,7 +74,11 @@ public enum ErrorCode {
     IO_FAILED(500, "D402", "입출력 중 예외가 발생했습니다."),
     URI_REQUEST_FAILED(500, "A500", "URI 요청 중 예외가 발생했습니다."),
 
-    OUTGOING_INSERT_FAILED(500, "O400", "출고 데이터 저장 중 에러가 발생했습니다.");
+    OUTGOING_INSERT_FAILED(500, "O400", "출고 데이터 저장 중 에러가 발생했습니다."),
+
+    API_KAKAO_REST_ERROR(500, "K001", "카카오 길찾기 API 요청 중 REST TEMPLATE에서 문제가 발생했습니다. "),
+    API_KAKAO_JSON_MAPPING_FAILED(500, "K002", "카카오 길찾기 응답데이터 JSON 매핑 중 에러가 발생했습니다.");
+
 
     private final int status;
     private final String code;

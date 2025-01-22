@@ -95,6 +95,22 @@ public class OutgoingServiceImpl implements OutgoingService {
         // 날짜 업데이트
         String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         outgoingMapper.updateOutgoingDate(outgoingId, currentDateTime); // 상태도 함께 업데이트
+
+        DestinationResponseDto location = outgoingMapper.selectLocationInfo(outgoingId);
+
+        TransportationRequestDto transportationRequestDto = new TransportationRequestDto();
+
+        int arrivalTime = getArrivalTime(location);
+
+        arrivalTime += (arrivalTime / 3600) * 10; // 1시간 당 휴식 시간 10분 보장
+
+        LocalDateTime now = LocalDateTime.now();
+
+        transportationRequestDto.setOutgoingId(outgoingId);
+        transportationRequestDto.setTransportationStart(String.valueOf(now));
+        transportationRequestDto.setTransportationEnd(String.valueOf( now.plusSeconds(arrivalTime)));
+
+        outgoingMapper.insertTransportation(transportationRequestDto);
     }
     @Override
     public OutgoingFormVO getOutgoingFormByInventoryId(int inventoryId) {
@@ -107,8 +123,7 @@ public class OutgoingServiceImpl implements OutgoingService {
         OutgoingRequestVO outgoingRequestVO = new OutgoingRequestVO();
 
         ProductVO productVO = productMapper.getProductByName(outgoingForm.getProductName());
-//        ShipperVO shipperVO = shipperMapper.getShipperByName(outgoingForm.getShipperName());
-        ShipperVO shipperVO = shipperMapper.getShipperByName("대한통운");
+        ShipperVO shipperVO = shipperMapper.getShipperByName(outgoingForm.getShipperName());
         BranchVO branchVO = branchMapper.getBranchByName(outgoingForm.getBranchName());
         SectorVO sectorVO = sectorMapper.findSectorByName(outgoingForm.getSectorName());
 
@@ -144,23 +159,14 @@ public class OutgoingServiceImpl implements OutgoingService {
             throw new OutgoingFailedException(ErrorCode.OUTGOING_INSERT_FAILED);
         }
 
-        DestinationResponseDto location = outgoingMapper.selectLocationInfo(outgoingId);
-
-        TransportationRequestDto transportationRequestDto = new TransportationRequestDto();
-
-        int arrivalTime = getArrivalTime(location);
-
-        arrivalTime += (arrivalTime / 3600) * 10; // 1시간 당 휴식 시간 10분 보장
-
-        LocalDateTime now = LocalDateTime.now();
-
-        transportationRequestDto.setOutgoingId(outgoingId);
-        transportationRequestDto.setTransportationStart(String.valueOf(now));
-        transportationRequestDto.setTransportationEnd(String.valueOf( now.plusSeconds(arrivalTime)));
-
-       return outgoingMapper.insertTransportation(transportationRequestDto);
+        return outgoingId;
     }
 
+    /**
+     * 카카오 길찾기 API 를 통해 도착 지점까지의 소요 시간을 조회하는 메서드입니다.
+     * @param location 출발지와 도착지의 위도/경도를 담은 DTO
+     * @return 출발지에서 도착지까지의 소요 시간(초)
+     */
     private int getArrivalTime(DestinationResponseDto location) {
         int result = 0;
 
@@ -187,13 +193,10 @@ public class OutgoingServiceImpl implements OutgoingService {
             result = rootNode.path("routes").path(0).path("summary").path("duration").asInt();
 
         } catch (RestClientException e) {
-            throw new ApiKakaoNaviException();
-        } catch (JsonMappingException e) {
-            throw new ApiKakaoNaviException();
+            throw new ApiKakaoNaviException(ErrorCode.API_KAKAO_REST_ERROR, e);
         } catch (JsonProcessingException e) {
-            throw new ApiKakaoNaviException();
+            throw new ApiKakaoNaviException(ErrorCode.API_KAKAO_JSON_MAPPING_FAILED, e);
         }
-
 
         return result;
     }

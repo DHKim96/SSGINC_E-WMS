@@ -174,15 +174,15 @@
                     <tbody>
                     <tr th:each="transportation : ${session.transportations}">
                         <td th:text="${transportation.outgoingId}"></td>
-                        <td th:text="${transportation.transportationStart}"></td>
+                        <td id="start" th:text="${transportation.transportationStart}"></td>
                         <td th:text="${transportation.destination}"></td>
-                        <td><span class="status shipping">Shipping</span></td>
-                        <td th:text="'&#8361;'${transportation.outgoingPrice}"></td>
-                        <td>
-                            <div class="bar bar-shipping">
-                                <div th:style="width: ${transportation.transportationEnd} / ${transportation.transportationStart};"></div>
+                        <td><span id="status" class="status shipping" th:data-endTime="${transportation.transportationEnd}">Shipping</span></td>
+                        <td th:text="'&#8361' + ${transportation.price}"></td>
+                        <td id="shipping-remain">
+                            <div id="remain-bar" class="bar bar-shipping">
+                                <div></div>
                             </div>
-                            <span th:text="${transportation.transportationEnd} - ${transportation.transportationStart}"></span>
+                            <span id="shipping-remainTime"></span>
                         </td>
                     </tr>
                     <!-- Add more rows as needed -->

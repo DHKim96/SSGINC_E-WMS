@@ -3,6 +3,7 @@ package com.ssginc.ewms.dashboard.service;
 import com.ssginc.ewms.dashboard.dto.IncomeResponseDto;
 import com.ssginc.ewms.dashboard.dto.OutgoingResponseDto;
 import com.ssginc.ewms.dashboard.dto.SectorResponseDto;
+import com.ssginc.ewms.dashboard.dto.TransportationResponseDto;
 import com.ssginc.ewms.dashboard.mapper.DashboardMapper;
 import com.ssginc.ewms.exception.DashboardException;
 import com.ssginc.ewms.member.vo.MemberVO;
@@ -105,6 +106,11 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public List<SectorResponseDto> selectSectorListByWarehouseId(MemberVO loginUser) {
         return dashboardMapper.selectSectorListByWarehouseId(loginUser.getWarehouseId());
+    }
+
+    @Override
+    public List<TransportationResponseDto> selectTransportationList() {
+        return dashboardMapper.selectTransportationList();
     }
 
     private boolean verifyType(String type) {

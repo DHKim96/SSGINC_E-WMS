@@ -12,4 +12,11 @@
         INNER JOIN inventory i ON i.sector_id = s.sector_id
         WHERE inventory_id = #{inventoryId}
     </select>
+
+    <select id="selectWarehouseLocationById" resultType="java.util.Map">
+        SELECT warehouse_latitude AS latitude,
+               warehouse_longitude AS longitude
+        FROM warehouse
+        WHERE warehouse_id = #{warehouseId};
+    </select>
 </mapper>

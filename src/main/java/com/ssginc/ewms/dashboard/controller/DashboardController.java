@@ -3,6 +3,7 @@ package com.ssginc.ewms.dashboard.controller;
 import com.ssginc.ewms.dashboard.dto.IncomeResponseDto;
 import com.ssginc.ewms.dashboard.dto.OutgoingResponseDto;
 import com.ssginc.ewms.dashboard.dto.SectorResponseDto;
+import com.ssginc.ewms.dashboard.dto.TransportationResponseDto;
 import com.ssginc.ewms.dashboard.service.DashboardService;
 import com.ssginc.ewms.member.dto.ResponseDto;
 import com.ssginc.ewms.member.vo.MemberVO;
@@ -29,10 +30,10 @@ public class DashboardController {
     public String dashboard(HttpSession session) {
 
         List<SectorResponseDto> sectors = dashboardService.selectSectorListByWarehouseId((MemberVO)session.getAttribute("loginUser"));
-
-        log.info("selectSectorListByWarehouseId 결과 = {}", sectors);
+        List<TransportationResponseDto> transportations = dashboardService.selectTransportationList();
 
         session.setAttribute("sectors", sectors);
+        session.setAttribute("transportations", transportations);
 
         return "dashboard/dashboard";
     }

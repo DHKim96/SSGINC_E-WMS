@@ -107,5 +107,18 @@
         ORDER BY
         s.sector_id;
     </select>
+    <select id="selectTransportationList" resultType="com.ssginc.ewms.dashboard.dto.TransportationResponseDto">
+        select t.transportation_id,
+               t.outgoing_id,
+               t.transportation_start,
+               t.transportation_end,
+               b.branch_name AS "destination",
+               o.outgoing_price AS "price"
+        from transportation t
+        join outgoing o using (outgoing_id)
+        join branch b using (branch_id)
+        ORDER BY t.transportation_id desc
+        LIMIT 10
+    </select>
 
 </mapper>

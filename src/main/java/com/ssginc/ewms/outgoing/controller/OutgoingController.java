@@ -85,14 +85,8 @@ public class OutgoingController {
 
     @PostMapping("/approvePicking")
     public ResponseEntity<String> approvePicking(@RequestParam("outgoingId") int outgoingId) {
-        try {
-            outgoingService.updateOutgoingStatusAndQuantity(outgoingId, 2); // 상태를 출고 완료로 업데이트
-            return ResponseEntity.ok("출고 상태와 재고가 성공적으로 업데이트되었습니다.");
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("출고 상태 또는 재고 업데이트 실패");
-        }
+        outgoingService.updateOutgoingStatusAndQuantity(outgoingId, 2); // 상태를 출고 완료로 업데이트
+        return ResponseEntity.ok("출고 상태와 재고가 성공적으로 업데이트되었습니다.");
     }
 
     @GetMapping("/complete")

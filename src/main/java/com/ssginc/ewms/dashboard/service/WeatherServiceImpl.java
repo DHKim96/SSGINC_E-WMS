@@ -2,9 +2,15 @@ package com.ssginc.ewms.dashboard.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssginc.ewms.dashboard.dto.GridDto;
 import com.ssginc.ewms.exception.ApiWeatherException;
+import com.ssginc.ewms.member.mapper.MemberMapper;
+import com.ssginc.ewms.member.vo.MemberVO;
 import com.ssginc.ewms.util.ErrorCode;
+import com.ssginc.ewms.util.GpsTransfer;
+import com.ssginc.ewms.warehouse.mapper.WarehouseMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -12,24 +18,35 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WeatherServiceImpl implements WeatherService {
 
     private static final String END_POINT = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst";
+    private final WarehouseMapper warehouseMapper;
 
     @Value("${weather.serviceKey.encoding}")
     private String apiEncodingKey;
 
     @Override
-    public JsonNode getWeatherInfo() {
+    public JsonNode getWeatherInfo(MemberVO loginUser) {
+
+        GpsTransfer gpsTransfer = new GpsTransfer();
+
         LocalDateTime dateTime = LocalDateTime.now().minusHours(1);
+
+        Map<String, BigDecimal> location = warehouseMapper.selectWarehouseLocationById(loginUser.getWarehouseId());
+
+        GridDto grid = gpsTransfer.transfer(location.get("latitude").doubleValue(), location.get("longitude").doubleValue());
 
         String uriString = UriComponentsBuilder.fromHttpUrl(END_POINT)
                 .queryParam("pageNo", 1)
@@ -37,8 +54,8 @@ public class WeatherServiceImpl implements WeatherService {
                 .queryParam("dataType", "JSON")
                 .queryParam("base_date", formattingYyyyMMdd(dateTime))
                 .queryParam("base_time", getNearestHour(dateTime))
-                .queryParam("nx", 55)
-                .queryParam("ny", 127)
+                .queryParam("nx", grid.getX())
+                .queryParam("ny", grid.getY())
                 .toUriString();
 
         uriString += "&ServiceKey=" + apiEncodingKey; // UriComponentsBuilder 사용 시 이미 인코딩된 키를 추가 인코딩

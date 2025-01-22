@@ -114,7 +114,7 @@
     </insert>
 
     <insert id="insertTransportation">
-        INSERT INTO transporataion(outgoing_id, transporation_start, transportation_end)
+        INSERT INTO transportation(outgoing_id, transportation_start, transportation_end)
         VALUES (#{outgoingId}, #{transportationStart}, #{transportationEnd})
     </insert>
 
