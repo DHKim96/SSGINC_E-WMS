@@ -14,61 +14,55 @@
     <div class="container table-container mt-5">
         <h3 class="mb-3" style="font-weight: bold;">게시글</h3>
         <hr>
-        <!-- 검색 폼: 게시글 제목과 카테고리로 검색 가능 -->
         <form action="/board/find" method="get" class="d-flex mb-3">
             <!-- 게시글 검색 필터 -->
             <select name="boardType" class="form-select me-2" style="width: 200px;">
                 <option selected>카테고리</option>
                 <option value="notice">notice</option>
             </select>
-            <!-- 제목 검색 입력 필드 -->
             <input type="text" name="find" class="form-control me-2" placeholder="제목을 입력하세요.">
             <!-- 검색 버튼 -->
             <button type="submit" class="btn text-white" style="width: 100px; background-color: #ffc107">검색</button>
         </form>
-
-        <!-- 게시글 목록 테이블 -->
         <table class="table table-hover table-bordered">
             <!-- 테이블 헤더 -->
             <thead class="text-white" style="background-color: #ffc107">
             <tr class="text-center">
-                <th scope="col">#</th> <!-- 순번 -->
-                <th scope="col">카테고리</th> <!-- 게시글 카테고리 -->
-                <th scope="col">제목</th> <!-- 게시글 제목 -->
-                <th scope="col">작성자</th> <!-- 작성자 정보 -->
-                <th scope="col">작성 날짜</th> <!-- 작성 날짜 -->
-                <th scope="col">조회수</th> <!-- 조회수 -->
+                <th scope="col">#</th>
+                <th scope="col">카테고리</th>
+                <th scope="col">제목</th>
+                <th scope="col">작성자</th>
+                <th scope="col">작성 날짜</th>
+                <th scope="col">조회수</th>
             </tr>
             </thead>
             <tbody id="board-data">
-            <!-- 게시글 데이터를 렌더링하는 영역 -->
+            <!-- 게시글 데이터를 렌더링 -->
             <tr class="text-center" th:each="row, status : ${list}">
                 <!-- row: 데이터 리스트의 각 항목, status: 상태 객체 -->
-                <td>[[${status.index + 1}]]</td> <!-- 순번 출력 -->
-                <td>[[${row.boardType}]]</td> <!-- 카테고리 출력 -->
+                <td>[[${status.index + 1}]]</td>
+                <td>[[${row.boardType}]]</td>
                 <td>
-                    <!-- 게시글 제목을 클릭하면 상세 페이지로 이동 -->
                     <a th:href="@{/board/read(boardId=${row.boardId})}">
                         [[${row.title}]]
                     </a>
                 </td>
-                <td>[[${row.memberNo}]]</td> <!-- 작성자 번호 출력 -->
+                <td>[[${row.memberNo}]]</td>
                 <td th:text="${#temporals.format(row.boardDate, 'yyyy-MM-dd')}"></td>
                 <!-- 날짜 형식을 yyyy-MM-dd로 포맷 -->
-                <td>[[${row.viewCount}]]</td> <!-- 조회수 출력 -->
+                <td>[[${row.viewCount}]]</td>
             </tr>
             </tbody>
         </table>
-
-        <!-- 게시글 작성 버튼 -->
         <div class="container mt-4">
             <div class="d-flex justify-content-center">
+                <!-- 게시글 작성 버튼 -->
                 <a href="/board/create" class="btn text-white" style="background-color: #ffc107">게시글 작성</a>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript로 서버에서 데이터 가져오는 코드 (주석 처리됨) -->
+    <!-- JavaScript로 서버에서 데이터 가져오는 코드 -->
     <!--
     <script>
         // 서버에서 데이터를 가져와 테이블에 추가

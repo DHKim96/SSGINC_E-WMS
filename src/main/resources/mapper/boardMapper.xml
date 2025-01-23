@@ -3,17 +3,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssginc.ewms.board.dao.BoardMapper">
     <!--
-        MyBatis 매퍼 파일: BoardMapper
-        이 매퍼 파일은 com.ssginc.ewms.board.dao.BoardMapper 인터페이스와 매핑됩니다.
-        SQL 쿼리를 정의하며, Java 코드에서 호출 가능한 메서드 형태로 사용됩니다.
+        이 매퍼 파일은 MyBatis를 사용하여 BoardMapper 인터페이스의 SQL 쿼리를 정의합니다.
+        namespace는 Java의 BoardMapper 인터페이스와 연결됩니다.
     -->
 
     <!-- 게시글 전체 조회 -->
     <select id="selectBoardAll" resultType="com.ssginc.ewms.board.vo.BoardVO">
         <!--
-            board 테이블에서 모든 게시글 데이터를 조회합니다.
-            member 테이블과 JOIN 하여 작성자의 ID를 가져옵니다.
-            게시글 작성 날짜(board_date)를 기준으로 내림차순 정렬하여 최신 게시글이 상단에 위치합니다.
+            board 테이블에서 게시글 전체를 조회합니다.
+            작성 날짜(board_date)를 기준으로 내림차순 정렬하여 최신 게시글이 상단에 오도록 정렬합니다.
+            게시글 작성자 정보는 member 테이블과 조인하여 가져옵니다.
         -->
         SELECT b.board_id, b.title, b.board_type, b.board_date, m.member_id, b.view_count
         FROM board b
@@ -24,8 +23,8 @@
     <!-- 게시글 작성 -->
     <insert id="insertBoard" parameterType="boardVO" useGeneratedKeys="true" keyProperty="boardId">
         <!--
-            새 게시글 데이터를 board 테이블에 삽입합니다.
-            데이터베이스에서 생성된 board_id(기본키)를 반환받아 BoardVO 객체의 boardId 필드에 설정합니다.
+            새 게시글을 board 테이블에 삽입합니다.
+            데이터베이스가 자동 생성한 board_id 값을 반환하여 BoardVO의 boardId 필드에 설정합니다.
         -->
         INSERT INTO board (title, board_type, content, member_no)
         VALUES (#{title}, #{boardType}, #{content}, #{memberNo})
@@ -35,7 +34,7 @@
     <update id="updateBoard" parameterType="com.ssginc.ewms.board.vo.BoardVO">
         <!--
             특정 게시글의 제목(title)과 내용(content)을 수정합니다.
-            board_id를 기준으로 해당 게시글을 찾아 수정합니다.
+            수정하려는 게시글은 board_id를 기준으로 찾습니다.
         -->
         UPDATE board
         SET title = #{title}, content = #{content}
@@ -46,7 +45,7 @@
     <delete id="deleteBoard" parameterType="int">
         <!--
             특정 게시글을 삭제합니다.
-            삭제 조건은 board_id(기본키)입니다.
+            삭제 조건은 board_id를 기준으로 합니다.
         -->
         DELETE FROM board
         WHERE board_id = #{boardId}
@@ -55,8 +54,7 @@
     <!-- 특정 게시글 조회 -->
     <select id="selectBoardByNo" parameterType="int" resultType="com.ssginc.ewms.board.vo.BoardVO">
         <!--
-            게시글 번호(board_id)를 기준으로 특정 게시글 데이터를 조회합니다.
-            게시글의 모든 주요 필드(board_id, title, member_no, view_count 등)를 가져옵니다.
+            특정 게시글 번호(board_id)를 기준으로 게시글 데이터를 조회합니다.
         -->
         SELECT board_id, board_type, title, member_no, board_date, view_count, content
         FROM board
@@ -66,10 +64,11 @@
     <!-- 게시글 내용 검색 -->
     <select id="getBoardByContent" resultType="com.ssginc.ewms.board.vo.BoardVO">
         <!--
-            특정 키워드를 사용하여 게시글을 검색합니다.
-            - 게시글 내용(content) 또는 작성자 ID(member_id)에서 키워드를 검색합니다.
-            - 특정 게시글 카테고리(board_type)로 검색 범위를 제한할 수 있습니다.
-            - 결과는 게시글 작성 날짜(board_date) 기준 내림차순으로 정렬됩니다.
+            특정 키워드로 게시글을 검색합니다.
+            - content: 게시물 내용에서 키워드를 검색합니다.
+            - member_id: 작성자 ID에서도 키워드를 검색합니다.
+            - board_type: 특정 카테고리 내에서 검색하도록 조건 추가.
+            결과는 게시글 작성 날짜(board_date)를 기준으로 내림차순 정렬됩니다.
         -->
         SELECT
         b.board_id,
@@ -80,9 +79,9 @@
         b.board_type
         FROM board b
         JOIN member m ON b.member_no = m.member_no -- member 테이블과 조인
-        WHERE (b.content LIKE CONCAT('%', #{find}, '%') -- 게시글 내용에서 키워드 검색
-        OR m.member_id LIKE CONCAT('%', #{find}, '%')) -- 작성자 ID에서 키워드 검색
-        AND b.board_type = #{boardType} -- 특정 카테고리 필터링
+        WHERE (b.content LIKE CONCAT('%', #{find}, '%') -- 게시글 내용 검색
+        OR m.member_id LIKE CONCAT('%', #{find}, '%')) -- 작성자 검색
+        AND b.board_type = #{boardType} -- 카테고리 필터
         ORDER BY b.board_date DESC
     </select>
 

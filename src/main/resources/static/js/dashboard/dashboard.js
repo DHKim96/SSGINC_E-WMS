@@ -49,11 +49,12 @@ async function fetchChartData(sort, type) {
         }
 
         return {
-            labels: response.data.data.map((item) => item.incomeDate || item.outgoingDate),
+            type: type,
+            labels: response.data.data.map((item) => sort === 'income' ? item.incomeDate : item.outgoingDate),
             datasets: [
                 {
                     label: sort === 'income' ? '입고량' : '출고량',
-                    data: response.data.data.map((item) => parseInt(item.incomeQuantity || item.outgoingQuantity || 0, 10)),
+                    data: response.data.data.map((item) => sort === 'income' ? parseInt(item.incomeQuantity || 0, 10) : parseInt(item.outgoingQuantity || 0, 10)),
                     borderColor: 'rgba(74, 144, 226, 1)',
                     backgroundColor: 'rgba(74, 144, 226, 0.2)',
                     fill: true,
@@ -79,17 +80,18 @@ function initializeLineChart(data) {
         data: data,
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
                 x: { grid: { display: false } },
-                y: { grid: { color: 'rgba(0, 0, 0, 0.1)' }, ticks: { stepSize: 10 } },
+                y: { grid: { color: 'rgba(0, 0, 0, 0.1)' }, ticks: { stepSize: data.type === "daily" ? 50 : data.type === "monthly" ? 500 : 5000 }, beginAtZero: true },
             },
         },
     });
 }
 
 async function loadInitialChart() {
+
     const initialData = await fetchChartData('income', 'daily');
     if (initialData) {
         initializeLineChart(initialData);
@@ -207,6 +209,60 @@ function renderWeatherInfo(weatherData) {
     document.querySelector('#description').innerText = weatherDescription;
     document.querySelector('#humidity').innerText = humidity;
 }
+
+
+// ============================================================= 출고 배송 현황 ===========================================================================
+
+
+function drawShippingTable(){
+
+    document.querySelectorAll("tr").forEach((tr) => {
+        // 출발 시간과 도착 시간 가져오기
+        const start = new Date(tr.querySelector("#start").innerText).getTime() / 1000; // 초 단위
+        const end = new Date(tr.querySelector("#status").getAttribute("data-endTime")).getTime() / 1000; // 초 단위
+        const current = Date.now() / 1000; // 초 단위
+
+        // 남은 시간 계산
+        let remainingTime = Math.max(end - current, 0); // 남은 시간 (초 단위)
+        const totalMinutes = Math.ceil(remainingTime / 60); // 남은 시간 (분 단위로 올림)
+        const roundedMinutes = Math.ceil(totalMinutes / 10) * 10; // 10분 단위로 올림
+
+        // 시간과 분으로 분리
+        const hours = Math.floor(roundedMinutes / 60);
+        const minutes = roundedMinutes % 60;
+
+        // 텍스트 포맷팅
+        const remainTimeText = hours > 0
+            ? `${hours}H${minutes > 0 ? minutes + 'm' : ''}`
+            : `${minutes}m`;
+
+        // DOM 업데이트
+        const remainTime = tr.querySelector("#shipping-remainTime");
+        remainTime.textContent = remainTimeText; // ex. 1H30m
+
+        // 진행률 계산
+        const totalDuration = end - start; // 초 단위
+        const elapsedDuration = current - start; // 초 단위
+        let progressPercentage = (elapsedDuration / totalDuration) * 100;
+
+        // 진행률 값 제한 (0 ~ 100%)
+        if (progressPercentage < 0) progressPercentage = 0;
+        if (progressPercentage > 100) progressPercentage = 100;
+
+        console.log("start = " + start);
+        console.log("end = " + end);
+        console.log("totalDuration" + totalDuration);
+        console.log("elapsedDuration" + elapsedDuration);
+        console.log("progressPercentage" + progressPercentage);
+
+        // 진행 바 업데이트
+        const remainBar = tr.querySelector("#remain-bar > div");
+        remainBar.setAttribute("style", `width: ${progressPercentage}%;`);
+    });
+
+}
+
+
 // ============================================================= 초기화 ===========================================================================
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -214,6 +270,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadInitialChart();
     await loadInitialOutgoingChart();
     await requestWeather();
+    drawShippingTable();
 
     // 날짜 선택 이벤트 리스너
     document.getElementById('year-select').addEventListener('change', () => {
@@ -242,9 +299,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 입출고 분석 차트 갱신 이벤트 리스너
     document.getElementById('show-select').addEventListener('change', async () => {
-        await loadInitialChart();
+        let sort = document.querySelector('#show-select').value;
+        let type = document.querySelector('#short-by-select').value;
+        let data = await fetchChartData(sort, type);
+        initializeLineChart(data);
     });
     document.getElementById('short-by-select').addEventListener('change', async () => {
-        await loadInitialChart();
+        let sort = document.querySelector('#show-select').value;
+        let type = document.querySelector('#short-by-select').value;
+        let data = await fetchChartData(sort, type);
+        initializeLineChart(data);
     });
+
 });

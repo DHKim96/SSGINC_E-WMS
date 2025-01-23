@@ -15,6 +15,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public boolean validatePwd(MemberInsertRequest member, MemberVO loginUser) {
+        System.out.println("@@@@@@@@@@@@@@@ admin = " + passwordEncoder.encode("admin") );
         return passwordEncoder.matches(member.getMemberPw(), loginUser.getMemberPw());
     }
 

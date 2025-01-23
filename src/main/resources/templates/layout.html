@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <link href="/css/style.css" rel="stylesheet" />
+    <link th:href="@{/css/style.css}" rel="stylesheet" />
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 
@@ -20,7 +20,7 @@
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-warning">
     <!-- Navbar Brand-->
     <a href="/dashboard">
-        <img src="/img/member/emart-logo-small.png">
+        <img th:src="@{/img/member/emart-logo-small.png}">
     </a>
     <a class="navbar-brand ps-3">E-WMS</a>
     <!-- Navbar-->
@@ -28,13 +28,13 @@
         <span style="color: white">물류센터명: <strong>김포물류센터</strong></span>
         <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4 justify-content-end">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" th:href="@{#}" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="/">환경설정</a></li>
-                    <li><a class="dropdown-item" href="/">활동로그</a></li>
+                    <li><a class="dropdown-item" th:href="@{/}">환경설정</a></li>
+                    <li><a class="dropdown-item" th:href="@{/}">활동로그</a></li>
                     <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item" href="/modify/verify">정보수정</a></li>
-                    <li><a class="dropdown-item" href="/login/logout">로그아웃</a></li>
+                    <li><a class="dropdown-item" th:href="@{/modify/verify}">정보수정</a></li>
+                    <li><a class="dropdown-item" th:href="@{/login/logout}">로그아웃</a></li>
                 </ul>
             </li>
         </ul>
@@ -46,53 +46,53 @@
             <div class="sb-sidenav-menu">
                 <div class="nav">
                     <div class="sb-sidenav-menu-heading">재고 관리</div>
-                    <a class="nav-link collapsed text-white" href="/inventory/inventory/0">
+                    <a class="nav-link collapsed text-white" th:href="@{/inventory/inventory/0}">
                         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                         재고 현황
                     </a>
-                    <a class="nav-link collapsed text-white" href="/inventory/adjust/0">
+                    <a class="nav-link collapsed text-white" th:href="@{/inventory/adjust/0}">
                         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                         재고 조정
                     </a>
 
                     <div class="sb-sidenav-menu-heading">입고 관리</div>
-                    <a class="nav-link collapsed text-white" href="/income/incomemanagement">
+                    <a class="nav-link collapsed text-white" th:href="@{/income/incomemanagement}">
                         <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                         입고 관리
                     </a>
-                    <a class="nav-link collapsed text-white" href="/income/inspectionmanagement">
+                    <a class="nav-link collapsed text-white" th:href="@{/income/inspectionmanagement}">
                         <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                         검수 관리
                     </a>
-                    <a class="nav-link collapsed text-white" href="/income/accumulationmanagement">
+                    <a class="nav-link collapsed text-white" th:href="@{/income/accumulationmanagement}">
                         <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                         적치 관리
                     </a>
 
                     <div class="sb-sidenav-menu-heading">출고관리</div>
-                    <a class="nav-link collapsed text-white" href="/outgoing/outgoing">
+                    <a class="nav-link collapsed text-white" th:href="@{/outgoing/outgoing}">
                         <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                         출고 예정
                     </a>
-                    <a class="nav-link text-white" href="/outgoing/picking">
+                    <a class="nav-link text-white" th:href="@{/outgoing/picking}">
                         <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                         출고 대기
                     </a>
-                    <a class="nav-link text-white" href="/outgoing/complete">
+                    <a class="nav-link text-white" th:href="@{/outgoing/complete}">
                         <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                         출고 완료
                     </a>
 
                     <div class="sb-sidenav-menu-heading">대시보드</div>
-                    <a class="nav-link text-white" href="/board/board">
+                    <a class="nav-link text-white" th:href="@{/board/board}">
                         <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                         게시판
                     </a>
-                    <a class="nav-link text-white" href="">
+                    <a class="nav-link text-white" th:href="@{/}">
                         <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                         창고현황 그래프
                     </a>
-                    <a class="nav-link text-white" href="">
+                    <a class="nav-link text-white" th:href="@{/}">
                         <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                         매출현황 그래프
                     </a>
@@ -106,7 +106,7 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-<script src="/js/scripts.js"></script>
+<script th:src="@{/js/scripts.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </body>
 </html>

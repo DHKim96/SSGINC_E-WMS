@@ -3,6 +3,7 @@ package com.ssginc.ewms.dashboard.service;
 import com.ssginc.ewms.dashboard.dto.IncomeResponseDto;
 import com.ssginc.ewms.dashboard.dto.OutgoingResponseDto;
 import com.ssginc.ewms.dashboard.dto.SectorResponseDto;
+import com.ssginc.ewms.dashboard.dto.TransportationResponseDto;
 import com.ssginc.ewms.member.vo.MemberVO;
 
 import java.util.List;
@@ -41,4 +42,10 @@ public interface DashboardService {
      * @return 섹션별 사용률
      */
     List<SectorResponseDto> selectSectorListByWarehouseId(MemberVO loginUser);
+
+    /**
+     * 최근 출고 운송 현황 10개를 조회합니다.
+     * @return 출고 운송 현황
+     */
+    List<TransportationResponseDto> selectTransportationList();
 }

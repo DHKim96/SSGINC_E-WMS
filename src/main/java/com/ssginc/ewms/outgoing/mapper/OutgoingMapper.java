@@ -1,5 +1,7 @@
 package com.ssginc.ewms.outgoing.mapper;
 
+import com.ssginc.ewms.outgoing.dto.DestinationResponseDto;
+import com.ssginc.ewms.outgoing.dto.TransportationRequestDto;
 import com.ssginc.ewms.outgoing.vo.OutgoingFormVO;
 import com.ssginc.ewms.outgoing.vo.OutgoingRequestVO;
 import com.ssginc.ewms.outgoing.vo.OutgoingVO;
@@ -36,4 +38,8 @@ public interface OutgoingMapper {
     OutgoingFormVO getOutgoingFormByProductId(int inventoryId);
 
     int insertOutgoingRequest(OutgoingRequestVO outgoingRequestVO);
+
+    DestinationResponseDto selectLocationInfo(int outgoingId);
+
+    int insertTransportation(TransportationRequestDto transportationRequestDto);
 }

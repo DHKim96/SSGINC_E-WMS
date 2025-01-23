@@ -3,6 +3,7 @@ package com.ssginc.ewms.dashboard.service;
 import com.ssginc.ewms.dashboard.dto.IncomeResponseDto;
 import com.ssginc.ewms.dashboard.dto.OutgoingResponseDto;
 import com.ssginc.ewms.dashboard.dto.SectorResponseDto;
+import com.ssginc.ewms.dashboard.dto.TransportationResponseDto;
 import com.ssginc.ewms.dashboard.mapper.DashboardMapper;
 import com.ssginc.ewms.exception.DashboardException;
 import com.ssginc.ewms.member.vo.MemberVO;
@@ -57,19 +58,15 @@ public class DashboardServiceImpl implements DashboardService {
             return null;
         }
 
-        log.info("MyBatis Mapper 호출 시작: {}", type);
 
         List<OutgoingResponseDto> result = dashboardMapper.selectOutgoingListByType(type);
 
         if (result == null) {
-            log.error("MyBatis 호출 결과 null 반환: type = {}", type);
             throw new DashboardException(ErrorCode.DATA_NOT_FOUNDED);
         }
 
-        log.info("쿼리 결과: {}건", result.size());
 
         if (result.isEmpty()) {
-            log.error("데이터 없음: type = {}", type);
             throw new DashboardException(ErrorCode.DATA_NOT_FOUNDED);
         }
 
@@ -79,8 +76,6 @@ public class DashboardServiceImpl implements DashboardService {
             cumulativeOutgoing += Integer.parseInt(dto.getOutgoingQuantity());
             dto.setCumulativeSum(String.valueOf(cumulativeOutgoing));
         }
-
-        log.info("누적 합계 계산 완료: 최종 값 = {}", cumulativeOutgoing);
 
         return result;
     }
@@ -111,6 +106,11 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public List<SectorResponseDto> selectSectorListByWarehouseId(MemberVO loginUser) {
         return dashboardMapper.selectSectorListByWarehouseId(loginUser.getWarehouseId());
+    }
+
+    @Override
+    public List<TransportationResponseDto> selectTransportationList() {
+        return dashboardMapper.selectTransportationList();
     }
 
     private boolean verifyType(String type) {
