@@ -251,6 +251,10 @@
             border-radius: 10px;
         }
 
+        tr td{
+            height: 63px;
+        }
+
         /* 번호 */
         tr td:nth-child(1) {
             color: #2F579A;
@@ -263,7 +267,7 @@
         }
         /* 출고지점 */
         tr td:nth-child(3) {
-            width: 150px;
+            width: 200px;
         }
         /* 상태 */
         tr td:nth-child(4) {
